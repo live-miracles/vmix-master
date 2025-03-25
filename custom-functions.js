@@ -101,7 +101,7 @@ function renderCustomFunctions() {
                 type="${input.type}"
                 placeholder="${input.placeholder}"
                 name: "${input.name}"
-                class="${input.name}-param input input-xs input-bordered ${input.width}"
+                class="${input.name}-param input input-xs ${input.width}"
                 value="${input.value}"
                 min="${input.min}"
                 max="${input.max}" />`,

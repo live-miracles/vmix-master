@@ -16,8 +16,8 @@ function prerenderVmixWeb() {
             <div class="volume-value mt-1">&nbsp;</div>
 
             <div class="flex items-center gap-1 mt-2">
-              <input id="volume-${bus}" type="text" placeholder="Vol" class="input input-xs input-bordered w-[40px]" value="100">
-              <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded p-1" onclick="setBusVolume('${bus}')">
+              <input id="volume-${bus}" type="text" placeholder="Vol" class="input input-xs w-[40px]" value="100">
+              <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="setBusVolume('${bus}')">
                 <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
               </button>
             </div>
@@ -27,10 +27,10 @@ function prerenderVmixWeb() {
         </div>
 
         <div class="flex items-center gap-2 w-fit mx-auto px-1 mt-2 h-[20px]">
-          <button class="mute-btn btn btn-sm w-[22px] h-[22px] min-h-0 rounded p-0" onclick="toggleBusAudio('${bus}')">
+          <button class="mute-btn btn btn-sm w-[22px] h-[22px] min-h-0 rounded-xs p-0" onclick="toggleBusAudio('${bus}')">
             <svg class="fill-current w-4 h-4 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M533.6 32.5C598.5 85.2 640 165.8 640 256s-41.5 170.7-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64l0 384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352 64 352c-35.3 0-64-28.7-64-64l0-64c0-35.3 28.7-64 64-64l67.8 0L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></svg>
           </button>
-          ${bus === 'M' ? '' : `<button class="bus-M btn btn-sm w-[22px] h-[20px] min-h-0 rounded" onclick="toggleSendToMaster('${bus}')">M</button>`}
+          ${bus === 'M' ? '' : `<button class="bus-M btn btn-sm w-[22px] h-[20px] min-h-0 rounded-xs" onclick="toggleSendToMaster('${bus}')">M</button>`}
         </div>
       </div>`),
     );
@@ -43,12 +43,12 @@ function prerenderVmixWeb() {
               <span class="input-title whitespace-nowrap overflow-hidden inline-flex flex-1"></span>
             </button>
             <div class="m-1">
-            <button class="overlay1-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded" onclick="overlayInput(${i}, 1)">1</button>
-            <button class="overlay2-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded" onclick="overlayInput(${i}, 2)">2</button>
-            <button class="overlay3-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded" onclick="overlayInput(${i}, 3)">3</button>
-            <button class="overlay4-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded" onclick="overlayInput(${i}, 4)">4</button>
-            <button class="audio-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded" onclick="muteInput(${i})">AUDIO</button>
-            <button class="loop-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded" onclick="loopInput(${i})">LOOP</button>
+            <button class="overlay1-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 1)">1</button>
+            <button class="overlay2-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 2)">2</button>
+            <button class="overlay3-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 3)">3</button>
+            <button class="overlay4-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 4)">4</button>
+            <button class="audio-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="muteInput(${i})">AUDIO</button>
+            <button class="loop-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="loopInput(${i})">LOOP</button>
             </div>
           </div>`;
 
@@ -64,16 +64,16 @@ function prerenderVmixWeb() {
                 <div class="volume-value mt-1"></div>
 
                 <div class="flex items-center gap-1 mt-2">
-                  <input id="volume-${i}" type="text" placeholder="Vol" class="input input-xs input-bordered w-[40px]" value="100">
-                  <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded p-1" onclick="fadeInputAudio(${i})">
+                  <input id="volume-${i}" type="text" placeholder="Vol" class="input input-xs w-[40px]" value="100">
+                  <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="fadeInputAudio(${i})">
                     <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                   </button>
                   <span>Vol</span>
                 </div>
 
                 <div class="flex items-center gap-1 mt-2">
-                  <input id="gain-${i}" type="text" placeholder="dB" class="input input-xs input-bordered w-[40px]" value="0">
-                  <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded p-1" onclick="setInputGain(${i})">
+                  <input id="gain-${i}" type="text" placeholder="dB" class="input input-xs w-[40px]" value="0">
+                  <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="setInputGain(${i})">
                     <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                   </button>
                   <span>dB</span>
@@ -82,9 +82,9 @@ function prerenderVmixWeb() {
 
             </div>
             <div class="flex items-center gap-2 w-fit mx-auto px-1 mt-2 h-[22px]">
-              <button class="bus-M btn btn-sm w-[22px] h-[20px] min-h-0 rounded" onclick="toggleAudioBus(${i}, 'M')">M</button>
-              <button class="bus-A btn btn-sm w-[22px] h-[20px] min-h-0 rounded" onclick="toggleAudioBus(${i}, 'A')">A</button>
-              <button class="bus-B btn btn-sm w-[22px] h-[20px] min-h-0 rounded" onclick="toggleAudioBus(${i}, 'B')">B</button>
+              <button class="bus-M btn btn-sm w-[22px] h-[20px] min-h-0 rounded-xs" onclick="toggleAudioBus(${i}, 'M')">M</button>
+              <button class="bus-A btn btn-sm w-[22px] h-[20px] min-h-0 rounded-xs" onclick="toggleAudioBus(${i}, 'A')">A</button>
+              <button class="bus-B btn btn-sm w-[22px] h-[20px] min-h-0 rounded-xs" onclick="toggleAudioBus(${i}, 'B')">B</button>
             </div>
           </div>`;
     }
