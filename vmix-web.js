@@ -6,7 +6,7 @@ function prerenderVmixWeb() {
     ['M', 'A', 'B'].forEach(
         (bus) =>
             (mixerHTML += `
-      <div id="mixer-${bus}" class="inline-block w-[95px] border border-neutral pb-1 m-1 bg-base-100 hidden">
+      <div id="mixer-${bus}" class="w-[95px] border border-neutral pb-1 m-1 bg-base-100 hidden">
         <div class="mixer-header p-0 bg-success text-center">
           <span class="badge my-1">${getBusName(bus, true)}</span>
         </div>
@@ -37,7 +37,7 @@ function prerenderVmixWeb() {
 
     for (let i = 1; i <= INPUTS_SIZE; i++) {
         inputsHTML += `
-          <div id="input-${i}" class="inline-block mx-1 my-1 border border-neutral hidden">
+          <div id="input-${i}" class="mx-1 my-1 border border-neutral hidden">
             <button class="preview-btn btn w-64 whitespace-nowrap overflow-hidden flex h-fit min-h-0 justify-start p-0 gap-0 rounded-none" onclick="previewInput(${i})">
               <span class="badge badge-neutral mx-1 my-1 w-[24px]">${i}</span>
               <span class="input-title whitespace-nowrap overflow-hidden inline-flex flex-1"></span>
@@ -53,7 +53,7 @@ function prerenderVmixWeb() {
           </div>`;
 
         mixerHTML += `
-          <div id="mixer-${i}" class="inline-block w-[120px] border border-neutral pb-1 m-1 bg-base-100 hidden">
+          <div id="mixer-${i}" class="w-[120px] border border-neutral pb-1 m-1 bg-base-100 hidden">
             <div class="mixer-header whitespace-nowrap overflow-hidden p-0">
               <span class="badge badge-neutral w-[24px] ml-1 mr-0 my-1">${i}</span>
               <span class="mixer-title whitespace-nowrap overflow-hidden text-sm p-0"></span>
@@ -133,7 +133,9 @@ async function renderVmixWeb() {
 
     const inputLength = info.inputs.length;
     for (let i = inputLength; i <= INPUTS_SIZE; i++) {
-        document.getElementById('input-' + i).classList.add('hidden');
+        const inputElem = document.getElementById('input-' + i);
+        inputElem.classList.add('hidden');
+        inputElem.classList.remove('inline-block');
     }
 
     ['M', 'A', 'B'].forEach((bus) => {
@@ -141,10 +143,12 @@ async function renderVmixWeb() {
         const busInfo = info.audio[getBusName(bus)];
         if (busInfo === undefined) {
             mixerElem.classList.add('hidden');
+            mixerElem.classList.remove('inline-block');
             return;
         }
         const busHeader = mixerElem.querySelector('.mixer-header');
         setColor(busHeader, busInfo.muted === 'False', false, 'bg');
+        mixerElem.classList.add('inline-block');
         mixerElem.classList.remove('hidden');
         const volumeElem = mixerElem.querySelector('.volume-value');
         volumeElem.innerHTML = Math.round(busInfo.volume) + '%';
@@ -160,6 +164,7 @@ async function renderVmixWeb() {
 
     info.inputs.forEach((input, i) => {
         const inputElem = document.getElementById('input-' + i);
+        inputElem.classList.add('inline-block');
         inputElem.classList.remove('hidden');
         inputElem.querySelector('.input-title').innerHTML = getResponsiveTitle(input.title);
         const previewBtn = inputElem.querySelector('.preview-btn');
@@ -192,8 +197,10 @@ async function renderVmixWeb() {
         const mixerElem = document.getElementById('mixer-' + i);
         if (input.volume === undefined) {
             mixerElem.classList.add('hidden');
+            mixerElem.classList.remove('inline-block');
             return;
         }
+        mixerElem.classList.add('inline-block');
         mixerElem.classList.remove('hidden');
 
         mixerElem.querySelector('.mixer-title').innerHTML = input.title;
@@ -237,16 +244,12 @@ function getSlaves() {
 
 function hideVmixWeb() {
     const vmixContainer = document.getElementById('vmix-container');
-    if (!vmixContainer.classList.contains('hidden')) {
-        vmixContainer.classList.add('hidden');
-    }
+    vmixContainer.classList.add('hidden');
 }
 
 function showVmixWeb() {
     const vmixContainer = document.getElementById('vmix-container');
-    if (vmixContainer.classList.contains('hidden')) {
-        vmixContainer.classList.remove('hidden');
-    }
+    vmixContainer.classList.remove('hidden');
 }
 
 function formatTime(ms) {
