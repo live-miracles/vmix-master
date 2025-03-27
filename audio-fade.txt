@@ -1,5 +1,5 @@
-' AudioFade
-' You need to add "AudioFade" in the input title and disable "Automatically Pause After Transition"
+' You need to add "AudioFade" in the input title
+' Also disable "Automatically mix audio" and "Automatically Pause after Transition"
 
 Do While True
     ' Sleep for 500ms before each iteration
