@@ -13,8 +13,8 @@ Do While True
     ' Find input with "AudioFade" in the title
     Dim nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
 
-    If nodeList.Count > 0 Then
-        Dim inputNode = nodeList(0)
+    Dim inputNode As XmlNode
+    For Each inputNode In nodeList
         Dim inputNumber = inputNode.Attributes("number").Value ' Use inputNumber instead of inputKey
         Dim isMuted = inputNode.Attributes("muted").Value
         Dim isRunning = inputNode.Attributes("state").Value  ' Check if input is running
@@ -37,6 +37,5 @@ Do While True
         ElseIf isRunning = "Running" And isActive And isMuted = "True" Then
             API.Function("AudioOn", inputNumber)
         End If
-    End If
+    Next
 Loop
-
