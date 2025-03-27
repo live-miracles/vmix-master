@@ -31,11 +31,11 @@ Do While True
             API.Function("AudioOff", inputNumber)
             API.Function("Pause", inputNumber)
             API.Function("SetPosition", inputNumber, "0")
-            API.Function("SetVolume", inputNumber, "91")
 
         ' If input is running, active, and muted, unmute it
         ElseIf isRunning = "Running" And isActive And isMuted = "True" Then
             API.Function("AudioOn", inputNumber)
+            API.Function("SetVolumeFade", inputNumber, "91,1000")
         End If
     Next
 Loop
