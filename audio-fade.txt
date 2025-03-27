@@ -1,0 +1,42 @@
+' AudioFade
+' You need to add "AudioFade" in the input title and disable "Automatically Pause After Transition"
+
+Do While True
+    ' Sleep for 500ms before each iteration
+    Sleep(500)
+
+    ' Get all inputs
+    Dim inputs = API.XML()
+    Dim xml = New System.Xml.XmlDocument()
+    xml.LoadXml(inputs)
+    
+    ' Find input with "AudioFade" in the title
+    Dim nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
+
+    If nodeList.Count > 0 Then
+        Dim inputNode = nodeList(0)
+        Dim inputNumber = inputNode.Attributes("number").Value ' Use inputNumber instead of inputKey
+        Dim isMuted = inputNode.Attributes("muted").Value
+        Dim isRunning = inputNode.Attributes("state").Value  ' Check if input is running
+        
+        ' Get the currently active input number
+        Dim activeNode = xml.SelectSingleNode("//active")
+        Dim activeNumber = activeNode.InnerText
+        Dim isActive = (inputNumber = activeNumber) ' Compare inputNumber with activeNumber
+
+        ' If input is running but NOT active, fade audio, stop, mute, and reset volume
+        If isRunning = "Running" And Not isActive Then
+            API.Function("SetVolumeFade", inputNumber, "0,3000")
+            Sleep(3000)
+            API.Function("AudioOff", inputNumber)
+            API.Function("Pause", inputNumber)
+            API.Function("SetPosition", inputNumber, "0")
+            API.Function("SetVolume", inputNumber, "91")
+
+        ' If input is running, active, and muted, unmute it
+        ElseIf isRunning = "Running" And isActive And isMuted = "True" Then
+            API.Function("AudioOn", inputNumber)
+        End If
+    End If
+Loop
+
