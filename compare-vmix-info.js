@@ -37,7 +37,7 @@ function compareSlaves() {
        </ul>
 
        <b>P.S.</b> Leading number means something like <code>05_</code>, <code>05_3_</code>
-       or <code>05_03</code>.`;
+       or <code>05_03_</code>.`;
     const master = getMaster();
     if (master === null) {
         compareReport.className = className + 'border-info prose';

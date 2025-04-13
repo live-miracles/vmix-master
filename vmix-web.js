@@ -300,11 +300,9 @@ function setColor(elem, active, preview = false, type = 'btn') {
 
 function drawAudioLevels(canvas, input) {
     const ctx = canvas.getContext('2d');
-    const left = parseFloat(input.meterF1);
-    const right = parseFloat(input.meterF2);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, 100, 100);
-    ctx.fillStyle = input.muted === 'True' ? '#0ca5e9' : '#2dd4bf';
-    ctx.fillRect(0, 100 - left * 100, 48, 100);
-    ctx.fillRect(52, 100 - right * 100, 100, 100);
+    ctx.clearRect(0, 0, 100, 100);
+    const left = Math.log10(parseFloat(input.meterF1)) * 20;
+    const right = Math.log10(parseFloat(input.meterF2)) * 20;
+    drawDbMeter(ctx, 0, left, input.muted === 'True');
+    drawDbMeter(ctx, 52, right, input.muted === 'True');
 }
