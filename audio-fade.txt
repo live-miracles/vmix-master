@@ -1,23 +1,34 @@
 ' You need to add "AudioFade" in the input title
 ' Also disable "Automatically mix audio" and "Automatically Pause after Transition"
 
+Dim inputs = API.XML()
+Dim xml = New System.Xml.XmlDocument()
+xml.LoadXml(inputs)
+Dim nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
+Dim inputNode As XmlNode
+For Each inputNode In nodeList
+    Dim inputNumber = inputNode.Attributes("number").Value
+    API.Function("AutoPauseOff", inputNumber)
+    API.Function("AutoPlayOff", inputNumber)
+    API.Function("AudioAutoOff", inputNumber)
+    API.Function("AutoRestartOff", inputNumber)
+Next
+
 Do While True
     ' Sleep for 500ms before each iteration
     Sleep(500)
 
     ' Get all inputs
-    Dim inputs = API.XML()
-    Dim xml = New System.Xml.XmlDocument()
+    inputs = API.XML()
+    xml = New System.Xml.XmlDocument()
     xml.LoadXml(inputs)
     
     ' Find input with "AudioFade" in the title
-    Dim nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
+    nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
 
-    Dim inputNode As XmlNode
     For Each inputNode In nodeList
-        Dim inputNumber = inputNode.Attributes("number").Value ' Use inputNumber instead of inputKey
-        Dim isMuted = inputNode.Attributes("muted").Value
-        Dim isRunning = inputNode.Attributes("state").Value  ' Check if input is running
+        Dim inputNumber = inputNode.Attributes("number").Value
+        Dim isRunning = inputNode.Attributes("state").Value
         
         ' Get the currently active input number
         Dim activeNode = xml.SelectSingleNode("//active")
@@ -26,6 +37,7 @@ Do While True
 
         ' If input is running but NOT active, fade audio, stop, mute, and reset volume
         If isRunning = "Running" And Not isActive Then
+            console.writeline("Running Not Active")
             API.Function("SetVolumeFade", inputNumber, "0,3000")
             Sleep(3000)
             API.Function("AudioOff", inputNumber)
@@ -33,7 +45,10 @@ Do While True
             API.Function("SetPosition", inputNumber, "0")
 
         ' If input is running, active, and muted, unmute it
-        ElseIf isRunning = "Running" And isActive And isMuted = "True" Then
+        ElseIf isRunning = "Paused" And isActive Then
+            console.writeline("Paused Active")
+            API.Function("Restart", inputNumber)
+            API.Function("Play", inputNumber)
             API.Function("AudioOn", inputNumber)
             API.Function("SetVolumeFade", inputNumber, "91,1000")
         End If
