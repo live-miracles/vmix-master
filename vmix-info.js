@@ -159,6 +159,9 @@ function renderVmixInfo(box) {
             })
             .join('')}
       </ol>`;
+
+    const volumeCanvas = box.querySelector('.volume-canvas');
+    drawAudioLevels(volumeCanvas, vmixInfo.value.audio[getBusName('M')]);
 }
 
 function getBusName(bus, capital = false) {
@@ -209,4 +212,13 @@ function getVolumeInfo(input) {
         gain = ' | ' + input.gainDb + 'dB';
     }
     return Math.round(input.volume) + '%' + gain;
+}
+
+function drawAudioLevels(canvas, input) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 100, 100);
+    const left = Math.log10(parseFloat(input.meterF1)) * 20;
+    const right = Math.log10(parseFloat(input.meterF2)) * 20;
+    drawDbMeter(ctx, 0, left, input.muted === 'True');
+    drawDbMeter(ctx, 52, right, input.muted === 'True');
 }

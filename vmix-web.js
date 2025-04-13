@@ -10,13 +10,13 @@ function prerenderVmixWeb() {
         <div class="mixer-header p-0 bg-success text-center">
           <span class="badge my-1">${getBusName(bus, true)}</span>
         </div>
-        <div class="relative pl-[18px]">
-          <canvas class="volume-canvas absolute left-0 top-0 w-[16px] h-full" width="100" height="100"></canvas>
+        <div class="relative pl-[12px]">
+          <canvas class="volume-canvas absolute left-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
           <div class="inline-block text-center ml-1">
             <div class="volume-value mt-1">&nbsp;</div>
 
             <div class="flex items-center gap-1 mt-2">
-              <input id="volume-${bus}" type="text" placeholder="Vol" class="input input-xs w-[40px]" value="100">
+              <input id="volume-${bus}" type="text" placeholder="Vol" class="input input-xs w-[40px] px-1" value="100">
               <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="setBusVolume('${bus}')">
                 <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
               </button>
@@ -58,13 +58,13 @@ function prerenderVmixWeb() {
               <span class="badge badge-neutral w-[24px] ml-1 mr-0 my-1">${i}</span>
               <span class="mixer-title whitespace-nowrap overflow-hidden text-sm p-0"></span>
             </div>
-            <div class="relative pl-[18px]">
-              <canvas class="volume-canvas absolute left-0 top-0 w-[16px] h-full" width="100" height="100"></canvas>
+            <div class="relative pl-[12px]">
+              <canvas class="volume-canvas absolute left-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
               <div class="inline-block text-center ml-1">
                 <div class="volume-value mt-1"></div>
 
                 <div class="flex items-center gap-1 mt-2">
-                  <input id="volume-${i}" type="text" placeholder="Vol" class="input input-xs w-[40px]" value="100">
+                  <input id="volume-${i}" type="text" placeholder="Vol" class="input input-xs w-[40px] px-1" value="100">
                   <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="fadeInputAudio(${i})">
                     <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                   </button>
@@ -72,7 +72,7 @@ function prerenderVmixWeb() {
                 </div>
 
                 <div class="flex items-center gap-1 mt-2">
-                  <input id="gain-${i}" type="text" placeholder="dB" class="input input-xs w-[40px]" value="0">
+                  <input id="gain-${i}" type="text" placeholder="dB" class="input input-xs w-[40px] px-1" value="0">
                   <button class="btn btn-sm btn-neutral w-[24px] h-[24px] min-h-0 rounded-xs p-1" onclick="setInputGain(${i})">
                     <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                   </button>
@@ -296,13 +296,4 @@ function setColor(elem, active, preview = false, type = 'btn') {
         elem.classList.remove(type + '-success');
         elem.classList.remove(type + '-warning');
     }
-}
-
-function drawAudioLevels(canvas, input) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 100, 100);
-    const left = Math.log10(parseFloat(input.meterF1)) * 20;
-    const right = Math.log10(parseFloat(input.meterF2)) * 20;
-    drawDbMeter(ctx, 0, left, input.muted === 'True');
-    drawDbMeter(ctx, 52, right, input.muted === 'True');
 }
