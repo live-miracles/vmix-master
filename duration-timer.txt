@@ -3,12 +3,11 @@
 ' updates this time in the Text input named "Text Middle Centre Outline.gtzip".
 ' If the current input has no duration, it will start counting up.
 
-Console.WriteLine("DurationTimer 1.0.0")
+Console.WriteLine("DurationTimer 1.0.1")
 
+Dim textInputTitle = "Text Middle Centre Outline.gtzip"
 Dim position as double = 0
 Dim duration as double = 0
-Dim activeInput as string = ""
-Dim timeLeft as double = 0
 Dim yellowTime as integer = 60
 Dim redTime as integer = 11
 
@@ -19,7 +18,7 @@ Do While True
     Dim x as new system.xml.xmldocument
     x.loadxml(xml)
 
-    activeInput = (x.SelectSingleNode("//active").InnerText)
+    Dim activeInput as string = (x.SelectSingleNode("//active").InnerText)
     Dim durationNode As XmlNode = x.SelectSingleNode("//input[@number='" & activeInput & "']/@duration")
     If durationNode IsNot Nothing Then
         duration = Double.Parse(durationNode.Value)
@@ -38,39 +37,30 @@ Do While True
 
 
     If duration = 0
-        API.Function("SetTextColour",Input:="Text Middle Centre Outline.gtzip", Value:="white")
-        API.Function("StartCountdown",Input:="Text Middle Centre Outline.gtzip")
+        API.Function("SetTextColour", textInputTitle, "white")
+        API.Function("StartCountdown", textInputTitle)
         continue do
     Else
-        API.Function("StopCountdown",Input:="Text Middle Centre Outline.gtzip")
+        API.Function("StopCountdown", textInputTitle)
     End if
 
-    timeLeft = duration - position
+    Dim timeLeft as integer = CInt((duration - position) / 100)
+    timeLeft = timeLeft / 10
 
-    timeLeft = timeLeft / 100
+    Dim Minutes as integer = timeLeft \ 60
+    Dim Seconds as integer = timeLeft Mod 60
 
-    Dim Timingleft as integer = CInt(timeLeft)
-    Timingleft = Timingleft / 10
+    Dim timeStr as string = Seconds.ToString()
+    If Minutes > 0
+        timeStr = Minutes.ToString("00") + ":" + Seconds.ToString("00")
+    End If
+    API.Function("SetText", textInputTitle, timeStr)
 
-    Dim Minutes as integer = Timingleft \ 60
-    Dim Seconds as integer = Timingleft Mod 60
-
-    Dim ThisTime as string 
-    ThisTime = Minutes.ToString("00") + ":" + Seconds.ToString("00")
-
-
-    If Timingleft < yellowTime
-       'put a response in a title and change color accordingly
-  
-        API.Function("SetText",Input:="Text Middle Centre Outline.gtzip",SelectedIndex:="0", Value:=Timingleft)
-   
-        If Timingleft < redTime
-            API.Function("SetTextColour",Input:="Text Middle Centre Outline.gtzip", Value:="red")
-        Else
-            API.Function("SetTextColour",Input:="Text Middle Centre Outline.gtzip", Value:="orange")
-        End If  
+    If timeLeft < redTime
+        API.Function("SetTextColour", textInputTitle, "red")
+    Else If timeLeft < yellowTime
+        API.Function("SetTextColour", textInputTitle, "orange")
     Else
-        API.Function("SetText",Input:="Text Middle Centre Outline.gtzip",SelectedIndex:="0", Value:=ThisTime)
-        API.Function("SetTextColour",Input:="Text Middle Centre Outline.gtzip", Value:="green")
+        API.Function("SetTextColour", textInputTitle, "green")
     End If
 Loop
