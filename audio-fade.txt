@@ -1,5 +1,13 @@
-' You need to add "AudioFade" in the input title
-' Also disable "Automatically mix audio" and "Automatically Pause after Transition"
+' Script name: AudioFade
+' By default, when you transition from one input to another, the audio
+' stops abruptly. This script makes the audio transition smooth.
+' The script only applies to inputs with "AudioFade" in the title.
+
+Console.WriteLine("AudioFade 1.0.0")
+
+Dim maxVolume = "91"
+Dim fadeDownTime = "3000"
+Dim fadeUpTime = "1000"
 
 Dim inputs = API.XML()
 Dim xml = New System.Xml.XmlDocument()
@@ -38,7 +46,7 @@ Do While True
         ' If input is running but NOT active, fade audio, stop, mute, and reset volume
         If isRunning = "Running" And Not isActive Then
             console.writeline("Running Not Active")
-            API.Function("SetVolumeFade", inputNumber, "0,3000")
+            API.Function("SetVolumeFade", inputNumber, "0," & fadeDownTime)
             Sleep(3000)
             API.Function("AudioOff", inputNumber)
             API.Function("Pause", inputNumber)
@@ -50,7 +58,7 @@ Do While True
             API.Function("Restart", inputNumber)
             API.Function("Play", inputNumber)
             API.Function("AudioOn", inputNumber)
-            API.Function("SetVolumeFade", inputNumber, "91,1000")
+            API.Function("SetVolumeFade", inputNumber, maxVolume & "," & fadeUpTime)
         End If
     Next
 Loop

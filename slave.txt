@@ -1,0 +1,47 @@
+' Script name: Slave
+' If the master has switched to the input n, this script will
+' cause the current vMix (slave) to also switch to input n.
+
+Console.WriteLine("Slave 1.0.0")
+
+Dim masterAPI = "http://192.168.x.x:8088/api"
+
+Dim localXml As New System.Xml.XmlDocument()
+Dim localResponse As String
+Dim localActive
+Dim localPreview
+
+Dim http As New System.Net.WebClient()
+Dim responseText As String
+Dim masterXml As New System.Xml.XmlDocument()
+Dim masterActive
+Dim masterPreview
+
+Do While True
+    Sleep(1000)
+
+    Try
+        localResponse = API.XML()
+        localXml.LoadXml(localResponse)
+        localActive = localXml.SelectSingleNode("//active").InnerText
+        localPreview = localXml.SelectSingleNode("//preview").InnerText
+
+        responseText = http.DownloadString(masterAPI)
+        masterXml.LoadXml(responseText)
+        masterActive = masterXml.SelectSingleNode("//active").InnerText
+        masterPreview = masterXml.SelectSingleNode("//preview").InnerText
+
+        If masterActive <> localActive Then
+            API.Function("Stinger1", masterActive)
+            Console.WriteLine("Changing Active: " & masterActive)
+            Sleep(3000)
+        End If
+
+        If masterPreview <> localPreview Then
+            API.Function("PreviewInput", masterPreview)
+            Sleep(500)
+        End If
+    Catch ex As Exception
+        Console.WriteLine("Unexpected error: " & ex.Message)
+    End Try
+Loop
