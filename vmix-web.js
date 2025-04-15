@@ -10,8 +10,8 @@ function prerenderVmixWeb() {
         <div class="mixer-header p-0 bg-success text-center">
           <span class="badge my-1">${getBusName(bus, true)}</span>
         </div>
-        <div class="relative pl-[12px]">
-          <canvas class="volume-canvas absolute left-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
+        <div class="relative pr-[12px]">
+          <canvas class="volume-canvas absolute right-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
           <div class="inline-block text-center ml-1">
             <div class="volume-value mt-1">&nbsp;</div>
 
@@ -37,18 +37,19 @@ function prerenderVmixWeb() {
 
     for (let i = 1; i <= INPUTS_SIZE; i++) {
         inputsHTML += `
-          <div id="input-${i}" class="mx-1 my-1 border border-neutral hidden">
+          <div id="input-${i}" class="mx-1 my-1 border border-neutral relative pr-[12px] hidden">
+            <canvas class="volume-canvas absolute right-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
             <button class="preview-btn btn w-64 whitespace-nowrap overflow-hidden flex h-fit min-h-0 justify-start p-0 gap-0 rounded-none" onclick="previewInput(${i})">
               <span class="badge badge-neutral mx-1 my-1 w-[24px]">${i}</span>
               <span class="input-title whitespace-nowrap overflow-hidden inline-flex flex-1"></span>
             </button>
             <div class="m-1">
-            <button class="overlay1-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 1)">1</button>
-            <button class="overlay2-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 2)">2</button>
-            <button class="overlay3-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 3)">3</button>
-            <button class="overlay4-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 4)">4</button>
-            <button class="audio-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="muteInput(${i})">AUDIO</button>
-            <button class="loop-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="loopInput(${i})">LOOP</button>
+              <button class="overlay1-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 1)">1</button>
+              <button class="overlay2-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 2)">2</button>
+              <button class="overlay3-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 3)">3</button>
+              <button class="overlay4-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 4)">4</button>
+              <button class="audio-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="muteInput(${i})">AUDIO</button>
+              <button class="loop-btn btn btn-neutral w-fit h-[20px] min-h-0 px-2 rounded-xs" onclick="loopInput(${i})">LOOP</button>
             </div>
           </div>`;
 
@@ -58,8 +59,8 @@ function prerenderVmixWeb() {
               <span class="badge badge-neutral w-[24px] ml-1 mr-0 my-1">${i}</span>
               <span class="mixer-title whitespace-nowrap overflow-hidden text-sm p-0"></span>
             </div>
-            <div class="relative pl-[12px]">
-              <canvas class="volume-canvas absolute left-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
+            <div class="relative pr-[12px]">
+              <canvas class="volume-canvas absolute right-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
               <div class="inline-block text-center ml-1">
                 <div class="volume-value mt-1"></div>
 
@@ -163,6 +164,7 @@ async function renderVmixWeb() {
     });
 
     info.inputs.forEach((input, i) => {
+        // Render input tile
         const inputElem = document.getElementById('input-' + i);
         inputElem.classList.add('inline-block');
         inputElem.classList.remove('hidden');
@@ -193,7 +195,9 @@ async function renderVmixWeb() {
         } else {
             loopBtn.classList.remove('invisible');
         }
+        drawAudioLevels(inputElem.querySelector('.volume-canvas'), input);
 
+        // Render input audio mixer
         const mixerElem = document.getElementById('mixer-' + i);
         if (input.volume === undefined) {
             mixerElem.classList.add('hidden');
@@ -207,8 +211,7 @@ async function renderVmixWeb() {
         const mixerHeader = mixerElem.querySelector('.mixer-header');
         setColor(mixerHeader, input.muted === 'False', false, 'bg');
 
-        const canvas = mixerElem.querySelector('.volume-canvas');
-        drawAudioLevels(canvas, input);
+        drawAudioLevels(mixerElem.querySelector('.volume-canvas'), input);
 
         const volumeValue = mixerElem.querySelector('.volume-value');
         volumeValue.innerHTML = getInputVolume(input);
