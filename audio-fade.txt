@@ -3,7 +3,7 @@
 ' stops abruptly. This script makes the audio transition smooth.
 ' The script only applies to inputs with "AudioFade" in the title.
 
-Console.WriteLine("AudioFade 1.0.0")
+Console.WriteLine("AudioFade 1.0.1")
 
 Dim maxVolume = "91"
 Dim fadeDownTime = "3000"
@@ -23,42 +23,41 @@ For Each inputNode In nodeList
 Next
 
 Do While True
-    ' Sleep for 500ms before each iteration
     Sleep(500)
 
-    ' Get all inputs
-    inputs = API.XML()
-    xml = New System.Xml.XmlDocument()
-    xml.LoadXml(inputs)
-    
-    ' Find input with "AudioFade" in the title
-    nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
-
-    For Each inputNode In nodeList
-        Dim inputNumber = inputNode.Attributes("number").Value
-        Dim isRunning = inputNode.Attributes("state").Value
+    Try
+        inputs = API.XML()
+        xml = New System.Xml.XmlDocument()
+        xml.LoadXml(inputs)
         
-        ' Get the currently active input number
-        Dim activeNode = xml.SelectSingleNode("//active")
-        Dim activeNumber = activeNode.InnerText
-        Dim isActive = (inputNumber = activeNumber) ' Compare inputNumber with activeNumber
+        ' Find input with "AudioFade" in the title
+        nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
 
-        ' If input is running but NOT active, fade audio, stop, mute, and reset volume
-        If isRunning = "Running" And Not isActive Then
-            console.writeline("Running Not Active")
-            API.Function("SetVolumeFade", inputNumber, "0," & fadeDownTime)
-            Sleep(3000)
-            API.Function("AudioOff", inputNumber)
-            API.Function("Pause", inputNumber)
-            API.Function("SetPosition", inputNumber, "0")
+        For Each inputNode In nodeList
+            Dim inputNumber = inputNode.Attributes("number").Value
+            Dim isRunning = inputNode.Attributes("state").Value
+            
+            ' Get the currently active input number
+            Dim activeNode = xml.SelectSingleNode("//active")
+            Dim activeNumber = activeNode.InnerText
+            Dim isActive = (inputNumber = activeNumber)
 
-        ' If input is running, active, and muted, unmute it
-        ElseIf isRunning = "Paused" And isActive Then
-            console.writeline("Paused Active")
-            API.Function("Restart", inputNumber)
-            API.Function("Play", inputNumber)
-            API.Function("AudioOn", inputNumber)
-            API.Function("SetVolumeFade", inputNumber, maxVolume & "," & fadeUpTime)
-        End If
-    Next
+            If isRunning = "Running" And Not isActive Then
+                console.writeline("Running Not Active")
+                API.Function("SetVolumeFade", inputNumber, "0," & fadeDownTime)
+                Sleep(3000)
+                API.Function("AudioOff", inputNumber)
+                API.Function("Pause", inputNumber)
+                API.Function("SetPosition", inputNumber, "0")
+            ElseIf isRunning = "Paused" And isActive Then
+                console.writeline("Paused Active")
+                API.Function("Restart", inputNumber)
+                API.Function("Play", inputNumber)
+                API.Function("AudioOn", inputNumber)
+                API.Function("SetVolumeFade", inputNumber, maxVolume & "," & fadeUpTime)
+            End If
+        Next
+    Catch ex As Exception
+        Console.WriteLine("Unexpected error: " & ex.Message)
+    End Try
 Loop

@@ -2,7 +2,7 @@
 ' If the master has switched to the input n, this script will
 ' cause the current vMix (slave) to also switch to input n.
 
-Console.WriteLine("Slave 1.0.0")
+Console.WriteLine("Slave 1.0.1")
 
 Dim masterAPI = "http://192.168.x.x:8088/api"
 
@@ -18,7 +18,7 @@ Dim masterActive
 Dim masterPreview
 
 Do While True
-    Sleep(1000)
+    Sleep(500)
 
     Try
         localResponse = API.XML()
