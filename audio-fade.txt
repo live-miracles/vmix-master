@@ -43,14 +43,14 @@ Do While True
             Dim isActive = (inputNumber = activeNumber)
 
             If isRunning = "Running" And Not isActive Then
-                console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Fading volume for input " & inputNumber)
+                console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] AudioFade | Fading volume for input " & inputNumber)
                 API.Function("SetVolumeFade", inputNumber, "0," & fadeDownTime)
                 Sleep(3000)
                 API.Function("AudioOff", inputNumber)
                 API.Function("Pause", inputNumber)
                 API.Function("SetPosition", inputNumber, "0")
             ElseIf isRunning = "Paused" And isActive Then
-                console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Restarting input " & inputNumber)
+                console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] AudioFade | Restarting input " & inputNumber)
                 API.Function("Restart", inputNumber)
                 API.Function("Play", inputNumber)
                 API.Function("AudioOn", inputNumber)
@@ -58,6 +58,6 @@ Do While True
             End If
         Next
     Catch ex As Exception
-        Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Unexpected error: " & ex.Message)
+        Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] AudioFade | Unexpected error: " & ex.Message)
     End Try
 Loop
