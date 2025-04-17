@@ -7,7 +7,7 @@
 ' - select Display Format as "mm:ss"
 ' - turn on "Reverse"
 
-Console.WriteLine("DurationTimer 1.0.3")
+Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] DurationTimer 1.0.4")
 
 Dim textInputTitle = "Text Middle Centre Outline.gtzip"
 Dim position As Double = 0

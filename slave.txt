@@ -2,7 +2,7 @@
 ' If the master has switched to the input n, this script will
 ' cause the current vMix (slave) to also switch to input n.
 
-Console.WriteLine("Slave 1.0.2")
+Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave 1.0.3")
 
 Dim masterAPI = "http://192.168.x.x:8088/api" ' Update this IP
 

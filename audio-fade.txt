@@ -3,7 +3,7 @@
 ' stops abruptly. This script makes the audio transition smooth.
 ' The script only applies to inputs with "AudioFade" in the title.
 
-Console.WriteLine("AudioFade 1.0.2")
+Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] AudioFade 1.0.3")
 
 Dim maxVolume = "91"
 Dim fadeDownTime = "3000"
