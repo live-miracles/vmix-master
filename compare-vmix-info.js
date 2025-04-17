@@ -19,6 +19,10 @@ function similarTypes(type1, type2) {
     if (audioTypes.includes(type1) && audioTypes.includes(type2)) {
         return true;
     }
+    const videoTypes = ['Capture', 'SRT'];
+    if (videoTypes.includes(type1) && videoTypes.includes(type2)) {
+        return true;
+    }
     return type1 === type2;
 }
 
