@@ -131,7 +131,7 @@ function showLog(url, status, value, error, time) {
     if (status === 200) {
         show(url, message);
     } else {
-        showError(url, message);
+        showError(url, message + ' || ' + error);
     }
 }
 
@@ -139,8 +139,8 @@ function storeLog(url, status, value, error, time) {
     const logs = localStorage.getItem('vmix-master-logs')
         ? JSON.parse(localStorage.getItem('vmix-master-logs'))
         : [];
-    logs.unshift({ time: time, url: url, status, value: value, error: error });
-    localStorage.setItem('logs', JSON.stringify(logs.slice(0, LOG_SIZE)));
+    logs.unshift({ time: time, url: url, status, value: value, error: String(error) });
+    localStorage.setItem('vmix-master-logs', JSON.stringify(logs.slice(0, LOG_SIZE)));
 }
 
 function showStoredLogs() {
