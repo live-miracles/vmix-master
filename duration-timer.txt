@@ -7,7 +7,8 @@
 ' - select Display Format as "mm:ss"
 ' - turn on "Reverse"
 
-Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] DurationTimer 1.0.4")
+Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
+Console.WriteLine(timestamp & " DurationTimer 1.0.5")
 
 Dim textInputTitle = "Text Middle Centre Outline.gtzip"
 Dim position As Double = 0
@@ -21,7 +22,8 @@ x.loadxml(xml)
 Dim textNode As XmlNode = x.SelectSingleNode("//input[@title='" & textInputTitle & "']")
 
 If textNode Is Nothing Then
-    Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] DuratronTimer | Error: Could not find a text input with title '" & textInputTitle & "'. Exiting...")
+    timestamp = DateTime.Now.ToString("HH:mm:ss")
+    Console.WriteLine(timestamp & " DuratronTimer | Error: Could not find a text input '" & textInputTitle & "'. Exiting...")
     Return
 End If
 
@@ -70,6 +72,7 @@ Do While True
             API.Function("SetTextColour", textInputTitle, "green")
         End If
     Catch ex As Exception
-        Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] DuratronTimer | Unexpected error: " & ex.Message)
+        timestamp = DateTime.Now.ToString("HH:mm:ss")
+        Console.WriteLine(timestamp & " DuratronTimer | Unexpected error: " & ex.Message)
     End Try
 Loop

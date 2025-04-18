@@ -1,10 +1,11 @@
 ' Script name: Slave
 ' If the master has switched to the input n, this script will
 ' cause the current vMix (slave) to also switch to input n.
+' Update the master IP below:
+Dim masterAPI = "http://192.168.x.x:8088/api"
 
-Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave 1.0.3")
-
-Dim masterAPI = "http://192.168.x.x:8088/api" ' Update this IP
+Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
+Console.WriteLine(timestamp & " Slave 1.0.4")
 
 Dim localXml As New System.Xml.XmlDocument()
 Dim localResponse As String
@@ -18,7 +19,7 @@ Dim masterActive
 Dim masterPreview
 
 If masterAPI = "http://192.168.x.x:8088/api" Then
-    Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave | Please update the masterAPI " & masterAPI & ". Exiting...")
+    Console.WriteLine(timestamp & " Slave | Please update the masterAPI " & masterAPI & ". Exiting...")
     Return
 End If
 
@@ -38,16 +39,19 @@ Do While True
 
         If masterActive <> localActive Then
             API.Function("Stinger1", masterActive)
-            Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave | New active: " & masterActive)
+            timestamp = DateTime.Now.ToString("HH:mm:ss")
+            Console.WriteLine(timestamp & " Slave | New active: " & masterActive)
             Sleep(3000)
         End If
 
         If masterPreview <> localPreview Then
             API.Function("PreviewInput", masterPreview)
-            Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave | New preview: " & masterPreview)
+            timestamp = DateTime.Now.ToString("HH:mm:ss")
+            Console.WriteLine(timestamp & " Slave | New preview: " & masterPreview)
             Sleep(500)
         End If
     Catch ex As Exception
-        Console.WriteLine("[" & DateTime.Now.ToString("HH:mm:ss") & "] Slave | Unexpected error: " & ex.Message)
+        timestamp = DateTime.Now.ToString("HH:mm:ss")
+        Console.WriteLine(timestamp & " Slave | Unexpected error: " & ex.Message)
     End Try
 Loop
