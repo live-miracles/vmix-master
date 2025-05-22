@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>vMix Master</title>
     <link rel="icon" type="image/png" href="./logo.svg" />
-    <link rel="stylesheet" href="./output.min.css" />
+    <link rel="stylesheet" href="./output.css" />
     <script src="./Sortable.min.js" defer></script>
     <script src="./tools.js" defer></script>
     <script src="./vmix-api.js" defer></script>
@@ -23,7 +23,7 @@
       </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-          <li><a href="/">Home</a></li>
+          <li><a href="/stable/vmix-master/">Stable</a></li>
           <li><a href="/vmix-master/scripts/audio-fade.vb">AudioFade</a></li>
           <li><a href="/vmix-master/scripts/duration-timer.vb">DurationTimer</a></li>
           <li><a href="/vmix-master/scripts/slave.vb">Slave</a></li>
@@ -32,14 +32,14 @@
       </div>
     </div>
 
-    <div class="focus flex hidden flex-col items-center">
+    <div class="focus flex flex-col items-center">
       <div class="flex w-full flex-wrap p-2">
         <div class="flex min-w-full items-center justify-center">
           <button id="add-box" class="btn btn-outline btn-secondary flex">Add Instance</button>
           <button id="refresh-all" class="btn btn-outline btn-secondary mx-3 flex">Refresh All</button>
           <label class="input input-secondary w-fit">
             Refresh Rate (sec)
-            <input id="refresh-rate" class="url-param w-12" name="refreshRate" type="number" min="1" value="5" placeholder="sec" />
+            <input id="refresh-rate" class="url-param w-12" name="refreshRate" type="number" min="1" value="1" placeholder="sec" />
           </label>
         </div>
       </div>
@@ -144,7 +144,7 @@
       </label>
 
       <label class="swap m-1">
-        <input id="show-custom-functions" type="checkbox" class="show-toggle url-param" />
+        <input id="show-custom-functions" type="checkbox" class="show-toggle url-param" checked />
         <div class="badge swap-on badge-secondary rounded-xs py-3">custom</div>
         <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">custom</div>
       </label>
