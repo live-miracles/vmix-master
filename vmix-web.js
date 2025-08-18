@@ -279,8 +279,10 @@ function getInputProgress(input) {
 }
 
 function getInputVolume(input) {
-    const gain =
-        input.gainDb === undefined ? '' : ' | ' + Math.round(input.gainDb * 100) / 100 + 'dB';
+    let gain = '';
+    if (input.gainDb !== undefined && input.gainDb !== '0') {
+        gain = ' | ' + Math.round(input.gainDb * 100) / 100 + 'dB';
+    }
     return Math.round(input.volume) + '%' + gain;
 }
 

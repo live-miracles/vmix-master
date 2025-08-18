@@ -204,7 +204,7 @@ function getInputDuration(input) {
 function getVolumeInfo(input) {
     let gain = '';
     if (input.gainDb !== undefined && input.gainDb !== '0') {
-        gain = ' | ' + input.gainDb + 'dB';
+        gain = ' | ' + Math.round(input.gainDb * 100) / 100 + 'dB';
     }
     return Math.round(input.volume) + '%' + gain;
 }
