@@ -95,7 +95,6 @@ function prerenderVmixWeb() {
 }
 
 async function renderVmixWeb() {
-    const vmixContainer = document.getElementById('vmix-container');
     const masterInput = document.getElementById('master');
 
     const master = getMaster();
@@ -137,6 +136,10 @@ async function renderVmixWeb() {
         const inputElem = document.getElementById('input-' + i);
         inputElem.classList.add('hidden');
         inputElem.classList.remove('inline-block');
+
+        const mixerElem = document.getElementById('mixer-' + i);
+        mixerElem.classList.add('hidden');
+        mixerElem.classList.remove('inline-block');
     }
 
     ['M', 'A', 'B'].forEach((bus) => {
