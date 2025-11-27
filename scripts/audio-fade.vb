@@ -4,15 +4,14 @@
 ' The script only applies to inputs with "AudioFade" in the title.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " AudioFade 1.0.5")
+Console.WriteLine(timestamp & " AudioFade 1.0.6")
 
 Dim maxVolume = 91
 Dim fadeDownTime = 3000
 Dim fadeUpTime = 1000
 
-Dim inputs = API.XML()
 Dim xml = New System.Xml.XmlDocument()
-xml.LoadXml(inputs)
+xml.LoadXml(API.XML())
 Dim nodeList = xml.SelectNodes("//input[contains(@title, 'AudioFade')]")
 Dim inputNode As XmlNode
 For Each inputNode In nodeList
@@ -27,9 +26,7 @@ Do While True
     Sleep(500)
 
     Try
-        inputs = API.XML()
-        xml = New System.Xml.XmlDocument()
-        xml.LoadXml(inputs)
+        xml.LoadXml(API.XML())
 
         Dim activeNumber = xml.SelectSingleNode("//active").InnerText
 

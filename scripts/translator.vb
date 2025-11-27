@@ -4,7 +4,7 @@
 ' You can configure the fade times and treshhold values bellow.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " Translator 1.1.0")
+Console.WriteLine(timestamp & " Translator 1.1.1")
 
 ' Configuration
 Dim loopTime = 50
@@ -41,7 +41,11 @@ Do While True
             micNode = xml.SelectSingleNode("//input[@type='VideoCall']")
         End If
 
-        If micNode Is Nothing Then Continue Do
+        If micNode Is Nothing Then
+            Console.WriteLine(timestamp & " Translator | No mic / vMix Call input detected.")
+            Sleep(5000)
+            Continue Do
+        End If
 
         Dim micLevel As Double = CDbl(micNode.Attributes("meterF1").Value)
         Dim micMuted As String = micNode.Attributes("muted").Value
@@ -76,6 +80,6 @@ Do While True
 
     Catch ex As Exception
         timestamp = DateTime.Now.ToString("HH:mm:ss")
-        Console.WriteLine(timestamp & " Translator Script Error: " & ex.Message)
+        Console.WriteLine(timestamp & " Translator | Unexpected error: " & ex.Message)
     End Try
 Loop
