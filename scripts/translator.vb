@@ -4,15 +4,18 @@
 ' You can configure the fade times and treshhold values bellow.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " Translator 1.0.0")
+Console.WriteLine(timestamp & " Translator 1.1.0")
 
 ' Configuration
 Dim loopTime = 50
 Dim voiceThreshold As Double = 0.05
 Dim silenceLimit As Integer = 2500
-Dim volumeFull = 85
+Dim silenceLimit2 As Integer = 7000
+Dim volumeFull = 75
+Dim volumeFull2 = 85
 Dim volumeReduced = 50
 Dim volumeUpTime = 1000
+Dim volumeUpTime2 = 3000
 Dim volumeDownTime = 200
 Dim chainBus = "B"
 
@@ -55,10 +58,19 @@ Do While True
             Dim silenceDuration As Double = (DateTime.Now - lastActiveTimetamp).TotalMilliseconds
             Dim fadeDuration As Double = (DateTime.Now - fadeUpTimestamp).TotalMilliseconds
 
-            If silenceDuration > silenceLimit And fadeDuration > volumeUpTime Then
-                ' Raise source volume back to full
-                API.Function("SetBus" & chainBus & "VolumeFade", Value:=(volumeFull & "," & volumeUpTime))
-                fadeUpTimestamp = DateTime.Now
+            If silenceDuration > silenceLimit2 Then
+                IF fadeDuration > volumeUpTime2 Then
+                    ' Raise source volume back to full
+                    API.Function("SetBus" & chainBus & "VolumeFade", Value:=(volumeFull2 & "," & volumeUpTime2))
+                    fadeUpTimestamp = DateTime.Now
+                End If
+
+            ElseIf silenceDuration > silenceLimit Then
+                IF fadeDuration > volumeUpTime Then
+                    ' Raise source volume back to full
+                    API.Function("SetBus" & chainBus & "VolumeFade", Value:=(volumeFull & "," & volumeUpTime))
+                    fadeUpTimestamp = DateTime.Now
+                End If
             End If
         End If
 
