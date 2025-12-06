@@ -171,6 +171,66 @@
       if you have <b>Git</b> installed, or click <b>Code</b> → <b>Download ZIP</b>. After this go to the <code>vmix-master/</code> folder and open the
       <code>index.html</code> file in the Chrome browser.
 
+      <h3>vMix Scripts</h3>
+      <h4>vMix Audio Handling</h4>
+      <p>
+        The audio volume science is a little bit hard to understand and vMix in addition also makes it even more complicated by using different
+        scales. Here is some background on the Decibel (dB) based scales (like "volumeThreshold"), the formulas how the scales can be converted, and
+        some examples:
+      </p>
+
+      <pre>
+Scales:
+    Volume:      0 to 100    (used for UI volume bars, SetVolumeFade)
+    Amplitude:   0 to 1      (used for API audio bus meter, @meterF1)
+    Amplitude2:  0 to 100    (used for API input volume input, @volume)
+    Decibels:    -oo to 0    (used in audio science)
+
+Formulas:
+    Amplitude    = Amplitude2 / 100
+    Amplitude2   = Amplitude * 100
+    Volume       = (Amplitude ^ 0.25) * 100
+    Amplitude    = (Volume / 100) ^ 4
+    Decibels     = 20 * Math.Log10(Amplitude)
+    Amplitude    = 10 ^ (Decibels / 20)
+
+Examples:
+    ==== METER (measured) ===============      ==== CONTROL =============
+    Volume (%) Amplitude  Decibel (dB FS)      Volume (%) Decibel (dB FS) *
+    ---------- ---------- ---------------      ---------- ---------------
+    100        1,0000        0,00              100        - 18,00
+     95        0,8145     -  1,78               95        - 19,78
+     90        0,6561     -  3,66               90        - 21,66
+     85        0,5220     -  5,65               85        - 23,65
+     80        0,4096     -  7,75               80        - 25,75
+     75        0,3164     - 10,00               75        - 28,00
+     70        0,2401     - 12,39               70        - 30,39
+     65        0,1785     - 14,97               65        - 32,97
+     60        0,1296     - 17,75               60        - 35,75
+     55        0,0915     - 20,77               55        - 38,77
+     50        0,0625     - 24,08               50        - 42,08
+     45        0,0410     - 27,74               45        - 45,74
+     40        0,0256     - 31,84               40        - 49,84
+     35        0,0150     - 36,47               35        - 54,47
+     30        0,0081     - 41,83               30        - 59,83
+     25        0,0039     - 48,16               25        - 66,16
+     20        0,0016     - 55,92               20        - 73,92
+     15        0,0005     - 65,91               15        - 83,91
+     10        0,0001     - 80,00               10        - 98,00
+      5        0,0000     -104,08                5        -122,08
+      1        0,0000     -160,00                1        -178,08
+      0        0,0000     -    oo                0        -    oo
+
+  (*) for a usual incoming voice signal of -18 dB FS
+</pre
+      >
+
+      <p>
+        <strong>Attention:</strong> Keep in mind that 100% of a Volume Meter corresponds to 0 dB FS, while 100% of the Volume Bar corresponds to the
+        full incoming signal (usually about the target loudness of -18 dB FS for voice). So, if you attenuate by targeting a Volume Bar of 50%, you
+        are reducing your incoming signal BY(!) -24 dB relative, and NOT TO(!) -24 dB absolute.
+      </p>
+
       <h3>Links</h3>
       You can check out some usefull scripts
       <ul>

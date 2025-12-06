@@ -4,19 +4,22 @@
 ' You can configure the clip and peak treshhold values bellow.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " AutoGain 0.0.1")
+Console.WriteLine(timestamp & " AutoGain 0.0.2")
 
 ' Configuration
 Dim loopTime = 50
 Dim clipThreshold As Double = 0.9  ' 0.9 ~ -1dB | Decibels = 20 * Math.Log10(Amplitude)
-Dim peakThreshold As Double = 0.4  ' 0.4 ~ -8dB
+Dim peakThreshold As Double = 0.45  ' 0.45 ~ -7dB
 Dim voiceThreshold As Double = 0.1  ' 0.1 ~ -20dB
 Dim peakWaitLimit As Integer = 5000
 Dim gainUpTime As Integer = 3000
 Dim gainDownTime As Integer = 2000
 
-Dim voicePeakTimestamp As DateTime = DateTime.Now  ' When translator last reached peakThreshold
-Dim voiceTimestamp As DateTime = DateTime.Now  ' When translator last spoke above voiceThreshold
+Dim now As Double = 0
+Dim voicePeakTimestamp As Double = 0  ' When translator last reached peakThreshold
+Dim voiceTimestamp As Double = 0  ' When translator last spoke above voiceThreshold
+Dim gainDownTimestamp As Double = 0
+Dim gainUpTimestamp As Double = 0
 
 Dim xml = New System.Xml.XmlDocument()
 
@@ -26,6 +29,7 @@ Do While True
     Try
         ' Load vMix XML
         xml.LoadXml(API.XML())
+        now = (DateTime.Now - New DateTime(2000,1,1)).TotalMilliseconds
 
         ' Get Translator mic input node
         Dim micNode = xml.SelectSingleNode("//input[contains(@title, 'AutoGain')]")
@@ -39,26 +43,24 @@ Do While True
         Dim inputNumber As String = micNode.Attributes("number").Value
         Dim gainDb As Integer = CInt(micNode.Attributes("gainDb").Value)
 
-        If meterF1 > clipThreshold Then
+        If meterF1 > clipThreshold And gainDownTimestamp < now Then
             ' Decrease gain to prevent clipping
             API.Function("SetGain", Input:=inputNumber, Value:=CStr(Math.Max(gainDb - 1, 0)))
-            Sleep(gainDownTime)
+            gainDownTimestamp = now + gainDownTime
         End If
 
         If meterF1 > peakThreshold Then
-            voicePeakTimestamp = DateTime.Now
+            voicePeakTimestamp = now + peakWaitLimit
         End If
 
         If meterF1 > voiceThreshold Then
-            voiceTimestamp = DateTime.Now
+            voiceTimestamp = now + peakWaitLimit
         End If
 
-        Dim peakDuration As Double = (DateTime.Now - voicePeakTimestamp).TotalMilliseconds
-        Dim voiceDuration As Double = (DateTime.Now - voiceTimestamp).TotalMilliseconds
-        If peakDuration > peakWaitLimit And voiceDuration < peakWaitLimit Then
-            ' Increase gain if no peaks detected for gainUpTime
+        If voicePeakTimestamp < now And voiceTimestamp > now And gainUpTimestamp < now Then
+            ' Increase gain if no peaks detected for gainUpTime and voice detected recently
             API.Function("SetGain", Input:=inputNumber, Value:=CStr(Math.Min(gainDb + 1, 24)))
-            Sleep(gainUpTime)
+            gainUpTimestamp = now + gainUpTime
         End If
 
     Catch ex As Exception
