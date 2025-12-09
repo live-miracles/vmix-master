@@ -1,11 +1,14 @@
 ' Script name: NameSlave
-' When master switches to the input with name X, this script will
-' cause the current vMix (slave) to follow and switch to input X.
+'
+' When remote vMix switches to the input with name X, this script will
+' cause the local vMix (slave) to follow and switch to input X.
+' If no input with name X exists on the slave, it will switch to defaultInput.
+'
 ' Update the master IP below:
 Dim masterAPI = "http://192.168.x.x:8088/api"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " NameSlave 0.0.1")
+Console.WriteLine(timestamp & " NameSlave 1.0.0")
 
 Dim loopTime = 300
 Dim transitionBuffer = 3000
