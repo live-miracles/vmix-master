@@ -1,23 +1,26 @@
 ' Script name: AutoGain
+' 
 ' It monitors the input which has AutoGain in the name
 ' and automatically adjusts the gain to prevent clipping or low volume.
-' You can configure the clip and peak treshhold values bellow.
+' You can configure the clip and peak threshold values bellow.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " AutoGain 0.0.2")
+Console.WriteLine(timestamp & " AutoGain 0.0.3")
 
-' Configuration
+' Configuration | Decibels = 20 * Math.Log10(Amplitude)
 Dim loopTime = 50
-Dim clipThreshold As Double = 0.9  ' 0.9 ~ -1dB | Decibels = 20 * Math.Log10(Amplitude)
-Dim peakThreshold As Double = 0.45  ' 0.45 ~ -7dB
-Dim voiceThreshold As Double = 0.1  ' 0.1 ~ -20dB
-Dim peakWaitLimit As Integer = 5000
-Dim gainUpTime As Integer = 3000
-Dim gainDownTime As Integer = 2000
+Dim clipThreshold As Double = 0.9  ' 0.9 ~ -1dB; meterF1 value to consider as clipping
+Dim peakThreshold As Double = 0.45  ' 0.45 ~ -7dB; meterF1 value to consider as a loud enough voice
+Dim voiceThreshold As Double = 0.1  ' 0.1 ~ -20dB; meterF1 value to consider as voice present
+Dim voiceDurationThreshold As Integer = 150  ' Time of continuous voice detection to consider as speaking
+Dim peakWaitLimit As Integer = 5000  ' Time to wait after last peak detected before allowing gain increase
+Dim gainUpTime As Integer = 3000  ' Minimum time between gain increases
+Dim gainDownTime As Integer = 2000  ' Minimum time between gain decreases
 
 Dim now As Double = 0
 Dim voicePeakTimestamp As Double = 0  ' When translator last reached peakThreshold
-Dim voiceTimestamp As Double = 0  ' When translator last spoke above voiceThreshold
+Dim voiceThresholdTimestamp As Double = 0  ' When translator made sound above voiceThreshold
+Dim voiceTimestamp As Double = 0  ' When translator continuously spoke above voiceThreshold for voiceDurationThreshold
 Dim gainDownTimestamp As Double = 0
 Dim gainUpTimestamp As Double = 0
 
@@ -39,28 +42,41 @@ Do While True
             Continue Do
         End If
 
+        If micNode.Attributes("muted").Value = "True" Then
+            ' Skip if muted
+            voiceThresholdTimestamp = 0
+            Continue Do
+        End If
+
         Dim meterF1 As Double = CDbl(micNode.Attributes("meterF1").Value)
         Dim inputNumber As String = micNode.Attributes("number").Value
         Dim gainDb As Integer = CInt(micNode.Attributes("gainDb").Value)
 
-        If meterF1 > clipThreshold And gainDownTimestamp < now Then
+        If meterF1 > clipThreshold And now - gainDownTimestamp > gainDownTime Then
             ' Decrease gain to prevent clipping
             API.Function("SetGain", Input:=inputNumber, Value:=CStr(Math.Max(gainDb - 1, 0)))
-            gainDownTimestamp = now + gainDownTime
+            gainDownTimestamp = now
         End If
 
         If meterF1 > peakThreshold Then
-            voicePeakTimestamp = now + peakWaitLimit
+            voicePeakTimestamp = now
         End If
 
+        ' Detect voice only when it is present for a duration
         If meterF1 > voiceThreshold Then
-            voiceTimestamp = now + peakWaitLimit
+            If voiceThresholdTimestamp = 0 Then
+                voiceThresholdTimestamp = now
+            ElseIf now - voiceThresholdTimestamp > voiceDurationThreshold Then
+                voiceTimestamp = now
+            End If
+        Else
+            voiceThresholdTimestamp = 0
         End If
 
-        If voicePeakTimestamp < now And voiceTimestamp > now And gainUpTimestamp < now Then
+        If now - voicePeakTimestamp > peakWaitLimit And now - voiceTimestamp < peakWaitLimit And now - gainUpTimestamp > gainUpTime Then
             ' Increase gain if no peaks detected for gainUpTime and voice detected recently
             API.Function("SetGain", Input:=inputNumber, Value:=CStr(Math.Min(gainDb + 1, 24)))
-            gainUpTimestamp = now + gainUpTime
+            gainUpTimestamp = now
         End If
 
     Catch ex As Exception
