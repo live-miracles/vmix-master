@@ -10,7 +10,7 @@ Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " AutoGain 1.0.0")
 
 ' ===== Configurations =====
-Dim loopTime = 50  ' Wait time between each loop iteration
+Dim LOOP_TIME = 50  ' Wait time between each loop iteration
 
 Dim CLIP_THRESHOLD As Double = 0.9  ' 0.9 ~ -1dB; meterF1 value to consider as clipping
 Dim GAIN_DOWN_TIME As Integer = 1000  ' Minimum time between gain decreases
@@ -34,7 +34,7 @@ Dim gainUpTimestamp As Double = 0  ' When gain was last increased
 Dim xml = New System.Xml.XmlDocument()
 
 Do While True
-    Sleep(loopTime)
+    Sleep(LOOP_TIME)
 
     Try
         ' Load vMix XML
