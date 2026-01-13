@@ -28,7 +28,7 @@
 ' +----+----+----+----+----+----+----→ Silence Time (no translation)
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " Translator 1.1.2")
+Console.WriteLine(timestamp & " Translator 1.1.3")
 
 ' ===== Configurations =====
 Dim LOOP_TIME = 50  ' Wait time between each loop iteration
