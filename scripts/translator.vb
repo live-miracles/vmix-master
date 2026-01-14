@@ -15,16 +15,16 @@
 ' Script will raise the volume in two stages to make it more smooth. All config time values are in ms.
 '
 ' Source Volume (chain bus)
-' |●                        ●─────
-' | \                      /
-' |  |                    /
-' |  \                   /
-' |   |                 /
-' |   \                /
-' |    |              /
-' |    \      ●──────●
-' |     |    /
-' |     ●───●
+' |                         ●─────
+' |                        /
+' |                       /
+' |                      /
+' |                     /
+' |                    /
+' |                   /
+' |           ●──────●
+' |          /
+' |●────────●
 ' +----+----+----+----+----+----+----→ Silence Time (no translation)
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
