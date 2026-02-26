@@ -146,8 +146,8 @@ function compareSlaves() {
             }
 
             // Handle vMix bug, it thinks m4a is video
-            if (input1.title.endsWith('.m4a') && input1.type === 'Video') input1.type = 'Audio';
-            if (input2.title.endsWith('.m4a') && input2.type === 'Video') input2.type = 'Audio';
+            if (input1.title.endsWith('.m4a') && input1.type === 'Video') input1.type = 'AudioFile';
+            if (input2.title.endsWith('.m4a') && input2.type === 'Video') input2.type = 'AudioFile';
 
             // check input types
             if (!similarTypes(input1.type, input2.type)) {
@@ -181,8 +181,8 @@ function compareSlaves() {
             const dur2 = parseInt(input2.duration);
             const durDiff = Math.round(Math.abs(dur1 - dur2) / 1000);
             if (
-                ['Audio', 'Video'].includes(input1.type) &&
-                ['Audio', 'Video'].includes(input2.type) &&
+                ['AudioFile', 'Video'].includes(input1.type) &&
+                ['AudioFile', 'Video'].includes(input2.type) &&
                 durDiff >= 5
             ) {
                 msg = `vMix #${num2} input ${i} has duration ${formatTimeMMSS(dur2)} is different from master's ${formatTimeMMSS(dur1)} by ${durDiff}s.`;
