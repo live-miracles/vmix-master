@@ -146,7 +146,11 @@ function compareSlaves() {
             }
 
             // check input types
-            if (!similarTypes(input1.type, input2.type)) {
+            if (
+                !(input1.title.endsWith('.m4a') && input2.type === 'Audio') &&
+                !(input2.title.endsWith('.m4a') && input1.type === 'Audio') &&
+                !similarTypes(input1.type, input2.type)
+            ) {
                 msg = `vMix #${num2} input ${i} has type "${input2.type}" instead of "${input1.type}".`;
                 warnings.push(getWarning('type mismatch', msg));
             }
