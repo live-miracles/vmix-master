@@ -63,9 +63,10 @@ function compareSlaves() {
     for (let i = 0; i < nums.length; i++) {
         const number = nums[i];
         const info = getVmixInfo(number)?.value;
+        const name = getBox(number) ? getBoxName(getBox(number)) : '';
         if (info === undefined || info === null) {
             compareReport.className = className + 'border-info';
-            compareReport.innerHTML = `Could not fetch status for vMix #${number}.`;
+            compareReport.innerHTML = `Could not fetch status for #${number} ${name}.`;
             return;
         }
         infos.push(info);
@@ -81,17 +82,18 @@ function compareSlaves() {
         for (let j = 2; j < infos.length; j++) {
             const v2 = infos[j].audio[k];
             const num2 = nums[j];
+            const name2 = getBoxName(getBox(num2));
             if (v2 === undefined) {
-                errors.push(getError('missing bus', `vMix #${num2} bus ${k} is disabled.`));
+                errors.push(getError('missing bus', `Bus ${k} is disabled for #${num2} ${name2}.`));
                 continue;
             }
 
             if (v1.muted !== v2.muted) {
-                msg = `vMix #${num2} bus ${k} is ${v2.muted === 'True' ? '' : 'not '}muted.`;
+                msg = `Bus ${k} is ${v2.muted === 'True' ? '' : 'not '}muted for #${num2} ${name2}.`;
                 errors.push(getError('bus muted', msg));
             }
             if (v1.sendToMaster !== v2.sendToMaster) {
-                msg = `vMix #${num2} bus ${k} sendToMaster is ${v2.sendToMaster === 'True' ? '' : 'not '}enabled.`;
+                msg = `Bus ${k} sendToMaster is ${v2.sendToMaster === 'True' ? '' : 'not '}enabled for #${num2} ${name2}.`;
                 errors.push(getError('bus sendToMaster', msg));
             }
         }
@@ -104,17 +106,18 @@ function compareSlaves() {
             for (let j = 2; j < infos.length; j++) {
                 const input2 = infos[j].inputs[input1.number];
                 const num2 = nums[j];
+                const name2 = getBoxName(getBox(num2));
                 if (input2.type !== 'VideoCall') {
                     continue;
                 }
                 if (input1.callVideoSource !== input2.callVideoSource) {
-                    msg = `vMix #${num2} VideoCall input ${input1.number} video source is
-                      "${input2.callVideoSource}" instead of "${input1.callVideoSource}".`;
+                    msg = `VideoCall input #${input1.number} ${input1.title} video source is
+                      "${input2.callVideoSource}" instead of "${input1.callVideoSource}" for #${num2} ${name2}.`;
                     errors.push(getError('vMix call settings', msg));
                 }
                 if (input1.callAudioSource !== input2.callAudioSource) {
-                    msg = `vMix #${num2} VideoCall input ${input1.number} audio source is 
-                      "${input2.callAudioSource}" instead of "${input1.callAudioSource}".`;
+                    msg = `VideoCall input #${input1.number} ${input1.title} audio source is 
+                      "${input2.callAudioSource}" instead of "${input1.callAudioSource}" for #${num2} ${name2}.`;
                     errors.push(getError('vMix call settings', msg));
                 }
             }
@@ -125,11 +128,13 @@ function compareSlaves() {
         for (let j = 1; j < infos.length; j++) {
             const input2 = infos[j].inputs[i];
             const num2 = nums[j];
+            const name2 = getBoxName(getBox(num2));
 
             // check missing inputs
             if (input2 === undefined) {
                 if (leadNum1 !== '') {
-                    errors.push(getError('missing input', `vMix #${num2} input ${i} is missing.`));
+                    msg = `Input #${i} ${input1.title} is missing for #${num2} ${name2}.`;
+                    errors.push(getError('missing input', msg));
                 }
                 continue;
             }
@@ -137,7 +142,7 @@ function compareSlaves() {
             // check leading numbers (e.g. 05, 05_1)
             const leadNum2 = extractLeadingNumbers(input2.title);
             if (leadNum1 !== leadNum2) {
-                msg = `vMix #${num2} input ${i} starts with "${leadNum2}" instead of "${leadNum1}".`;
+                msg = `Input #${i} ${input2.title} starts with "${leadNum2}" instead of "${leadNum1}" for #${num2} ${name2}.`;
                 errors.push(getError('order mismatch', msg));
             }
 
@@ -151,7 +156,7 @@ function compareSlaves() {
 
             // check input types
             if (!similarTypes(input1.type, input2.type)) {
-                msg = `vMix #${num2} input ${i} has type "${input2.type}" instead of "${input1.type}".`;
+                msg = `Input #${i} ${input2.title} has type "${input2.type}" instead of "${input1.type}" for #${num2} ${name2}.`;
                 warnings.push(getWarning('type mismatch', msg));
             }
 
@@ -163,16 +168,18 @@ function compareSlaves() {
                 if (overLeadNum === '') {
                     return;
                 } else if (over2 === undefined) {
-                    msg = `vMix #${num2} input ${i} layer ${over1.index + 1} is missing.`;
+                    msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over2.number}>
+                        is missing for #${num2} ${name2}.`;
                     errors.push(getError('missing layer', msg));
                 } else if (over1.index !== over2.index || over1.number !== over2.number) {
-                    msg = `vMix #${num2} input ${i} layer ${over2.index + 1} <${over2.number}> 
-                      do not match master layer ${over1.index + 1} <${over1.number}>.`;
+                    msg = `Input #${i} ${input2.title} layer #${over2.index + 1} <${over2.number}> 
+                        do not match layer #${over1.index + 1} <${over1.number}>.`;
                     errors.push(getError('layer mismatch', msg));
                 }
             });
             if (input1.overlays.length < input2.overlays.length) {
-                msg = `vMix #${num2} input ${i} has ${input2.overlays.length} layer(s) while master has ${input1.overlays.length} layer(s).`;
+                msg = `Input #${i} ${input2.title} has ${input2.overlays.length} layer(s) instead of
+                    ${input1.overlays.length} layer(s) for #${num2} ${name2}.`;
                 errors.push(getError('additional layers', msg));
             }
 
@@ -185,7 +192,8 @@ function compareSlaves() {
                 ['AudioFile', 'Video'].includes(input2.type) &&
                 durDiff >= 5
             ) {
-                msg = `vMix #${num2} input ${i} has duration ${formatTimeMMSS(dur2)} is different from master's ${formatTimeMMSS(dur1)} by ${durDiff}s.`;
+                msg = `Input #${i} ${input2.title} duration is ${formatTimeMMSS(dur2)} is
+                    ${dur2 > dur1 ? 'more' : 'less'} than ${formatTimeMMSS(dur1)} by ${durDiff}s for #${num2} ${name2}.`;
                 warnings.push(getWarning('type mismatch', msg));
             }
         }
