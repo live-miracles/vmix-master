@@ -3,6 +3,16 @@ function addBox(name = '', host = '') {
     boxes.appendChild(createBox(name, host, getBoxCount() + 1));
 }
 
+function splitOnce(str, separator) {
+    const index = str.indexOf(separator);
+
+    if (index === -1) {
+        return [str, '']; // no dot found
+    }
+
+    return [str.slice(0, index), str.slice(index + 1)];
+}
+
 function initBoxes() {
     const params = new URLSearchParams(window.location.search);
     const boxesParam = params.get('boxes') ? params.get('boxes') : '';
@@ -10,7 +20,7 @@ function initBoxes() {
     boxesParam
         .split('¦')
         .filter(Boolean)
-        .map((str) => str.split('.', 2))
+        .map((str) => splitOnce(str, '.'))
         .forEach((param) => addBox(param[0], param[1]));
 }
 
