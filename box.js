@@ -9,7 +9,7 @@ function closeBox(e) {
     const box = e.currentTarget.parentElement.parentElement;
     box.parentNode.removeChild(box);
     updateBoxNums();
-    updateUrlParams();
+    updateBoxesParam();
 }
 
 function createBox(name, host, num) {
@@ -29,8 +29,8 @@ function createBox(name, host, num) {
           <div class="vmixInfo text-sm wrap overflow-y-scroll h-full pl-[13px]"></div>
         </div>`;
 
-    box.querySelector('.name-input').onblur = updateUrlParams;
-    box.querySelector('.host-input').onblur = updateUrlParams;
+    box.querySelector('.name-input').onblur = updateBoxesParam;
+    box.querySelector('.host-input').onblur = updateBoxesParam;
     box.querySelector('.close-btn').onclick = closeBox;
 
     return box;

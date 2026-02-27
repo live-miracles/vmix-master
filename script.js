@@ -4,13 +4,14 @@ function addBox(name = '', host = '') {
 }
 
 function initBoxes() {
-    const urlParams = getBoxUrlParams();
-    if (urlParams.length === 0) {
-        addBox();
-    }
-    urlParams.forEach((param) => {
-        addBox(param.key, param.value);
-    });
+    const params = new URLSearchParams(window.location.search);
+    const boxesParam = params.get('boxes') ? params.get('boxes') : '';
+    if (boxesParam === '') addBox();
+    boxesParam
+        .split('¦')
+        .filter(Boolean)
+        .map((str) => str.split('.', 2))
+        .forEach((param) => addBox(param[0], param[1]));
 }
 
 async function refreshInstance(box) {
@@ -66,8 +67,9 @@ let refreshRate = -1;
 const vmixInfos = [];
 
 (() => {
-    updateDocumentConfig();
+    setDocumentUrlParams();
     initBoxes();
+
     renderCustomFunctions();
     prerenderVmixWeb();
     showStoredLogs();
@@ -83,7 +85,7 @@ const vmixInfos = [];
 
     document
         .querySelectorAll('.url-param')
-        .forEach((input) => input.addEventListener('change', updateUrlParams));
+        .forEach((input) => input.addEventListener('change', updateUrlParam));
 
     document
         .querySelectorAll('.show-toggle')

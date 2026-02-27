@@ -39,28 +39,18 @@ function getBoxVmixInfo(box) {
 }
 
 // ===== Document Config & Box URL Utils =====
-function getDocumentConfig() {
-    const params = new URLSearchParams();
-
-    document.querySelectorAll('.url-param').forEach((input) => {
-        if (input.type === 'checkbox') {
-            params.append('__' + input.id, input.checked ? '1' : '0');
-        } else if (input.type === 'text' || input.type === 'number') {
-            params.append('__' + input.id, input.value);
-        } else {
-            console.error('Unexpected type: ' + input.type);
-        }
-    });
-    return params;
+function getInputValue(input) {
+    if (input.type === 'checkbox') {
+        return input.checked ? '1' : '0';
+    } else if (input.type === 'text' || input.type === 'number') {
+        return input.value;
+    } else {
+        console.error('Unknown input type: ' + input.type);
+        return null;
+    }
 }
 
-function setInputValue(id, value) {
-    const input = document.getElementById(id, value);
-    console.assert(input !== null, 'Can\'t find element with ID "' + id + '"');
-    if (input === null) {
-        return;
-    }
-
+function setInputValue(input, value) {
     if (input.type === 'checkbox') {
         console.assert(['0', '1'].includes(value));
         input.checked = value === '1';
@@ -71,43 +61,35 @@ function setInputValue(id, value) {
     }
 }
 
-function updateDocumentConfig() {
-    const urlParams = getConfigUrlParams();
-    urlParams.forEach((param) => setInputValue(param.key, param.value));
-}
-
-function getConfigUrlParams() {
+function setDocumentUrlParams() {
     const url = window.location.href;
     const searchParams = new URLSearchParams(new URL(url).search);
-    const params = [];
-    searchParams.forEach(function (value, key) {
-        if (key === '' || !key.startsWith('__')) return;
-        params.push({ key: key.substring(2), value: value });
+
+    document.querySelectorAll('.url-param').forEach((input) => {
+        const value = searchParams.get(input.id);
+        if (value) {
+            setInputValue(input, value);
+        }
     });
-    return params;
 }
 
-function getBoxUrlParams() {
-    const url = window.location.href;
-    const searchParams = new URLSearchParams(new URL(url).search);
-    const params = [];
-    searchParams.forEach((value, key) => {
-        if (key === '' || key.startsWith('__')) return;
-        params.push({ key: key, value: value });
-    });
-    return params;
+function updateUrlParam(e) {
+    const name = e.currentTarget.id;
+    const value = getInputValue(e.currentTarget);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set(name, value);
+    window.history.replaceState({}, '', url);
 }
 
-function updateUrlParams() {
-    const boxParams = new URLSearchParams();
-    getBoxes().forEach((box) => {
-        const key = getBoxName(box);
-        const val = getBoxHost(box);
-        if (key === '') return;
-        boxParams.append(key, val);
-    });
-    const configParams = getDocumentConfig();
-    window.history.pushState({}, '', `?${boxParams.toString()}&${configParams.toString()}`);
+function updateBoxesParam() {
+    const param = Array.from(document.querySelectorAll('.box'))
+        .map((box) => getBoxName(box) + '.' + getBoxHost(box))
+        .join('¦');
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('boxes', param);
+    window.history.replaceState({}, '', url);
 }
 
 // ===== Logging Utils =====
