@@ -3,7 +3,7 @@
 ' The script will automatically put the next input in the preview after transition
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " PreviewNext 0.0.0")
+Console.WriteLine(timestamp & " PreviewNext 1.0.0")
 
 ' ===== Configurations =====
 Dim LOOP_TIME = 300  ' Wait time between each loop iteration
@@ -26,7 +26,7 @@ Do While True
         If lastActive <> active Then
             Sleep(DELAY_TIME)
             lastActive = active
-            Dim nextInput = (CInt(lastActive) + 1).ToString()
+            Dim nextInput = CStr(CInt(lastActive) + 1)
             Console.WriteLine(timestamp & " PreviewNext | Updating preview: " & nextInput)
             API.Function("PreviewInput", Input:=nextInput)
             Continue Do

@@ -1,13 +1,13 @@
 ' Script name: AutoGain
 ' 
-' It monitors the input which has AutoGain in the name
+' It monitors the input which has AutoGain in the name or have type Audio or VideoCall
 ' and automatically adjusts the gain to prevent clipping or low volume.
 ' You can configure the clip and peak threshold values bellow.
 '
 ' Decibels = 20 * Math.Log10(Amplitude)
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " AutoGain 1.0.0")
+Console.WriteLine(timestamp & " AutoGain 1.1.0")
 
 ' ===== Configurations =====
 Dim LOOP_TIME = 50  ' Wait time between each loop iteration
@@ -43,8 +43,18 @@ Do While True
 
         ' Get Translator mic input node
         Dim micNode = xml.SelectSingleNode("//input[contains(@title, 'AutoGain')]")
+
         If micNode Is Nothing Then
-            Console.WriteLine(timestamp & " AutoGain | No inputs have 'AutoGain' in the name.")
+            micNode = xml.SelectSingleNode("//input[@type='Audio']")
+        End If
+
+        If micNode Is Nothing Then
+            micNode = xml.SelectSingleNode("//input[@type='VideoCall']")
+        End If
+
+        If micNode Is Nothing Then
+            timestamp = DateTime.Now.ToString("HH:mm:ss")
+            Console.WriteLine(timestamp & " AutoGain | No inputs have 'AutoGain' in the name or have Audio or VideoCall type.")
             Sleep(5000)
             Continue Do
         End If
