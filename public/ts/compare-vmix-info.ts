@@ -78,7 +78,7 @@ function compareSlaves() {
     const errors = [];
 
     // check buses
-    Object.entries(infos[1].audio).forEach(([k, v1]) => {
+    Object.entries(infos[1].audio).forEach(([k, v1]: [string, any]) => {
         for (let j = 2; j < infos.length; j++) {
             const v2 = infos[j].audio[k];
             const num2 = nums[j];

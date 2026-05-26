@@ -70,7 +70,7 @@ function showElements() {
 
 function updateRefreshRates() {
     const val1 = document.getElementById('refresh-rate').value;
-    refreshRate = val1 === '' ? -1 : Math.max(1, val1);
+    refreshRate = val1 === '' ? -1 : Math.max(1, parseInt(val1));
 }
 
 let refreshRate = -1;
@@ -84,14 +84,6 @@ const vmixInfos = [];
     prerenderVmixWeb();
     showStoredLogs();
     showElements();
-
-    if (window.location.protocol === 'http:') {
-        const navbar = document.querySelector('.navbar');
-        navbar.innerHTML = navbar.innerHTML.replaceAll(
-            'https://github.com/live-miracles/vmix-master/blob/master',
-            '/vmix-master',
-        );
-    }
 
     document
         .querySelectorAll('.url-param')
@@ -116,7 +108,7 @@ const vmixInfos = [];
         ghostClass: 'bg-base-300', // Adds a class for the dragged item
         onEnd: function (e) {
             updateBoxNums();
-            updateUrlParams();
+            updateBoxesParam();
         },
     });
 })();

@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>vMix Master</title>
     <link rel="icon" type="image/png" href="./logo.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#111827" />
     <link rel="stylesheet" href="./output.css" />
     <script src="./Sortable.min.js" defer></script>
-    <script src="./tools.js" defer></script>
-    <script src="./vmix-api.js" defer></script>
-    <script src="./box.js" defer></script>
-    <script src="./vmix-info.js" defer></script>
-    <script src="./vmix-web.js" defer></script>
-    <script src="./compare-vmix-info.js" defer></script>
-    <script src="./custom-functions.js" defer></script>
-    <script src="./script.js" defer></script>
+    <script src="./js/tools.js" defer></script>
+    <script src="./js/vmix-api.js" defer></script>
+    <script src="./js/box.js" defer></script>
+    <script src="./js/vmix-info.js" defer></script>
+    <script src="./js/vmix-web.js" defer></script>
+    <script src="./js/compare-vmix-info.js" defer></script>
+    <script src="./js/custom-functions.js" defer></script>
+    <script src="./js/script.js" defer></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+      }
+    </script>
   </head>
   <body class="bg-base-100 text-base-content">
     <div class="navbar focus bg-base-100">
@@ -28,13 +35,13 @@
             <details>
               <summary>vMix Scripts</summary>
               <ul class="bg-base-100 rounded-t-none p-2">
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/audio-fade.vb">AudioFade</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/duration-timer.vb">DurationTimer</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/slave.vb">Slave</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/name-slave.vb">NameSlave</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/translator.vb">Translator</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/auto-gain.vb">AutoGain</a></li>
-                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/scripts/preview-next.vb">PreviewNext</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/audio-fade.vb">AudioFade</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/duration-timer.vb">DurationTimer</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/slave.vb">Slave</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/name-slave.vb">NameSlave</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/translator.vb">Translator</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/auto-gain.vb">AutoGain</a></li>
+                <li><a href="https://github.com/live-miracles/vmix-master/blob/master/vmix-scripts/preview-next.vb">PreviewNext</a></li>
               </ul>
             </details>
           </li>
@@ -251,7 +258,7 @@ Examples:
           For any bug / feature requests, please open an issue in our
           <a class="link" href="https://github.com/live-miracles/vmix-master/">GitHub</a> repo (ʃƪ˶˘ ﻬ ˘˶).
         </p>
-        <p>Check out our <a class="link" href="/">homepage</a> for more streaming tools (=ↀωↀ=).</p>
+        <p>Check out our <a class="link" href="https://github.com/live-miracles">homepage</a> for more streaming tools (=ↀωↀ=).</p>
       </aside>
     </footer>
   </body>

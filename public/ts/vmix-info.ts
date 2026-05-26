@@ -1,4 +1,15 @@
 class VmixInfo {
+    preset;
+    preview;
+    active;
+    recording;
+    external;
+    streaming;
+    fadeToBlack;
+    inputs;
+    overlays;
+    audio;
+
     constructor(jsonData) {
         this.preset = jsonData.vmix.preset
             ? jsonData.vmix.preset['#text'].split('\\').pop().slice(0, -5)

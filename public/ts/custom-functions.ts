@@ -68,7 +68,7 @@ function renderCustomFunctions() {
         width: 'w-26',
     };
 
-    const buttons = [
+    const buttons: any[] = [
         { func: 'StartExternal', inputs: [] },
         { func: 'StopExternal', inputs: [] },
         { func: 'FadeToBlack', inputs: [] },
@@ -112,8 +112,8 @@ function renderCustomFunctions() {
                 name: "${input.name}"
                 class="${input.name}-param input input-xs ${input.width}"
                 value="${input.value}"
-                min="${input.min}"
-                max="${input.max}" />`,
+                min="${input.min ?? ''}"
+                max="${input.max ?? ''}" />`,
                           )
                           .join('')
             }
