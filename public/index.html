@@ -72,7 +72,7 @@
 
     <div class="vmix-web divider focus hidden">vMix Web</div>
     <div class="vmix-web hidden">
-      <div class="mx-auto mb-5 flex w-[500px] items-center gap-1 px-5">
+      <div class="mx-auto mb-5 flex w-125 items-center gap-1 px-5">
         <span class="text-md">Master:</span>
         <input id="master" type="number" min="1" name="master" placeholder="e.g. 1" class="url-param input input-xs w-16" />
         <span class="text-md ms-3">Slaves:</span>
@@ -86,7 +86,7 @@
       <div id="vmix-container" class="pb-5">
         <div
           id="vmix-screens"
-          class="wrap mx-auto mt-3 grid h-[80px] w-[995px] grid-cols-[400px_90px_90px_400px] grid-rows-[25px_25px_20px] gap-1 text-center">
+          class="wrap mx-auto mt-3 grid h-20 w-[995px] grid-cols-[400px_90px_90px_400px] grid-rows-[25px_25px_20px] gap-1 text-center">
           <div id="preview-title" class="bg-warning text-primary-content col-span-1 row-span-2 mr-1 text-lg font-semibold"></div>
           <div class="col-span-1 row-span-1">
             <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Stinger1')">Stinger 1</button>
@@ -117,7 +117,7 @@
     <div class="custom-functions hidden px-5">
       <div class="mx-auto my-1 flex w-fit items-center gap-1">
         <span class="text-md">Include: </span>
-        <input id="include" type="text" name="include" placeholder="e.g. 1 2 3" class="url-param input input-xs w-[300px]" />
+        <input id="include" type="text" name="include" placeholder="e.g. 1 2 3" class="url-param input input-xs w-75" />
       </div>
 
       <div class="flex flex-col items-center">
@@ -129,7 +129,7 @@
                 type="text"
                 name="rawRequest"
                 placeholder="e.g. Function=Fade&Duration=1000&Input=5"
-                class="url-param input input-xs w-[500px]" />
+                class="url-param input input-xs w-125" />
             </div>
             <div class="mx-auto w-fit">
               <button id="execute-btn" class="btn btn-outline btn-secondary btn-sm mt-1">Raw Request</button>
@@ -140,7 +140,7 @@
     </div>
 
     <div
-      class="logs border-secondary bg-base-300 fixed right-1 bottom-1 mx-auto hidden h-[280px] w-[700px] overflow-y-scroll rounded-lg border p-1 opacity-80"></div>
+      class="logs border-secondary bg-base-300 fixed right-1 bottom-1 mx-auto hidden h-70 w-175 overflow-y-scroll rounded-lg border p-1 opacity-80"></div>
 
     <div class="bg-neutral fixed right-9 bottom-2 rounded-xs px-3">
       <label class="swap m-1">
