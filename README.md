@@ -12,7 +12,7 @@ The app can connect to one or more vMix systems at the same time. Its slave feat
 - A vMix-style web panel for common live production controls.
 - Ready-to-use vMix scripts in `vmix-scripts/`.
 
-> Note: Browsers generally cannot call the vMix API from the hosted HTTPS GitHub Pages site because vMix usually runs over local HTTP. For local production use, download or clone this repository and open `public/index.html` from the machine/browser that can reach your vMix systems.
+> Note: Chrome can connect from the hosted HTTPS GitHub Pages site to vMix over HTTP on your local network. For local use, clone the `gh-pages` branch or download the ZIP from the `gh-pages` branch, then open `index.html` from the cloned or extracted folder in Chrome.
 
 ### Development
 
