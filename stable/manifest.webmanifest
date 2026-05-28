@@ -1,0 +1,18 @@
+{
+    "name": "vMix Master",
+    "short_name": "vMix Master",
+    "description": "Control and compare multiple vMix systems from a static web app.",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#111827",
+    "theme_color": "#111827",
+    "icons": [
+        {
+            "src": "./logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
