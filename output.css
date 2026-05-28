@@ -9,7 +9,7 @@
       "Courier New", monospace;
     --color-black: #000;
     --spacing: 0.25rem;
-    --container-3xl: 48rem;
+    --container-4xl: 56rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: calc(1 / 0.75);
     --text-sm: 0.875rem;
@@ -19,6 +19,7 @@
     --text-xl: 1.25rem;
     --text-xl--line-height: calc(1.75 / 1.25);
     --font-weight-semibold: 600;
+    --font-weight-bold: 700;
     --radius-xs: 0.125rem;
     --radius-lg: 0.5rem;
     --default-transition-duration: 150ms;
@@ -225,6 +226,61 @@
             min-width: 95cqi;
             max-width: 95cqi;
           }
+        }
+      }
+    }
+  }
+  .modal {
+    @layer daisyui.l1.l2.l3 {
+      pointer-events: none;
+      visibility: hidden;
+      position: fixed;
+      inset: calc(0.25rem * 0);
+      margin: calc(0.25rem * 0);
+      display: grid;
+      height: 100%;
+      max-height: none;
+      width: 100%;
+      max-width: none;
+      align-items: center;
+      justify-items: center;
+      background-color: transparent;
+      padding: calc(0.25rem * 0);
+      color: inherit;
+      transition: visibility 0.3s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+      overflow: clip;
+      overscroll-behavior: contain;
+      z-index: 999;
+      scrollbar-gutter: auto;
+      &::backdrop {
+        display: none;
+      }
+    }
+    @layer daisyui.l1.l2 {
+      &.modal-open, &[open], &:target, .modal-toggle:checked + & {
+        pointer-events: auto;
+        visibility: visible;
+        opacity: 100%;
+        transition: visibility 0s allow-discrete, background-color 0.3s ease-out, opacity 0.1s ease-out;
+        background-color: oklch(0% 0 0/ 0.4);
+        .modal-box {
+          translate: 0 0;
+          scale: 1;
+          opacity: 1;
+        }
+        :root:has(&) {
+          --page-has-backdrop: 1;
+          --page-overflow: hidden;
+          --page-scroll-bg: var(--page-scroll-bg-on);
+          --page-scroll-gutter: stable;
+          --page-scroll-transition: var(--page-scroll-transition-on);
+          animation: set-page-has-scroll forwards;
+          animation-timeline: scroll();
+        }
+      }
+      @starting-style {
+        &.modal-open, &[open], &:target, .modal-toggle:checked + & {
+          opacity: 0%;
         }
       }
     }
@@ -602,6 +658,142 @@
         }
         > * {
           grid-row-start: 1;
+        }
+      }
+    }
+  }
+  .toggle {
+    @layer daisyui.l1.l2.l3 {
+      border: var(--border) solid currentColor;
+      color: var(--input-color);
+      position: relative;
+      display: inline-grid;
+      flex-shrink: 0;
+      cursor: pointer;
+      appearance: none;
+      place-content: center;
+      vertical-align: middle;
+      webkit-user-select: none;
+      user-select: none;
+      grid-template-columns: 0fr 1fr 1fr;
+      --radius-selector-max: calc(
+      var(--radius-selector) + var(--radius-selector) + var(--radius-selector)
+    );
+      border-radius: calc( var(--radius-selector) + min(var(--toggle-p), var(--radius-selector-max)) + min(var(--border), var(--radius-selector-max)) );
+      padding: var(--toggle-p);
+      box-shadow: 0 1px currentColor inset;
+      @supports (color: color-mix(in lab, red, red)) {
+        box-shadow: 0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000) inset;
+      }
+      transition: color 0.3s, grid-template-columns 0.2s;
+      --input-color: var(--color-base-content);
+      @supports (color: color-mix(in lab, red, red)) {
+        --input-color: color-mix(in oklab, var(--color-base-content) 50%, #0000);
+      }
+      --toggle-p: calc(var(--size) * 0.125);
+      --size: calc(var(--size-selector, 0.25rem) * 6);
+      width: calc((var(--size) * 2) - (var(--border) + var(--toggle-p)) * 2);
+      height: var(--size);
+      > * {
+        z-index: 1;
+        grid-column: span 1 / span 1;
+        grid-column-start: 2;
+        grid-row-start: 1;
+        height: 100%;
+        cursor: pointer;
+        appearance: none;
+        background-color: transparent;
+        padding: calc(0.25rem * 0.5);
+        transition: opacity 0.2s, rotate 0.4s;
+        border: none;
+        &:focus {
+          --tw-outline-style: none;
+          outline-style: none;
+          @media (forced-colors: active) {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+          }
+        }
+        &:nth-child(2) {
+          color: var(--color-base-100);
+          rotate: 0deg;
+        }
+        &:nth-child(3) {
+          color: var(--color-base-100);
+          opacity: 0%;
+          rotate: -15deg;
+        }
+      }
+      &:has(:checked) {
+        > :nth-child(2) {
+          opacity: 0%;
+          rotate: 15deg;
+        }
+        > :nth-child(3) {
+          opacity: 100%;
+          rotate: 0deg;
+        }
+      }
+      &:before {
+        position: relative;
+        inset-inline-start: calc(0.25rem * 0);
+        grid-column-start: 2;
+        grid-row-start: 1;
+        aspect-ratio: 1 / 1;
+        height: 100%;
+        width: 100%;
+        border-radius: var(--radius-selector);
+        background-color: currentcolor;
+        translate: 0;
+        --tw-content: "";
+        content: var(--tw-content);
+        transition: background-color 0.1s, translate 0.2s, inset-inline-start 0.2s;
+        box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px currentColor;
+        @supports (color: color-mix(in lab, red, red)) {
+          box-shadow: 0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) inset, 0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset, 0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000);
+        }
+        background-size: auto, calc(var(--noise) * 100%);
+        background-image: none, var(--fx-noise);
+      }
+      @media (forced-colors: active) {
+        &:before {
+          outline-style: var(--tw-outline-style);
+          outline-width: 1px;
+          outline-offset: calc(1px * -1);
+        }
+      }
+      @media print {
+        &:before {
+          outline: 0.25rem solid;
+          outline-offset: -1rem;
+        }
+      }
+      &:focus-visible, &:has(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+      &:checked, &[aria-checked="true"], &:has(> input:checked) {
+        grid-template-columns: 1fr 1fr 0fr;
+        background-color: var(--color-base-100);
+        --input-color: var(--color-base-content);
+        &:before {
+          background-color: currentcolor;
+        }
+        @starting-style {
+          &:before {
+            opacity: 0;
+          }
+        }
+      }
+      &:indeterminate {
+        grid-template-columns: 0.5fr 1fr 0.5fr;
+      }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 30%;
+        &:before {
+          background-color: transparent;
+          border: var(--border) solid currentColor;
         }
       }
     }
@@ -1381,26 +1573,55 @@
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
+  .top-2 {
+    top: calc(var(--spacing) * 2);
+  }
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
-  .right-1 {
-    right: calc(var(--spacing) * 1);
-  }
-  .right-9 {
-    right: calc(var(--spacing) * 9);
-  }
-  .bottom-1 {
-    bottom: calc(var(--spacing) * 1);
-  }
-  .bottom-2 {
-    bottom: calc(var(--spacing) * 2);
+  .right-2 {
+    right: calc(var(--spacing) * 2);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
   }
+  .modal-backdrop {
+    @layer daisyui.l1.l2.l3 {
+      grid-column-start: 1;
+      grid-row-start: 1;
+      display: grid;
+      align-self: stretch;
+      justify-self: stretch;
+      color: transparent;
+      z-index: -1;
+      button {
+        cursor: pointer;
+      }
+    }
+  }
   .col-span-1 {
     grid-column: span 1 / span 1;
+  }
+  .modal-box {
+    @layer daisyui.l1.l2.l3 {
+      grid-column-start: 1;
+      grid-row-start: 1;
+      max-height: 100vh;
+      width: calc(11/12 * 100%);
+      max-width: 32rem;
+      background-color: var(--color-base-100);
+      padding: calc(0.25rem * 6);
+      transition: translate 0.3s ease-out, scale 0.3s ease-out, opacity 0.2s ease-out 0.05s, box-shadow 0.3s ease-out;
+      border-top-left-radius: var(--modal-tl, var(--radius-box));
+      border-top-right-radius: var(--modal-tr, var(--radius-box));
+      border-bottom-left-radius: var(--modal-bl, var(--radius-box));
+      border-bottom-right-radius: var(--modal-br, var(--radius-box));
+      scale: 95%;
+      opacity: 0;
+      box-shadow: oklch(0% 0 0/ 0.25) 0px 25px 50px -12px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
   }
   .row-span-1 {
     grid-row: span 1 / span 1;
@@ -1507,11 +1728,20 @@
   .mx-1 {
     margin-inline: calc(var(--spacing) * 1);
   }
-  .mx-3 {
-    margin-inline: calc(var(--spacing) * 3);
-  }
   .mx-auto {
     margin-inline: auto;
+  }
+  .input-sm {
+    @layer daisyui.l1.l2 {
+      --size: calc(var(--size-field, 0.25rem) * 8);
+      font-size: max(var(--font-size, 0.75rem), 0.75rem);
+      &[type="number"] {
+        &::-webkit-inner-spin-button {
+          margin-block: calc(0.25rem * -2);
+          margin-inline-end: calc(0.25rem * -3);
+        }
+      }
+    }
   }
   .input-xs {
     @layer daisyui.l1.l2 {
@@ -1530,6 +1760,9 @@
   }
   .my-1 {
     margin-block: calc(var(--spacing) * 1);
+  }
+  .ms-2 {
+    margin-inline-start: calc(var(--spacing) * 2);
   }
   .ms-3 {
     margin-inline-start: calc(var(--spacing) * 3);
@@ -1970,6 +2203,9 @@
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
   }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
+  }
   .mb-5 {
     margin-bottom: calc(var(--spacing) * 5);
   }
@@ -2021,31 +2257,6 @@
       --size: calc(var(--size-selector, 0.25rem) * 6);
       height: var(--size);
       padding-inline: calc(var(--size) / 2 - var(--border));
-    }
-  }
-  .footer {
-    @layer daisyui.l1.l2.l3 {
-      display: grid;
-      width: 100%;
-      grid-auto-flow: row;
-      place-items: start;
-      column-gap: calc(0.25rem * 4);
-      row-gap: calc(0.25rem * 10);
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      & > * {
-        display: grid;
-        place-items: start;
-        gap: calc(0.25rem * 2);
-      }
-      &.footer-center {
-        grid-auto-flow: column dense;
-        place-items: center;
-        text-align: center;
-        & > * {
-          place-items: center;
-        }
-      }
     }
   }
   .prose {
@@ -2128,6 +2339,14 @@
   .table {
     display: table;
   }
+  .btn-circle {
+    @layer daisyui.l1.l2 {
+      border-radius: calc(infinity * 1px);
+      padding-inline: calc(0.25rem * 0);
+      width: var(--size);
+      height: var(--size);
+    }
+  }
   .h-4 {
     height: calc(var(--spacing) * 4);
   }
@@ -2136,9 +2355,6 @@
   }
   .h-20 {
     height: calc(var(--spacing) * 20);
-  }
-  .h-70 {
-    height: calc(var(--spacing) * 70);
   }
   .h-\[16px\] {
     height: 16px;
@@ -2155,6 +2371,9 @@
   .h-\[24px\] {
     height: 24px;
   }
+  .h-\[70vh\] {
+    height: 70vh;
+  }
   .h-\[180px\] {
     height: 180px;
   }
@@ -2166,6 +2385,9 @@
   }
   .h-full {
     height: 100%;
+  }
+  .max-h-\[90vh\] {
+    max-height: 90vh;
   }
   .min-h-0 {
     min-height: calc(var(--spacing) * 0);
@@ -2199,9 +2421,6 @@
   }
   .w-125 {
     width: calc(var(--spacing) * 125);
-  }
-  .w-175 {
-    width: calc(var(--spacing) * 175);
   }
   .w-\[10px\] {
     width: 10px;
@@ -2239,8 +2458,8 @@
   .w-full {
     width: 100%;
   }
-  .max-w-3xl {
-    max-width: var(--container-3xl);
+  .max-w-4xl {
+    max-width: var(--container-4xl);
   }
   .max-w-\[750px\] {
     max-width: 750px;
@@ -2248,14 +2467,14 @@
   .max-w-full {
     max-width: 100%;
   }
+  .max-w-none {
+    max-width: none;
+  }
   .min-w-5 {
     min-width: calc(var(--spacing) * 5);
   }
   .min-w-\[77px\] {
     min-width: 77px;
-  }
-  .min-w-full {
-    min-width: 100%;
   }
   .flex-1 {
     flex: 1;
@@ -2411,9 +2630,6 @@
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
   }
-  .px-3 {
-    padding-inline: calc(var(--spacing) * 3);
-  }
   .px-5 {
     padding-inline: calc(var(--spacing) * 5);
   }
@@ -2426,9 +2642,6 @@
   .py-3 {
     padding-block: calc(var(--spacing) * 3);
   }
-  .pt-4 {
-    padding-top: calc(var(--spacing) * 4);
-  }
   .pr-\[12px\] {
     padding-right: 12px;
   }
@@ -2437,9 +2650,6 @@
   }
   .pb-5 {
     padding-bottom: calc(var(--spacing) * 5);
-  }
-  .pb-10 {
-    padding-bottom: calc(var(--spacing) * 10);
   }
   .pl-\[13px\] {
     padding-left: 13px;
@@ -2462,6 +2672,10 @@
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
   }
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
@@ -2501,9 +2715,6 @@
     & :where(a.btn:not(.btn-link)):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
       text-decoration-line: none;
     }
-  }
-  .opacity-80 {
-    opacity: 80%;
   }
   .btn-ghost {
     @layer daisyui.l1 {
@@ -2642,6 +2853,20 @@
     @layer daisyui.l1.l2 {
       &, &:focus, &:focus-within {
         --input-color: var(--color-secondary);
+      }
+    }
+  }
+  .toggle-secondary {
+    @layer daisyui.l1.l2 {
+      &:checked, &[aria-checked="true"] {
+        --input-color: var(--color-secondary);
+      }
+    }
+  }
+  .toggle-sm {
+    @layer daisyui.l1.l2 {
+      &:is([type="checkbox"]), &:has([type="checkbox"]) {
+        --size: calc(var(--size-selector, 0.25rem) * 5);
       }
     }
   }

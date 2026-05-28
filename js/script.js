@@ -82,9 +82,6 @@ const vmixInfos = [];
         .querySelectorAll('.show-toggle')
         .forEach((elem) => elem.addEventListener('click', showElements));
     document.getElementById('add-box').addEventListener('click', () => addBox());
-    document
-        .getElementById('refresh-all')
-        .addEventListener('click', () => getBoxes().forEach(refreshInstance));
     updateRefreshRates();
     document.getElementById('refresh-rate').addEventListener('change', updateRefreshRates);
     refreshInstances();
