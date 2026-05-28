@@ -25,8 +25,8 @@ function createBox(name, host, num) {
             </button>
         </div>
         <div class="container relative max-w-full h-[180px] rounded-lg border border-secondary bg-base-200">
-          <canvas class="volume-canvas absolute left-0 top-0 w-[10px] h-full py-2" width="100" height="100"></canvas>
-          <div class="vmixInfo text-sm wrap overflow-y-scroll h-full pl-[13px]"></div>
+          <canvas class="volume-canvas absolute top-0 left-0 h-full w-[10px] py-2" width="100" height="100"></canvas>
+          <div class="vmixInfo wrap h-full overflow-y-scroll pl-[13px] text-sm"></div>
         </div>`;
 
     box.querySelector('.name-input').onblur = updateBoxesParam;

@@ -28,9 +28,18 @@
       <div class="flex-1">
         <a class="btn btn-ghost text-xl" href="/">vMix Master</a>
       </div>
+      <div class="flex flex-1 justify-center gap-2">
+        <button id="add-box" class="btn btn-outline btn-secondary btn-sm">Add Instance</button>
+        <label class="input input-secondary input-sm w-fit">
+          Refresh Rate (sec)
+          <input id="refresh-rate" class="url-param w-12" name="refreshRate" type="number" min="1" value="1" placeholder="sec" />
+        </label>
+      </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-          <li><a href="/stable/vmix-master/">Stable</a></li>
+          <li><button type="button" onclick="document.getElementById('documentation-modal').showModal()">Documentation</button></li>
+          <li><button type="button" onclick="document.getElementById('logs-modal').showModal()">Logs</button></li>
+          <li><a href="/vmix-master/stable/">Stable</a></li>
           <li>
             <details>
               <summary>vMix Scripts</summary>
@@ -45,21 +54,7 @@
               </ul>
             </details>
           </li>
-          <li><a href="https://github.com/live-miracles/vmix-master/">GitHub</a></li>
         </ul>
-      </div>
-    </div>
-
-    <div class="focus flex flex-col items-center">
-      <div class="flex w-full flex-wrap p-2">
-        <div class="flex min-w-full items-center justify-center">
-          <button id="add-box" class="btn btn-outline btn-secondary flex">Add Instance</button>
-          <button id="refresh-all" class="btn btn-outline btn-secondary mx-3 flex">Refresh All</button>
-          <label class="input input-secondary w-fit">
-            Refresh Rate (sec)
-            <input id="refresh-rate" class="url-param w-12" name="refreshRate" type="number" min="1" value="1" placeholder="sec" />
-          </label>
-        </div>
       </div>
     </div>
 
@@ -70,7 +65,15 @@
       </datalist>
     </div>
 
-    <div class="vmix-web divider focus hidden">vMix Web</div>
+    <div class="divider focus mt-5">
+      <input id="show-vmix-web" type="checkbox" class="toggle toggle-secondary toggle-sm show-toggle url-param" checked />
+      <span>vMix Web</span>
+      <label class="swap ms-2">
+        <input id="show-vmix-mixer" type="checkbox" class="show-toggle url-param" checked />
+        <div class="badge swap-on badge-secondary rounded-xs py-3">mixer</div>
+        <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">mixer</div>
+      </label>
+    </div>
     <div class="vmix-web hidden">
       <div class="mx-auto mb-5 flex w-125 items-center gap-1 px-5">
         <span class="text-md">Master:</span>
@@ -113,7 +116,10 @@
       </div>
     </div>
 
-    <div class="custom-functions divider focus mt-5 hidden">Custom Functions</div>
+    <div class="divider focus mt-5">
+      <input id="show-custom-functions" type="checkbox" class="toggle toggle-secondary toggle-sm show-toggle url-param" checked />
+      <span>Custom Functions</span>
+    </div>
     <div class="custom-functions hidden px-5">
       <div class="mx-auto my-1 flex w-fit items-center gap-1">
         <span class="text-md">Include: </span>
@@ -139,56 +145,43 @@
       </div>
     </div>
 
-    <div
-      class="logs border-secondary bg-base-300 fixed right-1 bottom-1 mx-auto hidden h-70 w-175 overflow-y-scroll rounded-lg border p-1 opacity-80"></div>
+    <dialog id="logs-modal" class="modal">
+      <div class="modal-box max-h-[90vh] max-w-4xl">
+        <form method="dialog">
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close logs">x</button>
+        </form>
+        <h2 class="mb-3 text-xl font-bold">Logs</h2>
+        <div class="logs border-secondary bg-base-300 h-[70vh] overflow-y-scroll rounded-lg border p-3"></div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
 
-    <div class="bg-neutral fixed right-9 bottom-2 rounded-xs px-3">
-      <label class="swap m-1">
-        <input id="show-logs" type="checkbox" class="show-toggle url-param" />
-        <div class="badge swap-on badge-secondary rounded-xs py-3">logs</div>
-        <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">logs</div>
-      </label>
+    <dialog id="documentation-modal" class="modal">
+      <div class="modal-box max-h-[90vh] max-w-4xl">
+        <form method="dialog">
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close documentation">x</button>
+        </form>
 
-      <label class="swap m-1">
-        <input id="show-vmix-web" type="checkbox" class="show-toggle url-param" checked />
-        <div class="badge swap-on badge-secondary rounded-xs py-3">vMix Web</div>
-        <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">vMix Web</div>
-      </label>
+        <div class="prose max-w-none">
+          <h2>Documentation</h2>
 
-      <label class="swap m-1">
-        <input id="show-vmix-mixer" type="checkbox" class="show-toggle url-param" checked />
-        <div class="badge swap-on badge-secondary rounded-xs py-3">mixer</div>
-        <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">mixer</div>
-      </label>
+          <p>
+            You won't be able to access the vMix API over HTTPS, so you'll need to download the source code from GitHub. You can either clone the
+            repository if you have <b>Git</b> installed, or click <b>Code</b> -> <b>Download ZIP</b>. After this go to the
+            <code>vmix-master/</code> folder and open the <code>index.html</code> file in the Chrome browser.
+          </p>
 
-      <label class="swap m-1">
-        <input id="show-custom-functions" type="checkbox" class="show-toggle url-param" checked />
-        <div class="badge swap-on badge-secondary rounded-xs py-3">custom</div>
-        <div class="badge swap-off badge-secondary badge-outline rounded-xs py-3">custom</div>
-      </label>
+          <h3>vMix Scripts</h3>
+          <h4>vMix Audio Handling</h4>
+          <p>
+            The audio volume science is a little bit hard to understand and vMix in addition also makes it even more complicated by using different
+            scales. Here is some background on the Decibel (dB) based scales (like "volumeThreshold"), the formulas how the scales can be converted,
+            and some examples:
+          </p>
 
-      <label class="swap m-1">
-        <input id="show-focus" type="checkbox" class="show-toggle url-param" checked />
-        <div class="badge swap-on badge-secondary badge-outline rounded-xs py-3">focus</div>
-        <div class="badge swap-off badge-secondary rounded-xs py-3">focus</div>
-      </label>
-    </div>
-
-    <div class="divider focus mt-5 hidden">Documentation</div>
-    <div class="prose focus mx-auto hidden max-w-3xl px-5">
-      You won't be able to access the vMix API over HTTPS, so you'll need to download the source code from GitHub. You can either clone the repository
-      if you have <b>Git</b> installed, or click <b>Code</b> → <b>Download ZIP</b>. After this go to the <code>vmix-master/</code> folder and open the
-      <code>index.html</code> file in the Chrome browser.
-
-      <h3>vMix Scripts</h3>
-      <h4>vMix Audio Handling</h4>
-      <p>
-        The audio volume science is a little bit hard to understand and vMix in addition also makes it even more complicated by using different
-        scales. Here is some background on the Decibel (dB) based scales (like "volumeThreshold"), the formulas how the scales can be converted, and
-        some examples:
-      </p>
-
-      <pre>
+          <pre>
 Scales:
     Volume:      0 to 100    (used for UI volume bars, SetVolumeFade)
     Amplitude:   0 to 1      (used for API audio bus meter, @meterF1)
@@ -232,34 +225,37 @@ Examples:
 
   (*) for a usual incoming voice signal of -18 dB FS
 </pre
-      >
+          >
 
-      <p>
-        <strong>Attention:</strong> Keep in mind that 100% of a Volume Meter corresponds to 0 dB FS, while 100% of the Volume Bar corresponds to the
-        full incoming signal (usually about the target loudness of -18 dB FS for voice). So, if you attenuate by targeting a Volume Bar of 50%, you
-        are reducing your incoming signal BY(!) -24 dB relative, and NOT TO(!) -24 dB absolute.
-      </p>
+          <p>
+            <strong>Attention:</strong> Keep in mind that 100% of a Volume Meter corresponds to 0 dB FS, while 100% of the Volume Bar corresponds to
+            the full incoming signal (usually about the target loudness of -18 dB FS for voice). So, if you attenuate by targeting a Volume Bar of
+            50%, you are reducing your incoming signal BY(!) -24 dB relative, and NOT TO(!) -24 dB absolute.
+          </p>
 
-      <h3>Links</h3>
-      You can check out some usefull scripts
-      <ul>
-        <li>
-          Official vMix API documentation:
-          <a href="https://www.vmix.com/help29/DeveloperAPI.html">www.vmix.com/help29/DeveloperAPI.html</a>
-        </li>
-        <li>Usefull vMix Scripts by RSE: <a href="https://github.com/rse/vmix-scripts">github.com/rse/vmix-scripts</a></li>
-      </ul>
-    </div>
+          <h3>Links</h3>
+          <p>You can check out some usefull scripts</p>
+          <ul>
+            <li>
+              Official vMix API documentation:
+              <a href="https://www.vmix.com/help29/DeveloperAPI.html">www.vmix.com/help29/DeveloperAPI.html</a>
+            </li>
+            <li>Usefull vMix Scripts by RSE: <a href="https://github.com/rse/vmix-scripts">github.com/rse/vmix-scripts</a></li>
+          </ul>
+
+          <h3>Project</h3>
+          <p>
+            For any bug / feature requests, please open an issue in our
+            <a class="link" href="https://github.com/live-miracles/vmix-master/">GitHub</a> repo (ʃƪ˶˘ ﻬ ˘˶).
+          </p>
+          <p>Check out our <a class="link" href="https://github.com/live-miracles">homepage</a> for more streaming tools (=ↀωↀ=).</p>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
 
     <div class="h-10"></div>
-    <footer class="footer footer-center focus bg-base-300 text-base-content hidden pt-4 pb-10">
-      <aside>
-        <p>
-          For any bug / feature requests, please open an issue in our
-          <a class="link" href="https://github.com/live-miracles/vmix-master/">GitHub</a> repo (ʃƪ˶˘ ﻬ ˘˶).
-        </p>
-        <p>Check out our <a class="link" href="https://github.com/live-miracles">homepage</a> for more streaming tools (=ↀωↀ=).</p>
-      </aside>
-    </footer>
   </body>
 </html>
