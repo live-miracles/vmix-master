@@ -1,32 +1,31 @@
 ' Script name: PreviewNext
-' 
-' The script will automatically put the next input in the preview after transition
+'
+' Automatically puts the next input into preview after each transition.
+' If the active input is the last one, vMix will ignore the out-of-range preview request gracefully.
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " PreviewNext 1.0.0")
 
 ' ===== Configurations =====
-Dim LOOP_TIME = 300  ' Wait time between each loop iteration
-Dim DELAY_TIME As Integer = 1000  ' How long to wait after transition
+Dim LOOP_TIME As Integer = 300  ' Poll interval in ms
+Dim DELAY_TIME As Integer = 1000  ' How long to wait after a transition before updating preview
 
-' ====== Timestamps ======
-Dim lastActive = ""
-Dim xml = New System.Xml.XmlDocument()
+Dim lastActive As String = ""
+Dim xml As New System.Xml.XmlDocument()
 
 Do While True
     Sleep(LOOP_TIME)
 
     Try
-        ' Load vMix XML
         xml.LoadXml(API.XML())
-        timestamp = DateTime.Now.ToString("HH:mm:ss")
 
-        Dim active = xml.SelectSingleNode("//active").InnerText
+        Dim active As String = xml.SelectSingleNode("//active").InnerText
 
         If lastActive <> active Then
             Sleep(DELAY_TIME)
             lastActive = active
-            Dim nextInput = CStr(CInt(lastActive) + 1)
+            Dim nextInput As String = CStr(CInt(lastActive) + 1)
+            timestamp = DateTime.Now.ToString("HH:mm:ss")
             Console.WriteLine(timestamp & " PreviewNext | Updating preview: " & nextInput)
             API.Function("PreviewInput", Input:=nextInput)
             Continue Do

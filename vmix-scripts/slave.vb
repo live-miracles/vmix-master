@@ -9,7 +9,7 @@
 Dim masterAPI As String = "http://192.168.x.x:8088/api"
 
 Dim SCRIPT_NAME As String = "slave"
-Dim SCRIPT_VERSION As String = "1.3.0"
+Dim SCRIPT_VERSION As String = "1.4.0"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -138,7 +138,9 @@ Do While True
                 API.Function("SetPosition", Input:=masterActive, Value:=CStr(masterPosition))
 
                 timestamp = DateTime.Now.ToString("HH:mm:ss")
-                Console.WriteLine(timestamp & " Slave | Position sync: " & masterPosition & " (diff: " & positionDiff & ")")
+                Dim posStr As String = TimeSpan.FromMilliseconds(masterPosition).ToString("hh\:mm\:ss")
+                Dim diffSec As Integer = CInt(positionDiff \ 1000)
+                Console.WriteLine(timestamp & " Slave | Position sync: " & posStr & " (diff: " & diffSec & "s)")
 
                 Sleep(TRANSITION_BUFFER)
             End If
