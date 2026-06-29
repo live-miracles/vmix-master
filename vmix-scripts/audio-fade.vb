@@ -11,8 +11,40 @@
 ' When a matching input goes off-air it fades to 0 over FADE_DOWN_TIME, then pauses
 ' and rewinds. When it comes back on-air it unmutes and fades up to MAX_VOLUME.
 
+Dim SCRIPT_NAME As String = "audio-fade"
+Dim SCRIPT_VERSION As String = "1.0.6"
+Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
+
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " AudioFade 1.0.6")
+Console.WriteLine(timestamp & " AudioFade " & SCRIPT_VERSION)
+
+' --- VERSION CHECK ---
+Try
+    Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
+    verRequest.Timeout = 5000
+    Dim verResponse As System.Net.HttpWebResponse = verRequest.GetResponse()
+    Dim verReader As New System.IO.StreamReader(verResponse.GetResponseStream())
+    Dim verJson As String = verReader.ReadToEnd()
+    verReader.Close()
+    verResponse.Close()
+
+    Dim key As String = """" & SCRIPT_NAME & """:"
+    Dim keyIndex As Integer = verJson.IndexOf(key)
+    If keyIndex >= 0 Then
+        Dim valueStart As Integer = verJson.IndexOf("""", keyIndex + key.Length) + 1
+        Dim valueEnd As Integer = verJson.IndexOf("""", valueStart)
+        If valueStart > 0 And valueEnd > valueStart Then
+            Dim latestVersion As String = verJson.Substring(valueStart, valueEnd - valueStart)
+            If latestVersion <> SCRIPT_VERSION Then
+                timestamp = DateTime.Now.ToString("HH:mm:ss")
+                Console.WriteLine(timestamp & " AudioFade | Update available: v" & latestVersion & " (running v" & SCRIPT_VERSION & ") - https://github.com/live-miracles/vmix-master")
+            End If
+        End If
+    End If
+Catch ex As Exception
+    timestamp = DateTime.Now.ToString("HH:mm:ss")
+    Console.WriteLine(timestamp & " AudioFade | Could not check for updates: " & ex.Message)
+End Try
 
 ' ===== Configurations =====
 Dim MAX_VOLUME As Integer = 91       ' Target volume (0-100) when input is live
