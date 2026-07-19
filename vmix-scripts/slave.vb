@@ -3,13 +3,13 @@
 ' Syncs active input, preview, and playback position with a master vMix instance.
 ' Polls master on every LOOP_TIME interval. Active input changes trigger the configured
 ' TRANSITION. Position is only corrected when drift exceeds POSITION_THRESHOLD and
-' both master and slave are in a Running state.
+' the master is Running, as long as the slave input is long enough for the target position.
 
 ' Update the master IP below:
 Dim masterAPI As String = "http://192.168.x.x:8088/api"
 
 Dim SCRIPT_NAME As String = "slave"
-Dim SCRIPT_VERSION As String = "1.4.0"
+Dim SCRIPT_VERSION As String = "1.4.2"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -47,13 +47,14 @@ End Try
 Dim LOOP_TIME As Integer = 300          ' Poll interval in ms
 Dim TRANSITION As String = "Stinger1"   ' vMix transition function used when switching active input
 Dim TRANSITION_BUFFER As Integer = 3000 ' Wait after a transition or position jump before next sync
-Dim POSITION_THRESHOLD As Integer = 60000  ' Min drift in ms before correcting position (1 min)
+Dim POSITION_THRESHOLD As Integer = 30000  ' Min drift in ms before correcting position (30 sec)
 
 Dim localXml As New System.Xml.XmlDocument()
 Dim localResponse As String = ""
 Dim localActive As String = ""
 Dim localPreview As String = ""
 Dim localPosition As Long = 0
+Dim localDuration As Long = 0
 Dim localState As String = ""
 
 Dim responseText As String = ""
@@ -82,11 +83,14 @@ Do While True
         Dim localInputNode = localXml.SelectSingleNode("//inputs/input[@number='" & localActive & "']")
         If Not localInputNode Is Nothing Then
             Dim localPosAttr = localInputNode.Attributes("position")
+            Dim localDurationAttr = localInputNode.Attributes("duration")
             Dim localStateAttr = localInputNode.Attributes("state")
             localPosition = If(localPosAttr IsNot Nothing, CLng(localPosAttr.Value), 0)
+            localDuration = If(localDurationAttr IsNot Nothing, CLng(localDurationAttr.Value), 0)
             localState = If(localStateAttr IsNot Nothing, localStateAttr.Value, "")
         Else
             localPosition = 0
+            localDuration = 0
             localState = ""
         End If
 
@@ -130,17 +134,20 @@ Do While True
             Console.WriteLine(timestamp & " Slave | New preview: " & masterPreview)
         End If
 
-        ' --- POSITION SYNC (ONLY IF BOTH PLAYING) ---
+        ' --- POSITION SYNC ---
         Dim positionDiff = Math.Abs(masterPosition - localPosition)
 
-        If masterActive = localActive And masterPosition <> 0 And localPosition <> 0 Then
-            If positionDiff > POSITION_THRESHOLD And localState = "Running" And masterState = "Running" Then
+        If masterActive = localActive And masterPosition <> 0 Then
+            If positionDiff > POSITION_THRESHOLD And masterState = "Running" And localDuration > masterPosition Then
                 API.Function("SetPosition", Input:=masterActive, Value:=CStr(masterPosition))
+                If localState <> "Running" Then
+                    API.Function("Play", Input:=masterActive)
+                End If
 
                 timestamp = DateTime.Now.ToString("HH:mm:ss")
                 Dim posStr As String = TimeSpan.FromMilliseconds(masterPosition).ToString("hh\:mm\:ss")
                 Dim diffSec As Integer = CInt(positionDiff \ 1000)
-                Console.WriteLine(timestamp & " Slave | Position sync: " & posStr & " (diff: " & diffSec & "s)")
+                Console.WriteLine(timestamp & " Slave | Position sync: " & posStr & " (diff: " & diffSec & "s, state: " & localState & ")")
 
                 Sleep(TRANSITION_BUFFER)
             End If

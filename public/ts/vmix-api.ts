@@ -46,14 +46,52 @@ function transition(type) {
     masterSlaveExecute('Function=' + type + inputParam);
 }
 
-function fadeInputAudio(inputNum) {
-    const volume = document.getElementById('volume-' + inputNum).value;
-    masterSlaveExecute('Function=SetVolumeFade&Value=' + volume + ',3000&Input=' + inputNum);
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
 }
 
-function setInputGain(inputNum) {
-    const value = document.getElementById('gain-' + inputNum).value;
-    masterSlaveExecute('Function=SetGain&Value=' + value + '&Input=' + inputNum);
+function getEffectiveInputVolume(input) {
+    const volume = Number(input.volume);
+    const gain = input.gainDb === undefined ? 0 : Number(input.gainDb);
+    return volume * Math.pow(10, gain / 20);
+}
+
+function getIncreasedInputAudio(input) {
+    const volume = getEffectiveInputVolume(input);
+    const dB = Math.round(20 * Math.log10(volume / 100));
+
+    if (volume < 100) {
+        return ['+=3', '0'];
+    }
+    return ['100', String(clamp(dB + 1, 0, 24))];
+}
+
+function getDecreasedInputAudio(input) {
+    const volume = getEffectiveInputVolume(input);
+    const dB = Math.round(20 * Math.log10(volume / 100));
+
+    if (volume <= 100 || dB === 0) {
+        return ['-=3', '0'];
+    }
+    return ['100', String(clamp(dB - 1, 0, 24))];
+}
+
+function adjustInputAudio(inputNum, direction) {
+    const info = getMasterInfo();
+    if (info === null) {
+        return;
+    }
+    const input = info.inputs[inputNum];
+    const [volume, gain] =
+        direction > 0 ? getIncreasedInputAudio(input) : getDecreasedInputAudio(input);
+    masterSlaveExecute(
+        'Function=SetVolume&Value=' + encodeURIComponent(volume) + '&Input=' + inputNum,
+    );
+    setTimeout(() => {
+        masterSlaveExecute(
+            'Function=SetGain&Value=' + encodeURIComponent(gain) + '&Input=' + inputNum,
+        );
+    }, 200);
 }
 
 function toggleAudioBus(inputNum, bus) {
@@ -84,12 +122,12 @@ function toggleBusAudio(bus) {
     masterSlaveExecute(`Function=${getBusName(bus, true)}Audio${on ? 'Off' : 'On'}`);
 }
 
-function setBusVolume(bus) {
+function adjustBusVolume(bus, amount) {
     const info = getMasterInfo();
     if (info === null) {
         return;
     }
-    const value = document.getElementById('volume-' + bus).value;
+    const value = clamp(Math.round(Number(info.audio[getBusName(bus)].volume)) + amount, 0, 100);
     masterSlaveExecute(`Function=Set${getBusName(bus, true)}Volume&Value=${value}`);
 }
 
