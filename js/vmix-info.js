@@ -156,11 +156,11 @@ function getBusName(bus, capital = false) {
 function getShortInputProgress(input) {
     if (input.duration === '0')
         return '';
-    console.assert(['Video', 'AudioFile', 'Photos'].includes(input.type), input.type);
+    console.assert(['Video', 'AudioFile', 'Photos', 'PowerPoint'].includes(input.type), input.type);
     const duration = parseInt(input.duration);
     const position = parseInt(input.position);
     const remaining = duration - position;
-    if (input.type === 'Photos') {
+    if (['Photos', 'PowerPoint'].includes(input.type)) {
         return `${position} / ${duration} / ${remaining}`;
     }
     return `${formatTimeMMSS(duration)} | ${formatTimeMMSS(remaining)}`;
@@ -168,9 +168,9 @@ function getShortInputProgress(input) {
 function getInputDuration(input) {
     if (input.duration === '0')
         return '';
-    console.assert(['Video', 'AudioFile', 'Photos'].includes(input.type), input.type);
+    console.assert(['Video', 'AudioFile', 'Photos', 'PowerPoint'].includes(input.type), input.type);
     const duration = parseInt(input.duration);
-    if (input.type === 'Photos') {
+    if (['Photos', 'PowerPoint'].includes(input.type)) {
         return duration;
     }
     return formatTimeMMSS(duration);

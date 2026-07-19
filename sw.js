@@ -5,6 +5,7 @@ const CORE_ASSETS = [
     './output.css',
     './logo.svg',
     './manifest.webmanifest',
+    './versions.json',
     './Sortable.min.js',
     './js/tools.js',
     './js/vmix-api.js',
