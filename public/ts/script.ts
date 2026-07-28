@@ -195,7 +195,8 @@ const vmixInfos = [];
         .querySelectorAll('.show-toggle')
         .forEach((elem) => elem.addEventListener('click', showElements));
 
-    document.getElementById('add-box').addEventListener('click', () => addBox());
+    document.getElementById('add-box').addEventListener('click', openNewBoxForm);
+    document.getElementById('save-box-edit').addEventListener('click', saveBoxEdit);
     document.getElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
 
     updateRefreshRates();

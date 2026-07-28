@@ -127,8 +127,10 @@ function adjustBusVolume(bus, amount) {
     if (info === null) {
         return;
     }
-    const value = clamp(Math.round(Number(info.audio[getBusName(bus)].volume)) + amount, 0, 100);
-    masterSlaveExecute(`Function=Set${getBusName(bus, true)}Volume&Value=${value}`);
+    const value = amount > 0 ? `+=${amount}` : `-=${Math.abs(amount)}`;
+    masterSlaveExecute(
+        `Function=Set${getBusName(bus, true)}Volume&Value=${encodeURIComponent(value)}`,
+    );
 }
 
 function overlayInput(inputNum, overlayNum) {

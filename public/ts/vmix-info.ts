@@ -86,98 +86,63 @@ function renderVmixInfo(box) {
     const vmixInfo = getVmixInfo(boxNum);
 
     if (vmixInfo === null) {
-        box.querySelector('.vmixInfo').innerHTML = '';
+        box.querySelector('.vmixStatus').innerHTML = '';
+        box.querySelector('.vmixInfo').innerHTML = getVmixInfoHeader(box, null);
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        box.querySelector('.vmixInfo').innerHTML = `vMix unavailable (${vmixInfo.error})`;
+        box.querySelector('.vmixStatus').innerHTML = '';
+        box.querySelector('.vmixInfo').innerHTML = `
+          ${getVmixInfoHeader(box, null)}
+          <div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
         return;
     }
     const active = info.inputs[info.active];
     const preview = info.inputs[info.preview];
+    box.querySelector('.vmixStatus').innerHTML = getVmixStatusBadges(info);
     box.querySelector('.vmixInfo').innerHTML = `
-      <div class="mb-1">
-        <span class="badge font-semibold px-1 rounded-xs">${info.preset}</span>
-        ${info.recording ? '<span class="badge badge-error badge-outline px-1 rounded-xs">REC</span>' : ''}
-        ${info.external ? '<span class="badge badge-error badge-outline px-1 rounded-xs">EXT</span>' : ''}
-        ${info.stream ? '<span class="badge badge-error badge-outline px-1 rounded-xs">STREAM</span>' : ''}
-         ${info.fadeToBlack ? '<span class="badge badge-error badge-outline px-1 rounded-xs">FTB</span>' : ''}
-        ${info.overlays
-            .map(
-                (o, i) =>
-                    `<span class="badge badge-success badge-outline px-1 rounded-xs"> ${'<'.repeat(i)}${o}${'>'.repeat(i)}</span>`,
-            )
-            .filter(Boolean)
-            .join('\n')}
-      </div>
-      <div class="flex gap-1 items-center">
-        <span class="badge badge-success w-[24px] h-[16px]">${active.number}</span>
-        ${active.duration !== '0' ? `<div class="text-xs min-w-[77px] inline-block text-center">${getShortInputProgress(active)}</div>` : ''}
-        <span class="whitespace-nowrap overflow-hidden inline-flex flex-1">${getResponsiveTitle(active.title)}</span>
-      </div>
-      <div class="flex gap-1 items-center">
-        <span class="badge badge-warning w-[24px] h-[16px] py-0">${preview.number}</span>
-        ${preview.duration !== '0' ? `<div class="text-xs min-w-[77px] inline-block text-center">${getShortInputProgress(preview)}</div>` : ''}
-        <span class="whitespace-nowrap overflow-hidden inline-flex flex-1">${getResponsiveTitle(preview.title)}</span>
-      </div>
-      <div class="divider my-0">Audio</div>
-      ${['M', 'A', 'B']
-          .map((bus) => {
-              const busInfo = info.audio[getBusName(bus)];
-              if (busInfo === undefined || busInfo.muted === 'True') {
-                  return '';
-              }
-              return `
-            <div class="gap-1 inline-block w-fit">
-                <span class="${bus === 'M' || busInfo.sendToMaster === 'True' ? 'text-error' : 'text-secondary'}">${bus}:</span>
-                <span>${getVolumeInfo(busInfo)}</span>
-              </div>`;
-          })
-          .filter((str) => str !== '')
-          .join('<span class="mx-1">|</span>')}
-      ${info.inputs
-          .filter((input) => input.muted === 'False')
-          .map(
-              (input) => `
-              <div class="flex items-center gap-1">
-                <span class="text-secondary">${input.number}.</span>
-                <span>${getVolumeInfo(input)}</span>
-                <span class="badge badge-success h-[16px] px-1 py-0">${input.audiobusses}</span>
-                <span class="whitespace-nowrap overflow-hidden inline-flex flex-1">${getResponsiveTitle(input.title)}</span>
-              </div>
-              `,
-          )
-          .join('')}
+      ${getVmixInfoHeader(box, info)}
+      ${getProgramPreviewLine(active, 'badge-primary', info.inputs)}
+      ${getProgramPreviewLine(preview, 'badge-warning', info.inputs)}`;
+}
 
-      <div class="divider my-0">Inputs</div>
-      <ol>
-        ${info.inputs
-            .map((input, i) => {
-                const layers = input.overlays
-                    .map((over) => `<span>&lt;${over.number}></span>`)
-                    .join('');
-                const duration = getInputDuration(input);
-                return (
-                    `<li>` +
-                    `<span class="${
-                        input.number === active.number
-                            ? 'text-success font-semibold'
-                            : input.number === preview.number
-                              ? 'text-warning font-semibold'
-                              : 'text-secondary'
-                    }">${i}.</span>&nbsp;` +
-                    `${layers}${layers ? '&nbsp;|&nbsp;' : ''}` +
-                    `<span class="italic">${duration}</span>${duration ? '&nbsp;|&nbsp;' : ''}` +
-                    `${input.title}` +
-                    `</li>`
-                );
-            })
-            .join('')}
-      </ol>`;
+function getVmixInfoHeader(box, info) {
+    const boxName = getBoxName(box) || `Box ${getBoxNumber(box)}`;
+    if (!info) {
+        return `<div class="mb-1 min-w-0 font-semibold text-accent">${boxName}</div>`;
+    }
 
-    const volumeCanvas = box.querySelector('.volume-canvas');
-    drawAudioLevels(volumeCanvas, vmixInfo.value.audio[getBusName('M')]);
+    return `<div class="mb-1 flex min-w-0 flex-wrap items-center gap-1">
+        <span class="font-semibold text-accent">${boxName}</span>
+        ${info.preset ? `<span class="badge rounded-xs px-1 font-semibold">${info.preset}</span>` : ''}
+      </div>`;
+}
+
+function getVmixStatusBadges(info) {
+    return [
+        info.recording
+            ? '<span class="badge badge-error badge-outline rounded-xs px-1">REC</span>'
+            : '',
+        info.external
+            ? '<span class="badge badge-error badge-outline rounded-xs px-1">EXT</span>'
+            : '',
+        info.streaming
+            ? '<span class="badge badge-error badge-outline rounded-xs px-1">STREAM</span>'
+            : '',
+        info.fadeToBlack
+            ? '<span class="badge badge-error badge-outline rounded-xs px-1">FTB</span>'
+            : '',
+    ].join('');
+}
+
+function getProgramPreviewLine(input, badgeClass, inputs) {
+    return `
+      <div class="flex min-w-0 items-center gap-1">
+        <span class="badge ${badgeClass} h-[16px] w-[24px] py-0">${input.number}</span>
+        ${input.duration !== '0' ? `<div class="inline-block min-w-[77px] text-center text-xs">${getShortInputProgress(input)}</div>` : ''}
+        <span class="inline-flex min-w-0 flex-1 overflow-hidden whitespace-nowrap" title="${getHtmlAttributeText(getInputTitleTip(input, inputs))}">${getResponsiveTitle(input.title)}</span>
+      </div>`;
 }
 
 function getBusName(bus, capital = false) {

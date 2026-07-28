@@ -158,6 +158,50 @@ function getResponsiveTitle(str) {
     );
 }
 
+function getHtmlAttributeText(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getInputTitleTip(input, inputs) {
+    const layerLines = input.overlays
+        .map((layer) => {
+            const layerInput = inputs[layer.number];
+            if (layerInput === undefined) {
+                return '';
+            }
+            return `<${layer.number}> ${layerInput.title}`;
+        })
+        .filter(Boolean);
+
+    return [getInputTitleTipHeader(input)].concat(layerLines).join('\n');
+}
+
+function getInputTitleTipHeader(input) {
+    if (input.duration === undefined || input.duration === '0') {
+        return input.title;
+    }
+    return `${input.title} (${formatDurationText(input.duration)})`;
+}
+
+function formatDurationText(ms) {
+    const totalSeconds = Math.floor(Number(ms) / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`;
+    }
+    if (minutes > 0) {
+        return `${minutes}m ${seconds}s`;
+    }
+    return `${seconds}s`;
+}
+
 function parseNumbers(str) {
     return str
         .split(' ')
