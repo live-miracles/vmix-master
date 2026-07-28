@@ -1,4 +1,4 @@
-## [vMix Master](https://live-miracles.github.io/vmix-master/)
+# [vMix Master](https://live-miracles.github.io/vmix-master/)
 
 <img width="700" alt="vMix Master" src="https://github.com/user-attachments/assets/ad8fd4e9-939b-4239-84c4-10f47a881c47">
 

@@ -15,8 +15,7 @@ const { result } = concurrently(
         },
         {
             name: 'server',
-            command:
-                'browser-sync start --server public --files public/**/* --port 3000 --no-open --no-notify',
+            command: 'serve public --listen 3000',
         },
     ],
     {
