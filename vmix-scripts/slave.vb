@@ -9,11 +9,17 @@
 Dim masterAPI As String = "http://192.168.x.x:8088/api"
 
 Dim SCRIPT_NAME As String = "slave"
-Dim SCRIPT_VERSION As String = "1.4.2"
+Dim SCRIPT_VERSION As String = "1.4.3"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " Slave " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim LOOP_TIME As Integer = 300          ' Poll interval in ms
+Dim TRANSITION As String = "Stinger1"   ' vMix transition function used when switching active input
+Dim TRANSITION_BUFFER As Integer = 3000 ' Wait after a transition or position jump before next sync
+Dim POSITION_THRESHOLD As Integer = 30000  ' Min drift in ms before correcting position (30 sec)
 
 ' --- VERSION CHECK ---
 Try
@@ -42,12 +48,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " Slave | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim LOOP_TIME As Integer = 300          ' Poll interval in ms
-Dim TRANSITION As String = "Stinger1"   ' vMix transition function used when switching active input
-Dim TRANSITION_BUFFER As Integer = 3000 ' Wait after a transition or position jump before next sync
-Dim POSITION_THRESHOLD As Integer = 30000  ' Min drift in ms before correcting position (30 sec)
 
 Dim localXml As New System.Xml.XmlDocument()
 Dim localResponse As String = ""

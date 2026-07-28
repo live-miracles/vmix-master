@@ -10,11 +10,16 @@
 ' - turn on "Display 00:00:00 when Stopped"
 
 Dim SCRIPT_NAME As String = "duration-timer"
-Dim SCRIPT_VERSION As String = "1.2.0"
+Dim SCRIPT_VERSION As String = "1.2.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " DurationTimer " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim GT_INPUT_TITLE As String = "DurationTimer" ' Name of the GT title input to update
+Dim YELLOW_TIME As Integer = 60                ' Seconds remaining when timer turns orange
+Dim RED_TIME As Integer = 11                   ' Seconds remaining when timer turns red
 
 ' --- VERSION CHECK ---
 Try
@@ -43,11 +48,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " DurationTimer | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim GT_INPUT_TITLE As String = "DurationTimer" ' Name of the GT title input to update
-Dim YELLOW_TIME As Integer = 60                ' Seconds remaining when timer turns orange
-Dim RED_TIME As Integer = 11                   ' Seconds remaining when timer turns red
 
 Dim position As Double = 0
 Dim duration As Double = 0

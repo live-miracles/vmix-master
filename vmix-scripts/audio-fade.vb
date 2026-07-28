@@ -12,11 +12,16 @@
 ' and rewinds. When it comes back on-air it unmutes and fades up to MAX_VOLUME.
 
 Dim SCRIPT_NAME As String = "audio-fade"
-Dim SCRIPT_VERSION As String = "1.0.6"
+Dim SCRIPT_VERSION As String = "1.0.7"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " AudioFade " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim MAX_VOLUME As Integer = 91       ' Target volume (0-100) when input is live
+Dim FADE_DOWN_TIME As Integer = 3000 ' Fade-out duration in ms when going off-air
+Dim FADE_UP_TIME As Integer = 1000   ' Fade-in duration in ms when coming on-air
 
 ' --- VERSION CHECK ---
 Try
@@ -45,11 +50,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " AudioFade | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim MAX_VOLUME As Integer = 91       ' Target volume (0-100) when input is live
-Dim FADE_DOWN_TIME As Integer = 3000 ' Fade-out duration in ms when going off-air
-Dim FADE_UP_TIME As Integer = 1000   ' Fade-in duration in ms when coming on-air
 
 Dim xml As New System.Xml.XmlDocument()
 xml.LoadXml(API.XML())

@@ -7,11 +7,25 @@
 ' Decibels = 20 * Math.Log10(Amplitude)
 
 Dim SCRIPT_NAME As String = "auto-gain"
-Dim SCRIPT_VERSION As String = "1.2.0"
+Dim SCRIPT_VERSION As String = "1.2.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " AutoGain " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
+
+Dim CLIP_THRESHOLD As Double = 0.9      ' 0.9 ~ -1dB; meterF1 value to consider as clipping
+Dim GAIN_DOWN_TIME As Integer = 1000    ' Minimum time between gain decreases
+
+Dim PEAK_THRESHOLD As Double = 0.45     ' 0.45 ~ -7dB; meterF1 value to consider as loud enough
+Dim PEAK_WAIT As Integer = 5000         ' Time to wait after last peak detected before allowing gain increase
+Dim GAIN_UP_TIME As Integer = 3000      ' Minimum time between gain increases
+
+Dim VOICE_THRESHOLD As Double = 0.1     ' 0.1 ~ -20dB; meterF1 value to consider as voice present
+Dim VOICE_DURATION As Integer = 250     ' Time of continuous voice detection to consider as speaking
+Dim VOICE_WAIT As Integer = 5000        ' If there is no voice for this time, script stops adjusting gain
 
 ' --- VERSION CHECK ---
 Try
@@ -40,20 +54,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " AutoGain | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
-
-Dim CLIP_THRESHOLD As Double = 0.9      ' 0.9 ~ -1dB; meterF1 value to consider as clipping
-Dim GAIN_DOWN_TIME As Integer = 1000    ' Minimum time between gain decreases
-
-Dim PEAK_THRESHOLD As Double = 0.45     ' 0.45 ~ -7dB; meterF1 value to consider as loud enough
-Dim PEAK_WAIT As Integer = 5000         ' Time to wait after last peak detected before allowing gain increase
-Dim GAIN_UP_TIME As Integer = 3000      ' Minimum time between gain increases
-
-Dim VOICE_THRESHOLD As Double = 0.1     ' 0.1 ~ -20dB; meterF1 value to consider as voice present
-Dim VOICE_DURATION As Integer = 250     ' Time of continuous voice detection to consider as speaking
-Dim VOICE_WAIT As Integer = 5000        ' If there is no voice for this time, script stops adjusting gain
 
 ' ====== Timestamps ======
 Dim now As Double = 0

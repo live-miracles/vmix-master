@@ -4,11 +4,15 @@
 ' If the active input is the last one, vMix will ignore the out-of-range preview request gracefully.
 
 Dim SCRIPT_NAME As String = "preview-next"
-Dim SCRIPT_VERSION As String = "1.0.0"
+Dim SCRIPT_VERSION As String = "1.0.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " PreviewNext " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim LOOP_TIME As Integer = 300  ' Poll interval in ms
+Dim DELAY_TIME As Integer = 1000  ' How long to wait after a transition before updating preview
 
 ' --- VERSION CHECK ---
 Try
@@ -37,10 +41,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " PreviewNext | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim LOOP_TIME As Integer = 300  ' Poll interval in ms
-Dim DELAY_TIME As Integer = 1000  ' How long to wait after a transition before updating preview
 
 Dim lastActive As String = ""
 Dim xml As New System.Xml.XmlDocument()

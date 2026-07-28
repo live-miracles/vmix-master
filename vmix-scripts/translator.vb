@@ -28,11 +28,27 @@
 ' +----+----+----+----+----+----+----→ Silence Time (no translation)
 
 Dim SCRIPT_NAME As String = "translator"
-Dim SCRIPT_VERSION As String = "1.2.0"
+Dim SCRIPT_VERSION As String = "1.2.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " Translator " & SCRIPT_VERSION)
+
+' ===== Configurations =====
+Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
+Dim VOICE_THRESHOLD As Double = 0.1     ' 0.1 ~ -20dB; meterF1 value to consider as voice present
+Dim CHAIN_BUS As String = "B"           ' Script will be adjusting volume for this bus
+
+Dim VOLUME_DOWN_TIME As Integer = 350   ' How fast to fade volume down when translator starts speaking
+Dim VOLUME_REDUCED As Integer = 50      ' Volume when translator is speaking
+
+Dim SILENCE_LIMIT As Integer = 2000     ' If translator doesn't speak for this duration we will start raising volume
+Dim VOLUME_UP_TIME As Integer = 1000    ' How fast to raise volume first time
+Dim VOLUME_FULL As Integer = 75         ' How much to raise volume first time
+
+Dim SILENCE_LIMIT2 As Integer = 4000   ' If translator still not speaking it will raise the volume even more
+Dim VOLUME_UP_TIME2 As Integer = 2000   ' How fast to raise volume second time
+Dim VOLUME_FULL2 As Integer = 85        ' How much to raise volume second time
 
 ' --- VERSION CHECK ---
 Try
@@ -61,22 +77,6 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " Translator | Could not check for updates: " & ex.Message)
 End Try
-
-' ===== Configurations =====
-Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
-Dim VOICE_THRESHOLD As Double = 0.1     ' 0.1 ~ -20dB; meterF1 value to consider as voice present
-Dim CHAIN_BUS As String = "B"           ' Script will be adjusting volume for this bus
-
-Dim VOLUME_DOWN_TIME As Integer = 350   ' How fast to fade volume down when translator starts speaking
-Dim VOLUME_REDUCED As Integer = 50      ' Volume when translator is speaking
-
-Dim SILENCE_LIMIT As Integer = 2000     ' If translator doesn't speak for this duration we will start raising volume
-Dim VOLUME_UP_TIME As Integer = 1000    ' How fast to raise volume first time
-Dim VOLUME_FULL As Integer = 75         ' How much to raise volume first time
-
-Dim SILENCE_LIMIT2 As Integer = 4000   ' If translator still not speaking it will raise the volume even more
-Dim VOLUME_UP_TIME2 As Integer = 2000   ' How fast to raise volume second time
-Dim VOLUME_FULL2 As Integer = 85        ' How much to raise volume second time
 
 ' ====== State ======
 Dim now As Double = 0
