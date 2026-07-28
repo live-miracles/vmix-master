@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="night">
+<html lang="en" data-theme="dim">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,26 +23,20 @@
       }
     </script>
   </head>
-  <body class="bg-base-100 pt-16 text-base-content">
-    <div class="navbar focus fixed top-0 z-50 w-full border-b border-base-300 bg-base-200 shadow-sm">
+  <body class="bg-base-100 pt-10 text-base-content">
+    <div class="navbar focus fixed top-0 z-50 min-h-10 w-full border-b border-base-300 bg-base-200 py-0 shadow-sm">
       <div class="flex flex-1 items-center gap-1">
-        <span class="px-3 text-xl font-semibold">vMix Master</span>
+        <span class="px-3 text-base font-semibold">vMix Master</span>
       </div>
       <div class="absolute left-1/2 flex -translate-x-1/2 gap-2">
-        <button id="add-box" class="btn btn-secondary btn-square btn-sm" aria-label="Add instance" title="Add instance">
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </svg>
-        </button>
         <button
           type="button"
-          class="btn btn-outline btn-secondary btn-square btn-sm"
+          class="btn btn-outline btn-accent btn-square btn-xs"
           aria-label="Settings"
           title="Settings"
           onclick="document.getElementById('settings-modal').showModal()">
           <svg
-            class="h-4 w-4"
+            class="h-3.5 w-3.5"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -58,7 +52,7 @@
       </div>
       <div class="flex flex-none items-center gap-2">
         <a
-          class="btn btn-outline btn-secondary btn-square btn-xs"
+          class="btn btn-outline btn-accent btn-square btn-xs"
           href="https://github.com/live-miracles/vmix-master/"
           aria-label="GitHub repository"
           title="GitHub repository">
@@ -69,7 +63,7 @@
         </a>
         <button
           type="button"
-          class="btn btn-outline btn-secondary btn-square btn-xs"
+          class="btn btn-outline btn-accent btn-square btn-xs"
           aria-label="Documentation"
           title="Documentation"
           onclick="document.getElementById('documentation-modal').showModal()">
@@ -89,7 +83,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-outline btn-secondary btn-square btn-xs"
+          class="btn btn-outline btn-accent btn-square btn-xs"
           aria-label="Logs"
           title="Logs"
           onclick="document.getElementById('logs-modal').showModal()">
@@ -178,92 +172,115 @@
       </div>
     </div>
 
-    <div class="flex flex-col items-center">
-      <div class="flex w-full flex-wrap p-1" id="boxes"></div>
-      <datalist id="hosts">
-        <option value="192.168.154.x"></option>
-      </datalist>
-    </div>
+    <main class="grid min-h-[calc(100vh-2.5rem)] grid-cols-1 lg:grid-cols-[252px_minmax(0,1fr)]">
+      <aside class="border-base-300 bg-base-200/70 lg:sticky lg:top-10 lg:h-[calc(100vh-2.5rem)] lg:overflow-y-auto lg:border-r">
+        <div class="border-base-300 flex h-12 items-center justify-between gap-2 border-b px-3">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-base-content/70">vMix Instances</h2>
+          <button id="add-box" class="btn btn-accent btn-square btn-xs" aria-label="Add instance" title="Add instance">
+            <svg
+              class="h-3.5 w-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              aria-hidden="true">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex w-full flex-col items-start p-2" id="boxes"></div>
+        <datalist id="hosts">
+          <option value="192.168.154.x"></option>
+        </datalist>
+      </aside>
 
-    <div class="divider focus mt-5">
-      <input id="show-vmix-web" type="checkbox" class="toggle toggle-secondary toggle-sm show-toggle url-param" checked />
-      <span>vMix Web</span>
-    </div>
-    <div class="vmix-web hidden">
-      <div class="mx-auto mb-5 flex w-125 items-center gap-1 px-5">
-        <span class="text-md">Master:</span>
-        <input id="master" type="number" min="1" name="master" placeholder="e.g. 1" class="url-param input input-xs w-16" />
-        <span class="text-md ms-3">Slaves:</span>
-        <input id="slaves" type="text" name="slaves" placeholder="e.g. 2 3" class="url-param input input-xs flex-1" />
-        <button class="btn btn-secondary btn-xs ms-3" onclick="compareSlaves()">Compare</button>
-        <button class="btn btn-secondary btn-xs" onclick="hideCompareReport()">Hide</button>
-      </div>
+      <section class="min-w-0 overflow-x-auto px-2 pb-8">
+        <div class="divider focus mt-5">
+          <input id="show-vmix-web" type="checkbox" class="toggle toggle-accent toggle-sm show-toggle url-param" checked />
+          <span>vMix Web</span>
+        </div>
+        <div class="vmix-web hidden">
+          <div class="mx-auto mb-5 flex w-125 items-center gap-1 px-5">
+            <span class="text-md">Master:</span>
+            <input id="master" type="number" min="1" name="master" placeholder="e.g. 1" class="url-param input input-xs w-16" />
+            <span class="text-md ms-3">Slaves:</span>
+            <input id="slaves" type="text" name="slaves" placeholder="e.g. 2 3" class="url-param input input-xs flex-1" />
+            <button class="btn btn-accent btn-xs ms-3" onclick="compareSlaves()">Compare</button>
+            <button class="btn btn-accent btn-xs" onclick="hideCompareReport()">Hide</button>
+          </div>
 
-      <div id="compare-report"></div>
+          <div id="compare-report"></div>
 
-      <div id="vmix-container" class="pb-5">
-        <div class="mx-auto mt-3 flex w-fit items-start gap-2">
-          <div id="vmix-busses" class="flex items-start"></div>
+          <div id="vmix-container" class="pb-5">
+            <div class="mx-auto mt-3 flex w-fit items-start">
+              <div id="vmix-screens" class="wrap grid h-20 w-[995px] grid-cols-[400px_90px_90px_400px] grid-rows-[25px_25px_20px] gap-1 text-center">
+                <div id="preview-title" class="bg-warning text-primary-content col-span-1 row-span-2 mr-1 text-lg font-semibold"></div>
+                <div class="col-span-1 row-span-1">
+                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Stinger1')">Stinger 1</button>
+                </div>
+                <div class="col-span-1 row-span-1">
+                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Fade')">Fade</button>
+                </div>
+                <div id="active-title" class="bg-primary text-primary-content col-span-1 row-span-2 ml-1 text-lg font-semibold"></div>
+                <div class="col-span-1 row-span-1">
+                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Cut')">Cut</button>
+                </div>
+                <div class="col-span-1 row-span-1">
+                  <button class="ftb-btn btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('FadeToBlack')">FTB</button>
+                </div>
+                <div id="preview-progress" class="col-span-1 row-span-1"></div>
+                <div class="col-span-1 row-span-1"></div>
+                <div class="col-span-1 row-span-1"></div>
+                <div id="active-progress" class="col-span-1 row-span-1"></div>
+              </div>
+            </div>
 
-          <div id="vmix-screens" class="wrap grid h-20 w-[995px] grid-cols-[400px_90px_90px_400px] grid-rows-[25px_25px_20px] gap-1 text-center">
-            <div id="preview-title" class="bg-warning text-primary-content col-span-1 row-span-2 mr-1 text-lg font-semibold"></div>
-            <div class="col-span-1 row-span-1">
-              <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Stinger1')">Stinger 1</button>
-            </div>
-            <div class="col-span-1 row-span-1">
-              <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Fade')">Fade</button>
-            </div>
-            <div id="active-title" class="bg-success text-primary-content col-span-1 row-span-2 ml-1 text-lg font-semibold"></div>
-            <div class="col-span-1 row-span-1">
-              <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Cut')">Cut</button>
-            </div>
-            <div class="col-span-1 row-span-1">
-              <button class="ftb-btn btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('FadeToBlack')">FTB</button>
-            </div>
-            <div id="preview-progress" class="col-span-1 row-span-1"></div>
-            <div class="col-span-1 row-span-1"></div>
-            <div class="col-span-1 row-span-1"></div>
-            <div id="active-progress" class="col-span-1 row-span-1"></div>
+            <div id="vmix-inputs" class="mt-2"></div>
           </div>
         </div>
 
-        <div id="vmix-inputs" class="mt-2"></div>
-      </div>
-    </div>
+        <div class="divider focus mt-5">
+          <input id="show-custom-functions" type="checkbox" class="toggle toggle-accent toggle-sm show-toggle url-param" checked />
+          <span>Custom Functions</span>
+        </div>
+        <div class="custom-functions hidden px-5">
+          <div class="mx-auto my-1 flex w-fit items-center gap-1">
+            <span class="text-md">Include: </span>
+            <input id="include" type="text" name="include" placeholder="e.g. 1 2 3" class="url-param input input-xs w-75" />
+          </div>
 
-    <div class="divider focus mt-5">
-      <input id="show-custom-functions" type="checkbox" class="toggle toggle-secondary toggle-sm show-toggle url-param" checked />
-      <span>Custom Functions</span>
-    </div>
-    <div class="custom-functions hidden px-5">
-      <div class="mx-auto my-1 flex w-fit items-center gap-1">
-        <span class="text-md">Include: </span>
-        <input id="include" type="text" name="include" placeholder="e.g. 1 2 3" class="url-param input input-xs w-75" />
-      </div>
-
-      <div class="flex flex-col items-center">
-        <div class="custom-functions-container flex w-fit flex-wrap p-1">
-          <div class="rounded-box bg-neutral m-1 w-fit p-3">
-            <div class="mx-auto w-fit">
-              <input
-                id="rawRequest"
-                type="text"
-                name="rawRequest"
-                placeholder="e.g. Function=Fade&Duration=1000&Input=5"
-                class="url-param input input-xs w-125" />
-            </div>
-            <div class="mx-auto w-fit">
-              <button id="execute-btn" class="btn btn-outline btn-secondary btn-sm mt-1">Raw Request</button>
+          <div class="flex flex-col items-center">
+            <div class="custom-functions-container flex w-fit flex-wrap p-1">
+              <div class="rounded-box bg-neutral m-1 w-fit p-3">
+                <div class="mx-auto w-fit">
+                  <input
+                    id="rawRequest"
+                    type="text"
+                    name="rawRequest"
+                    placeholder="e.g. Function=Fade&Duration=1000&Input=5"
+                    class="url-param input input-xs w-125" />
+                </div>
+                <div class="mx-auto w-fit">
+                  <button id="execute-btn" class="btn btn-outline btn-accent btn-sm mt-1">Raw Request</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <dialog id="logs-modal" class="modal">
       <div class="modal-box max-h-[90vh] max-w-4xl">
         <form method="dialog">
-          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close logs">x</button>
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close logs">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12" />
+              <path d="M18 6L6 18" />
+            </svg>
+          </button>
         </form>
         <h2 class="mb-3 text-xl font-bold">Logs</h2>
         <div class="logs border-secondary bg-base-300 h-[70vh] overflow-y-scroll rounded-lg border p-3"></div>
@@ -273,10 +290,49 @@
       </form>
     </dialog>
 
+    <dialog id="box-edit-modal" class="modal">
+      <div class="modal-box max-w-md">
+        <form method="dialog">
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close box editor">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12" />
+              <path d="M18 6L6 18" />
+            </svg>
+          </button>
+        </form>
+        <h2 class="mb-4 text-xl font-bold">Edit vMix Instance</h2>
+        <input type="hidden" class="box-edit-number" />
+        <div class="grid gap-3 sm:grid-cols-[160px_1fr]">
+          <label class="form-control">
+            <span class="label-text mb-1">Name</span>
+            <input type="text" class="box-edit-name input input-sm w-full" placeholder="Name" />
+          </label>
+          <label class="form-control">
+            <span class="label-text mb-1">Host</span>
+            <input type="text" class="box-edit-host input input-sm w-full" placeholder="IP or domain" list="hosts" />
+          </label>
+        </div>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-ghost btn-sm">Cancel</button>
+          </form>
+          <button id="save-box-edit" class="btn btn-accent btn-sm">Save</button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+
     <dialog id="settings-modal" class="modal">
       <div class="modal-box max-h-[90vh] max-w-2xl">
         <form method="dialog">
-          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close settings">x</button>
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close settings">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12" />
+              <path d="M18 6L6 18" />
+            </svg>
+          </button>
         </form>
         <h2 class="mb-4 text-xl font-bold">Settings</h2>
 
@@ -314,7 +370,12 @@
     <dialog id="documentation-modal" class="modal">
       <div class="modal-box max-h-[90vh] max-w-4xl">
         <form method="dialog">
-          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close documentation">x</button>
+          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close documentation">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12" />
+              <path d="M18 6L6 18" />
+            </svg>
+          </button>
         </form>
 
         <div class="prose max-w-none">
@@ -408,7 +469,5 @@ Examples:
         <button>close</button>
       </form>
     </dialog>
-
-    <div class="h-10"></div>
   </body>
 </html>

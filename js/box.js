@@ -1,33 +1,81 @@
 function updateBoxNums() {
     let cnt = 1;
     Array.from(document.getElementsByClassName('box')).forEach((box) => {
-        box.querySelector('.badge').innerHTML = String(cnt++);
+        box.querySelector('.box-number').innerHTML = String(cnt++);
     });
 }
 function closeBox(e) {
-    const box = e.currentTarget.parentElement.parentElement;
+    const box = e.currentTarget.closest('.box');
     box.parentNode.removeChild(box);
     updateBoxNums();
     updateBoxesParam();
 }
+function openBoxEdit(e) {
+    const box = e.currentTarget.closest('.box');
+    const modal = document.getElementById('box-edit-modal');
+    modal.querySelector('.box-edit-number').value = String(getBoxNumber(box));
+    modal.querySelector('.box-edit-name').value = getBoxName(box);
+    modal.querySelector('.box-edit-host').value = getBoxHost(box);
+    modal.showModal();
+}
+function openNewBoxForm() {
+    const modal = document.getElementById('box-edit-modal');
+    modal.querySelector('.box-edit-number').value = '';
+    modal.querySelector('.box-edit-name').value = '';
+    modal.querySelector('.box-edit-host').value = '';
+    modal.showModal();
+}
+function saveBoxEdit() {
+    const modal = document.getElementById('box-edit-modal');
+    const boxNumber = parseInt(modal.querySelector('.box-edit-number').value);
+    const name = modal.querySelector('.box-edit-name').value;
+    const host = modal.querySelector('.box-edit-host').value;
+    if (isNaN(boxNumber)) {
+        addBox(name, host);
+        updateBoxesParam();
+        modal.close();
+        return;
+    }
+    const box = getBox(boxNumber);
+    if (box === null) {
+        return;
+    }
+    box.querySelector('.name-input').value = name;
+    box.querySelector('.host-input').value = host;
+    updateBoxesParam();
+    renderVmixInfo(box);
+    modal.close();
+}
 function createBox(name, host, num) {
     const box = document.createElement('div');
-    box.className = 'box m-1 h-[220px] w-[350px]';
+    box.className = 'box m-1 w-full';
     box.innerHTML = `
-        <div class="flex gap-1 items-center my-1">
-            <span class="box-number badge badge-neutral cursor-grab w-7">${num}</span>
-            <input type="text" placeholder="Name" value="${name}" class="name-input input input-xs w-24" name="vmix-name">
-            <input type="text" placeholder="Host" value="${host}" class="host-input input input-xs flex-1 min-w-5" name="vmix-host" list="hosts">
-            <button class="close-btn focus btn btn-xs btn-error btn-outline w-[24px] p-0">
-                <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
-            </button>
-        </div>
-        <div class="container relative max-w-full h-[180px] rounded-lg border border-secondary bg-base-200">
-          <canvas class="volume-canvas absolute top-0 left-0 h-full w-[10px] py-2" width="100" height="100"></canvas>
-          <div class="vmixInfo wrap h-full overflow-y-scroll pl-[13px] text-sm"></div>
+        <div class="container max-w-full cursor-grab rounded-lg border border-accent bg-base-200 p-3">
+          <span class="box-number hidden">${num}</span>
+          <div class="mb-1 flex items-center gap-2">
+            <div class="vmixStatus flex min-w-0 flex-1 flex-wrap items-center gap-1"></div>
+            <div class="flex shrink-0 items-center justify-center gap-1">
+              <button class="edit-btn focus btn btn-square btn-accent btn-outline btn-xs" title="Edit box" aria-label="Edit box">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                </svg>
+              </button>
+              <button class="close-btn focus btn btn-square btn-error btn-outline btn-xs" title="Delete box" aria-label="Delete box">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 6h18" />
+                  <path d="M8 6V4h8v2" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v5" />
+                  <path d="M14 11v5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="vmixInfo min-w-0 text-sm"></div>
+          <input type="hidden" value="${name}" class="name-input" name="vmix-name">
+          <input type="hidden" value="${host}" class="host-input" name="vmix-host">
         </div>`;
-    box.querySelector('.name-input').onblur = updateBoxesParam;
-    box.querySelector('.host-input').onblur = updateBoxesParam;
+    box.querySelector('.edit-btn').onclick = openBoxEdit;
     box.querySelector('.close-btn').onclick = closeBox;
     return box;
 }

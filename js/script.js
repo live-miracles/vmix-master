@@ -171,7 +171,8 @@ const vmixInfos = [];
     document
         .querySelectorAll('.show-toggle')
         .forEach((elem) => elem.addEventListener('click', showElements));
-    document.getElementById('add-box').addEventListener('click', () => addBox());
+    document.getElementById('add-box').addEventListener('click', openNewBoxForm);
+    document.getElementById('save-box-edit').addEventListener('click', saveBoxEdit);
     document.getElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
     updateRefreshRates();
     document.getElementById('refresh-rate').addEventListener('change', updateRefreshRates);

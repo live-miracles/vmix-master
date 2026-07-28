@@ -112,7 +112,7 @@ function renderCustomFunctions() {
                 .join('')}
             </div>
             <div class="mx-auto w-fit">
-              <button class="function-btn btn btn-outline btn-secondary btn-sm mt-1">${b.func}</button>
+              <button class="function-btn btn btn-outline btn-accent btn-sm mt-1">${b.func}</button>
             </div>
           </div>`;
     });
