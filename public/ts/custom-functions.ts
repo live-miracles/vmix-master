@@ -1,4 +1,4 @@
-function customExecution(request) {
+function customExecution(request: string): void {
     masterSlaveExecute(request);
 }
 
@@ -102,7 +102,7 @@ function renderCustomFunctions() {
                     ? ''
                     : b.inputs
                           .map(
-                              (input) => `
+                              (input: any) => `
               <input
                 type="${input.type}"
                 placeholder="${input.placeholder}"
@@ -121,14 +121,15 @@ function renderCustomFunctions() {
           </div>`;
     });
 
-    document.querySelector('.custom-functions-container').innerHTML += innerHTML;
+    requireElement('.custom-functions-container').innerHTML += innerHTML;
 
-    const executeBtn = document.getElementById('execute-btn');
-    executeBtn.onclick = () => customExecution(document.getElementById('rawRequest').value);
+    const executeBtn = requireElementById('execute-btn');
+    executeBtn.onclick = () =>
+        customExecution(requireElementById<HTMLInputElement>('rawRequest').value);
 
     document.querySelectorAll('.function-btn').forEach((btn) => {
         btn.onclick = () => {
-            const container = btn.parentElement.parentElement;
+            const container = btn.parentElement!.parentElement!;
             const inputParam = container.querySelector('.input-param');
             const gainParam = container.querySelector('.gain-param');
             const volumeParam = container.querySelector('.volume-param');
