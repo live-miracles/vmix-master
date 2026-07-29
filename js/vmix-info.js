@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="./types.d.ts" />
 class VmixInfo {
     constructor(jsonData) {
         this.preset = jsonData.vmix.preset

@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="./types.d.ts" />
 const LOG_SIZE = 500;
 function requireElement(selector, parent = document) {
     const element = parent.querySelector(selector);

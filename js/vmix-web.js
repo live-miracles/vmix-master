@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="./types.d.ts" />
 const INPUTS_SIZE = 100;
 const AUDIO_BUSES = ['M', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
 function prerenderVmixWeb() {

@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="./types.d.ts" />
 // ===== vMix API Utils =====
 async function fetchUrl(url) {
     try {

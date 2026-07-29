@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="./types.d.ts" />
 /// <reference path="./tools.ts" />
 /// <reference path="./box.ts" />
 /// <reference path="./vmix-info.ts" />
