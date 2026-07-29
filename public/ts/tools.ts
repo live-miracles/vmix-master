@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 const LOG_SIZE = 500;
 
 function requireElement<T extends Element = HTMLElement>(

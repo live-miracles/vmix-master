@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 function extractLeadingNumbers(input: string): string {
     const match = input.match(/^(Virtual - )?(\d+(?:_\d+)?)/);
     if (match) {

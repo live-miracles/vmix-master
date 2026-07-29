@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 class VmixInfo {
     preset: string;
     preview: number;

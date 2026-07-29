@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 // ===== vMix API Utils =====
 async function fetchUrl(
     url: string,
