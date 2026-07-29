@@ -11,5 +11,6 @@ interface Element {
     checked: boolean;
     onblur: ((event: FocusEvent) => void) | null;
     onclick: ((event: MouseEvent) => void) | null;
+    reportValidity: () => boolean;
     value: string;
 }

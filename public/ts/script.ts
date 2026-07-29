@@ -1,6 +1,7 @@
-function addBox(name = '', host = '') {
+function addBox(name = '', host = '', group = false) {
     const boxes = document.getElementById('boxes');
-    boxes.appendChild(createBox(name, host, getBoxCount() + 1));
+    boxes.appendChild(createBox(name, host, getBoxCount() + 1, group));
+    updateBoxNums();
 }
 
 function splitOnce(str, separator) {
@@ -52,20 +53,6 @@ async function refreshInstances(cnt = 0) {
 
     await sleep(1000);
     requestAnimationFrame(() => refreshInstances((cnt + 1) % refreshRate));
-}
-
-function showElements() {
-    document.querySelectorAll('.show-toggle').forEach((elem) => {
-        const name = elem.id.slice('show-'.length);
-        const show = elem.checked;
-        document.querySelectorAll('.' + name).forEach((e) => {
-            if (show) {
-                e.classList.remove('hidden');
-            } else {
-                e.classList.add('hidden');
-            }
-        });
-    });
 }
 
 function updateRefreshRates() {
@@ -121,7 +108,7 @@ function addHostOptionRow(name = '', host = '') {
     row.className = 'host-option-row flex items-center gap-2';
     row.innerHTML = `
         <input type="text" class="host-option-name input input-xs w-36" placeholder="Name" value="">
-        <input type="text" class="host-option-host input input-xs flex-1" placeholder="IP or domain" value="">
+        <input type="text" class="host-option-host input input-xs flex-1" placeholder="IP, host:port, or URL" value="">
         <button type="button" class="remove-host-option btn btn-error btn-outline btn-square btn-xs" aria-label="Remove host suggestion">
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
             <path d="M5 12h14" />
@@ -178,6 +165,8 @@ const vmixInfos = [];
 (() => {
     setDocumentUrlParams();
     initBoxes();
+    setInitialMasterBox();
+    setInitialGroupBoxes();
 
     renderCustomFunctions();
     prerenderVmixWeb();
@@ -185,18 +174,17 @@ const vmixInfos = [];
     renderHostOptions();
     showVmixScriptVersions();
     showStoredLogs();
-    showElements();
 
     document
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
 
-    document
-        .querySelectorAll('.show-toggle')
-        .forEach((elem) => elem.addEventListener('click', showElements));
-
     document.getElementById('add-box').addEventListener('click', openNewBoxForm);
     document.getElementById('save-box-edit').addEventListener('click', saveBoxEdit);
+    document.querySelectorAll('.box-edit-name, .box-edit-host').forEach((input) => {
+        input.addEventListener('input', () => setInputValidationStyle(input));
+        input.addEventListener('change', () => setInputValidationStyle(input));
+    });
     document.getElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
 
     updateRefreshRates();
@@ -210,6 +198,9 @@ const vmixInfos = [];
         onEnd: function (e) {
             updateBoxNums();
             updateBoxesParam();
+            updateMasterParam();
+            updateGroupParam();
+            renderVmixWeb();
         },
     });
 })();

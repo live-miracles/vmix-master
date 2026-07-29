@@ -1,8 +1,5 @@
 function customExecution(request) {
-    const include = parseNumbers(document.getElementById('include').value);
-    getBoxes()
-        .filter((box) => include.includes(getBoxNumber(box)))
-        .forEach((box) => execute(getApiUrl(getBoxHost(box), request)));
+    masterSlaveExecute(request);
 }
 
 function renderCustomFunctions() {
@@ -98,11 +95,11 @@ function renderCustomFunctions() {
     let innerHTML = '';
     buttons.forEach((b) => {
         innerHTML += `
-          <div class="m-1 w-fit rounded-box bg-neutral p-3">
-            <div class="mx-auto w-fit">
+          <div class="m-1 flex w-fit items-center gap-1 rounded-box bg-neutral p-2">
+            <div class="${b.inputs.length === 0 ? 'hidden' : 'w-fit'}">
             ${
                 b.inputs.length === 0
-                    ? '&nbsp;'
+                    ? ''
                     : b.inputs
                           .map(
                               (input) => `
@@ -118,8 +115,8 @@ function renderCustomFunctions() {
                           .join('')
             }
             </div>
-            <div class="mx-auto w-fit">
-              <button class="function-btn btn btn-outline btn-accent btn-sm mt-1">${b.func}</button>
+            <div class="w-fit">
+              <button class="function-btn btn btn-accent btn-xs">${b.func}</button>
             </div>
           </div>`;
     });

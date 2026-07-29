@@ -56,6 +56,18 @@ export function similarTypes(type1: string, type2: string): boolean {
 }
 
 export function getApiUrl(host: string, request = ''): string {
-    const fullHost = host.includes(':') ? host : `${host}:8088`;
-    return `http://${fullHost}/api/?${request}`;
+    const rawUrl = host.trim();
+    const url = new URL(/^https?:\/\//i.test(rawUrl) ? rawUrl : `http://${rawUrl}`);
+
+    if (url.port === '') {
+        url.port = '8088';
+    }
+
+    if (!/\/api\/?$/i.test(url.pathname)) {
+        url.pathname = url.pathname.replace(/\/?$/, '/api/');
+    } else if (!url.pathname.endsWith('/')) {
+        url.pathname += '/';
+    }
+
+    return `${url.origin}${url.pathname}?${request}`;
 }

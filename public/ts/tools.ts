@@ -33,6 +33,11 @@ function getBoxHost(box) {
     return box.querySelector('.host-input').value;
 }
 
+function getBoxGroup(box) {
+    console.assert(box.classList.contains('box'));
+    return box.querySelector('.group-input').value === '1';
+}
+
 function getBoxVmixInfo(box) {
     console.assert(box.classList.contains('box'));
     return getVmixInfo(getBoxNumber(box));
@@ -89,6 +94,32 @@ function updateBoxesParam() {
 
     const url = new URL(window.location.href);
     url.searchParams.set('boxes', param);
+    window.history.replaceState({}, '', url);
+}
+
+function updateMasterParam() {
+    const master = getMaster();
+    const url = new URL(window.location.href);
+    if (master === null) {
+        url.searchParams.delete('master');
+    } else {
+        url.searchParams.set('master', String(master));
+    }
+    window.history.replaceState({}, '', url);
+}
+
+function updateGroupParam() {
+    const group = getBoxes()
+        .filter((box) => getBoxGroup(box))
+        .map((box) => getBoxNumber(box))
+        .join(' ');
+
+    const url = new URL(window.location.href);
+    if (group === '') {
+        url.searchParams.delete('group');
+    } else {
+        url.searchParams.set('group', group);
+    }
     window.history.replaceState({}, '', url);
 }
 

@@ -18,8 +18,20 @@ async function fetchUrl(url) {
 }
 
 function getApiUrl(host, request = '') {
-    const fullHost = host.includes(':') ? host : host + ':8088';
-    return 'http://' + fullHost + '/api/?' + request;
+    const rawUrl = host.trim();
+    const url = new URL(/^https?:\/\//i.test(rawUrl) ? rawUrl : 'http://' + rawUrl);
+
+    if (url.port === '') {
+        url.port = '8088';
+    }
+
+    if (!/\/api\/?$/i.test(url.pathname)) {
+        url.pathname = url.pathname.replace(/\/?$/, '/api/');
+    } else if (!url.pathname.endsWith('/')) {
+        url.pathname += '/';
+    }
+
+    return url.origin + url.pathname + '?' + request;
 }
 
 async function execute(url, isShow = true) {
@@ -117,8 +129,7 @@ function toggleBusAudio(bus) {
     if (info === null) {
         return;
     }
-    const fullName = { M: 'master', A: 'busA', B: 'busB' };
-    const on = info.audio[fullName[bus]].muted === 'False';
+    const on = info.audio[getBusName(bus)].muted === 'False';
     masterSlaveExecute(`Function=${getBusName(bus, true)}Audio${on ? 'Off' : 'On'}`);
 }
 
@@ -157,9 +168,14 @@ function loopInput(inputNum) {
 
 function masterSlaveExecute(command) {
     const master = getMaster();
-    const slaves = getSlaves();
-    slaves.unshift(master);
-    removeDuplicates(slaves)
+    if (master === null) {
+        return;
+    }
+
+    const targets = getGroupTargetNumbers();
+    targets.unshift(master);
+    removeDuplicates(targets)
+        .filter((num) => getBox(num) !== null)
         .map((num) => getBoxHost(getBox(num)))
         .forEach((host) => execute(getApiUrl(host, command)));
 }

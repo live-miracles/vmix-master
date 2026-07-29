@@ -77,6 +77,18 @@ describe('core helpers', () => {
         );
         assert.equal(getApiUrl('192.168.1.2:8090'), 'http://192.168.1.2:8090/api/?');
         assert.equal(
+            getApiUrl('123.123.123.123:8012', 'Function=Fade'),
+            'http://123.123.123.123:8012/api/?Function=Fade',
+        );
+        assert.equal(
+            getApiUrl('http://192.168.1.2:8090/api/', 'Function=Cut'),
+            'http://192.168.1.2:8090/api/?Function=Cut',
+        );
+        assert.equal(
+            getApiUrl('https://vmix.example.com/api'),
+            'https://vmix.example.com:8088/api/?',
+        );
+        assert.equal(
             getApiUrl('vmix.local', 'Function=SetVolume&Value=%2B%3D3'),
             'http://vmix.local:8088/api/?Function=SetVolume&Value=%2B%3D3',
         );
