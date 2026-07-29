@@ -1,5 +1,8 @@
 "use strict";
 /// <reference path="./types.d.ts" />
+/// <reference path="./tools.ts" />
+/// <reference path="./vmix-api.ts" />
+const vmixInfos = [];
 class VmixInfo {
     constructor(jsonData) {
         this.preset = jsonData.vmix.preset

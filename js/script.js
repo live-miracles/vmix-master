@@ -160,7 +160,6 @@ async function showVmixScriptVersions() {
     }
 }
 let refreshRate = -1;
-const vmixInfos = [];
 (() => {
     setDocumentUrlParams();
     initBoxes();
