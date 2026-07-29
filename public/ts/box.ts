@@ -65,6 +65,8 @@ function updateBoxMasterStyles() {
         const isGroup = getBoxGroup(box);
         panel.classList.toggle('border-accent', isMaster);
         panel.classList.toggle('border-base-content/25', !isMaster);
+        box.querySelector('.boxDisplayName').classList.toggle('text-accent', !isGroup);
+        box.querySelector('.boxDisplayName').classList.toggle('text-primary', isGroup);
         box.querySelector('.group-icon').classList.toggle('hidden', !isGroup);
     });
     updateGroupCompareButton();

@@ -107,6 +107,16 @@ function addHostOptionRow(name = '', host = '') {
     const row = document.createElement('div');
     row.className = 'host-option-row flex items-center gap-2';
     row.innerHTML = `
+        <button type="button" class="host-option-handle btn btn-ghost btn-square btn-xs cursor-grab" aria-label="Reorder host suggestion" title="Reorder host suggestion">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <path d="M9 5h.01" />
+            <path d="M15 5h.01" />
+            <path d="M9 12h.01" />
+            <path d="M15 12h.01" />
+            <path d="M9 19h.01" />
+            <path d="M15 19h.01" />
+          </svg>
+        </button>
         <input type="text" class="host-option-name input input-xs w-36" placeholder="Name" value="">
         <input type="text" class="host-option-host input input-xs flex-1" placeholder="IP, host:port, or URL" value="">
         <button type="button" class="remove-host-option btn btn-error btn-outline btn-square btn-xs" aria-label="Remove host suggestion">
@@ -202,5 +212,12 @@ const vmixInfos = [];
             updateGroupParam();
             renderVmixWeb();
         },
+    });
+
+    new Sortable(document.getElementById('host-options'), {
+        animation: 150,
+        handle: '.host-option-handle',
+        ghostClass: 'bg-base-300',
+        onEnd: saveHostOptions,
     });
 })();
