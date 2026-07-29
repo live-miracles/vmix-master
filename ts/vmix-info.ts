@@ -84,15 +84,19 @@ function setVmixInfo(number, info) {
 function renderVmixInfo(box) {
     const boxNum = getBoxNumber(box);
     const vmixInfo = getVmixInfo(boxNum);
+    const boxName = getBoxName(box) || `Box ${boxNum}`;
+    const boxDisplayName = box.querySelector('.boxDisplayName');
+    if (boxDisplayName) {
+        boxDisplayName.textContent = boxName;
+        boxDisplayName.setAttribute('title', boxName);
+    }
 
     if (vmixInfo === null) {
-        box.querySelector('.vmixStatus').innerHTML = '';
         box.querySelector('.vmixInfo').innerHTML = getVmixInfoHeader(box, null);
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        box.querySelector('.vmixStatus').innerHTML = '';
         box.querySelector('.vmixInfo').innerHTML = `
           ${getVmixInfoHeader(box, null)}
           <div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
@@ -100,7 +104,6 @@ function renderVmixInfo(box) {
     }
     const active = info.inputs[info.active];
     const preview = info.inputs[info.preview];
-    box.querySelector('.vmixStatus').innerHTML = getVmixStatusBadges(info);
     box.querySelector('.vmixInfo').innerHTML = `
       ${getVmixInfoHeader(box, info)}
       ${getProgramPreviewLine(active, 'badge-primary', info.inputs)}
@@ -108,31 +111,24 @@ function renderVmixInfo(box) {
 }
 
 function getVmixInfoHeader(box, info) {
-    const boxName = getBoxName(box) || `Box ${getBoxNumber(box)}`;
     if (!info) {
-        return `<div class="mb-1 min-w-0 font-semibold text-accent">${boxName}</div>`;
+        return '<div class="mb-1 min-w-0 text-xs font-semibold text-base-content/70">vMix</div>';
     }
 
     return `<div class="mb-1 flex min-w-0 flex-wrap items-center gap-1">
-        <span class="font-semibold text-accent">${boxName}</span>
-        ${info.preset ? `<span class="badge rounded-xs px-1 font-semibold">${info.preset}</span>` : ''}
+        <span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold text-base-content/70">${info.preset || 'vMix'}</span>
+        ${getVmixStatusBadges(info)}
       </div>`;
 }
 
 function getVmixStatusBadges(info) {
+    const badgeClass =
+        'badge badge-error badge-outline h-[14px] min-h-0 rounded-xs px-1 text-[10px] leading-none';
     return [
-        info.recording
-            ? '<span class="badge badge-error badge-outline rounded-xs px-1">REC</span>'
-            : '',
-        info.external
-            ? '<span class="badge badge-error badge-outline rounded-xs px-1">EXT</span>'
-            : '',
-        info.streaming
-            ? '<span class="badge badge-error badge-outline rounded-xs px-1">STREAM</span>'
-            : '',
-        info.fadeToBlack
-            ? '<span class="badge badge-error badge-outline rounded-xs px-1">FTB</span>'
-            : '',
+        info.recording ? `<span class="${badgeClass}">REC</span>` : '',
+        info.external ? `<span class="${badgeClass}">EXT</span>` : '',
+        info.streaming ? `<span class="${badgeClass}">STREAM</span>` : '',
+        info.fadeToBlack ? `<span class="${badgeClass}">FTB</span>` : '',
     ].join('');
 }
 
@@ -146,7 +142,7 @@ function getProgramPreviewLine(input, badgeClass, inputs) {
 }
 
 function getBusName(bus, capital = false) {
-    const name = { M: 'master', A: 'busA', B: 'busB' }[bus];
+    const name = bus === 'M' ? 'master' : `bus${bus}`;
     console.assert(name !== undefined, bus);
     return capital ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 }

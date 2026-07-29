@@ -11,6 +11,11 @@ function getError(type, msg) {
 function getWarning(type, msg) {
     return `<div><span class="text-warning font-semibold">Warning: ${type}.</span> ${msg}</div>`;
 }
+function getCompareBoxName(num) {
+    const box = getBox(num);
+    const name = box === null ? 'vMix instance' : getBoxName(box) || 'vMix instance';
+    return `<span class="font-semibold text-accent">${new Option(name).innerHTML}</span>`;
+}
 function similarTypes(type1, type2) {
     const audioTypes = ['Audio', 'VideoCall'];
     if (audioTypes.includes(type1) && audioTypes.includes(type2)) {
@@ -23,33 +28,35 @@ function similarTypes(type1, type2) {
     return type1 === type2;
 }
 function compareSlaves() {
-    const className = 'border rounded-box p-3 mb-5 w-[750px] max-w-[750px] mx-auto ';
+    const modal = document.getElementById('compare-modal');
+    const reportClassName = 'w-full max-w-none ';
     const compareReport = document.getElementById('compare-report');
+    modal.showModal();
     const infoMsg = `
-      Please specify the master and slaves. The script will do the following:
+      Click a vMix instance to set the selected vMix, then mark instances as Part of Group. The script will do the following:
        <ul>
-         <li>Compare first slave's buss settings with others (<code>mute</code>, <code>sendToMaster</code>).</li>
-         <li>Compare first slave's vMix Call settings with others
+         <li>Compare first group member's buss settings with others (<code>mute</code>, <code>sendToMaster</code>).</li>
+         <li>Compare first group member's vMix Call settings with others
            (<code>callVideoSource</code>, <code>callAudioSource</code>).</li>
-         <li>Compare master input <b>leading numbers</b> with slaves.</li>
-         <li>Compare master input <b>types</b> with slaves.</li>
-         <li>Compare master input <b>layers</b> with slaves.</li>
-         <li>Compare master input <b>duration</b> with slaves.</li>
+         <li>Compare selected vMix input <b>leading numbers</b> with group members.</li>
+         <li>Compare selected vMix input <b>types</b> with group members.</li>
+         <li>Compare selected vMix input <b>layers</b> with group members.</li>
+         <li>Compare selected vMix input <b>duration</b> with group members.</li>
        </ul>
 
        The comparison will be done only for inputs with a <b>leading number</b> like <code>05</code>, <code>05_3</code>
        or <code>05_03</code>.`;
     const master = getMaster();
     if (master === null) {
-        compareReport.className = className + 'border-info prose';
+        compareReport.className = reportClassName + 'prose';
         compareReport.innerHTML = infoMsg;
         return;
     }
-    const slaves = getSlaves();
-    slaves.unshift(master);
-    const nums = removeDuplicates(slaves);
+    const targets = getGroupTargetNumbers();
+    targets.unshift(master);
+    const nums = removeDuplicates(targets);
     if (nums.length === 1) {
-        compareReport.className = className + 'border-info prose';
+        compareReport.className = reportClassName + 'prose';
         compareReport.innerHTML = infoMsg;
         return;
     }
@@ -57,10 +64,9 @@ function compareSlaves() {
     for (let i = 0; i < nums.length; i++) {
         const number = nums[i];
         const info = getVmixInfo(number)?.value;
-        const name = getBox(number) ? getBoxName(getBox(number)) : '';
         if (info === undefined || info === null) {
-            compareReport.className = className + 'border-info';
-            compareReport.innerHTML = `Could not fetch status for #${number} ${name}.`;
+            compareReport.className = reportClassName;
+            compareReport.innerHTML = `Could not fetch status for ${getCompareBoxName(number)}.`;
             return;
         }
         infos.push(info);
@@ -74,17 +80,17 @@ function compareSlaves() {
         for (let j = 2; j < infos.length; j++) {
             const v2 = infos[j].audio[k];
             const num2 = nums[j];
-            const name2 = getBoxName(getBox(num2));
+            const name2 = getCompareBoxName(num2);
             if (v2 === undefined) {
-                errors.push(getError('missing bus', `Bus ${k} is disabled for #${num2} ${name2}.`));
+                errors.push(getError('missing bus', `Bus ${k} is disabled for ${name2}.`));
                 continue;
             }
             if (v1.muted !== v2.muted) {
-                msg = `Bus ${k} is ${v2.muted === 'True' ? '' : 'not '}muted for #${num2} ${name2}.`;
+                msg = `Bus ${k} is ${v2.muted === 'True' ? '' : 'not '}muted for ${name2}.`;
                 errors.push(getError('bus muted', msg));
             }
             if (v1.sendToMaster !== v2.sendToMaster) {
-                msg = `Bus ${k} sendToMaster is ${v2.sendToMaster === 'True' ? '' : 'not '}enabled for #${num2} ${name2}.`;
+                msg = `Bus ${k} sendToMaster is ${v2.sendToMaster === 'True' ? '' : 'not '}enabled for ${name2}.`;
                 errors.push(getError('bus sendToMaster', msg));
             }
         }
@@ -96,18 +102,18 @@ function compareSlaves() {
         for (let j = 2; j < infos.length; j++) {
             const input2 = infos[j].inputs[input1.number];
             const num2 = nums[j];
-            const name2 = getBoxName(getBox(num2));
+            const name2 = getCompareBoxName(num2);
             if (input2.type !== 'VideoCall') {
                 continue;
             }
             if (input1.callVideoSource !== input2.callVideoSource) {
                 msg = `VideoCall input #${input1.number} ${input1.title} video source is
-                      "${input2.callVideoSource}" instead of "${input1.callVideoSource}" for #${num2} ${name2}.`;
+                      "${input2.callVideoSource}" instead of "${input1.callVideoSource}" for ${name2}.`;
                 errors.push(getError('vMix call settings', msg));
             }
             if (input1.callAudioSource !== input2.callAudioSource) {
                 msg = `VideoCall input #${input1.number} ${input1.title} audio source is 
-                      "${input2.callAudioSource}" instead of "${input1.callAudioSource}" for #${num2} ${name2}.`;
+                      "${input2.callAudioSource}" instead of "${input1.callAudioSource}" for ${name2}.`;
                 errors.push(getError('vMix call settings', msg));
             }
         }
@@ -117,11 +123,11 @@ function compareSlaves() {
         for (let j = 1; j < infos.length; j++) {
             const input2 = infos[j].inputs[i];
             const num2 = nums[j];
-            const name2 = getBoxName(getBox(num2));
+            const name2 = getCompareBoxName(num2);
             // check missing inputs
             if (input2 === undefined) {
                 if (leadNum1 !== '') {
-                    msg = `Input #${i} ${input1.title} is missing for #${num2} ${name2}.`;
+                    msg = `Input #${i} ${input1.title} is missing for ${name2}.`;
                     errors.push(getError('missing input', msg));
                 }
                 continue;
@@ -129,7 +135,7 @@ function compareSlaves() {
             // check leading numbers (e.g. 05, 05_1)
             const leadNum2 = extractLeadingNumbers(input2.title);
             if (leadNum1 !== leadNum2) {
-                msg = `Input #${i} ${input2.title} starts with "${leadNum2}" instead of "${leadNum1}" for #${num2} ${name2}.`;
+                msg = `Input #${i} ${input2.title} starts with "${leadNum2}" instead of "${leadNum1}" for ${name2}.`;
                 errors.push(getError('order mismatch', msg));
             }
             if (leadNum1 === '') {
@@ -142,7 +148,7 @@ function compareSlaves() {
                 input2.type = 'AudioFile';
             // check input types
             if (!similarTypes(input1.type, input2.type)) {
-                msg = `Input #${i} ${input2.title} has type "${input2.type}" instead of "${input1.type}" for #${num2} ${name2}.`;
+                msg = `Input #${i} ${input2.title} has type "${input2.type}" instead of "${input1.type}" for ${name2}.`;
                 warnings.push(getWarning('type mismatch', msg));
             }
             // check layers
@@ -155,7 +161,7 @@ function compareSlaves() {
                 }
                 else if (over2 === undefined) {
                     msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over2.number}>
-                        is missing for #${num2} ${name2}.`;
+                        is missing for ${name2}.`;
                     errors.push(getError('missing layer', msg));
                 }
                 else if (over1.index !== over2.index || over1.number !== over2.number) {
@@ -166,7 +172,7 @@ function compareSlaves() {
             });
             if (input1.overlays.length < input2.overlays.length) {
                 msg = `Input #${i} ${input2.title} has ${input2.overlays.length} layer(s) instead of
-                    ${input1.overlays.length} layer(s) for #${num2} ${name2}.`;
+                    ${input1.overlays.length} layer(s) for ${name2}.`;
                 errors.push(getError('additional layers', msg));
             }
             // check input duration
@@ -177,20 +183,20 @@ function compareSlaves() {
                 ['AudioFile', 'Video'].includes(input2.type) &&
                 durDiff >= 5) {
                 msg = `Input #${i} ${input2.title} duration is ${formatTimeMMSS(dur2)} is
-                    ${dur2 > dur1 ? 'more' : 'less'} than ${formatTimeMMSS(dur1)} by ${durDiff}s for #${num2} ${name2}.`;
+                    ${dur2 > dur1 ? 'more' : 'less'} than ${formatTimeMMSS(dur1)} by ${durDiff}s for ${name2}.`;
                 warnings.push(getWarning('type mismatch', msg));
             }
         }
     });
     if (errors.length > 0) {
-        compareReport.className = className + 'border-error';
+        compareReport.className = reportClassName;
         innerHtml += errors.join('');
     }
     else if (warnings.length > 0) {
-        compareReport.className = className + 'border-warning';
+        compareReport.className = reportClassName;
     }
     else {
-        compareReport.className = className + 'border-success';
+        compareReport.className = reportClassName;
         innerHtml += 'Looks good 👍';
     }
     if (errors.length > 0 && warnings.length > 0) {
@@ -198,9 +204,5 @@ function compareSlaves() {
     }
     innerHtml += warnings.join('');
     compareReport.innerHTML = innerHtml;
-}
-function hideCompareReport() {
-    const compareReport = document.getElementById('compare-report');
-    compareReport.className = 'hidden';
 }
 //# sourceMappingURL=compare-vmix-info.js.map

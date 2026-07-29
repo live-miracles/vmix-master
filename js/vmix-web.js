@@ -1,17 +1,18 @@
 const INPUTS_SIZE = 100;
+const AUDIO_BUSES = ['M', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
 function prerenderVmixWeb() {
     let inputsHTML = '';
     let busHTML = ``;
-    ['M', 'A', 'B'].forEach((bus) => (busHTML += `
-      <div id="mixer-${bus}" class="relative mx-1 my-1 hidden rounded border border-base-content/25 bg-base-200 pr-[12px] align-top shadow-sm">
+    AUDIO_BUSES.forEach((bus) => (busHTML += `
+      <div id="mixer-${bus}" class="relative mx-px my-1 hidden w-fit rounded border border-base-content/25 bg-base-200 pr-[12px] align-top shadow-sm">
         <canvas class="volume-canvas absolute right-0 top-0 h-full w-[10px]" width="100" height="100"></canvas>
-        <div class="mixer-header btn flex h-fit min-h-0 w-52 justify-start gap-0 rounded-none p-0">
+        <div class="mixer-header btn flex h-fit min-h-0 w-full justify-start gap-0 rounded-none p-0">
           <span class="badge badge-neutral mx-1 my-1 w-[24px]">${bus}</span>
           <span class="whitespace-nowrap">${getBusName(bus, true)}</span>
         </div>
         <div class="m-1 flex h-[20px] items-center gap-0.5">
           <button class="bus-volume-minus btn btn-neutral h-[20px] min-h-0 w-[22px] rounded-xs p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', -3)">-</button>
-          <span class="volume-value badge badge-neutral h-[20px] w-[58px] rounded-xs px-0 text-xs font-semibold"></span>
+          <span class="volume-value badge badge-neutral h-[20px] w-[48px] rounded-xs px-0 text-xs font-semibold"></span>
           <button class="bus-volume-plus btn btn-neutral h-[20px] min-h-0 w-[22px] rounded-xs p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', 3)">+</button>
           <button class="mute-btn btn btn-neutral h-[20px] min-h-0 w-[24px] rounded-xs p-0" onclick="toggleBusAudio('${bus}')" aria-label="Toggle bus audio" title="Toggle bus audio">
             <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
@@ -21,13 +22,13 @@ function prerenderVmixWeb() {
       </div>`));
     for (let i = 1; i <= INPUTS_SIZE; i++) {
         inputsHTML += `
-          <div id="input-${i}" class="relative mx-1 my-1 hidden rounded border border-base-content/25 bg-base-200 pr-[12px] align-top shadow-sm">
+          <div id="input-${i}" class="relative mx-px my-1 hidden rounded border border-base-content/25 bg-base-200 pr-[12px] align-top shadow-sm">
             <canvas class="volume-canvas absolute right-0 top-0 w-[10px] h-full" width="100" height="100"></canvas>
             <button class="preview-btn btn w-52 whitespace-nowrap overflow-hidden flex h-fit min-h-0 justify-start p-0 gap-0 rounded-none" onclick="previewInput(${i})">
               <span class="badge badge-neutral mx-1 my-1 w-[24px]">${i}</span>
               <span class="input-title whitespace-nowrap overflow-hidden inline-flex flex-1"></span>
             </button>
-            <div class="m-1">
+            <div class="mx-1 mb-1 mt-0">
               <button class="overlay1-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 1)">1</button>
               <button class="overlay2-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 2)">2</button>
               <button class="overlay3-btn btn btn-neutral w-[22px] h-[20px] min-h-0 p-0 rounded-xs" onclick="overlayInput(${i}, 3)">3</button>
@@ -40,28 +41,23 @@ function prerenderVmixWeb() {
             </div>
             <div class="input-audio-row m-1 mt-0 flex h-[20px] items-center gap-0.5">
               <button class="input-volume-minus btn btn-neutral w-[22px] h-[20px] min-h-0 rounded-xs p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, -1)">-</button>
-              <span class="input-audio-value badge badge-neutral h-[20px] w-[58px] rounded-xs px-0 text-xs font-semibold"></span>
+              <span class="input-audio-value badge badge-neutral h-[20px] w-[48px] rounded-xs px-0 text-xs font-semibold"></span>
               <button class="input-volume-plus btn btn-neutral w-[22px] h-[20px] min-h-0 rounded-xs p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, 1)">+</button>
               <button class="audio-btn btn btn-neutral w-[24px] h-[20px] min-h-0 p-0 rounded-xs" onclick="muteInput(${i})" aria-label="Toggle audio" title="Toggle audio">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
               </button>
-              <button class="bus-M btn btn-neutral btn-sm w-[22px] h-[20px] min-h-0 rounded-xs p-0 text-xs" onclick="toggleAudioBus(${i}, 'M')">M</button>
-              <button class="bus-A btn btn-neutral btn-sm w-[22px] h-[20px] min-h-0 rounded-xs p-0 text-xs" onclick="toggleAudioBus(${i}, 'A')">A</button>
-              <button class="bus-B btn btn-neutral btn-sm w-[22px] h-[20px] min-h-0 rounded-xs p-0 text-xs" onclick="toggleAudioBus(${i}, 'B')">B</button>
+              ${AUDIO_BUSES.map((bus) => `<button class="bus-${bus} audio-bus-btn btn btn-neutral btn-sm h-[20px] min-h-0 w-[22px] rounded-xs p-0 text-xs" onclick="toggleAudioBus(${i}, '${bus}')">${bus}</button>`).join('')}
             </div>
           </div>`;
     }
     document.getElementById('vmix-inputs').innerHTML = busHTML + inputsHTML;
 }
 async function renderVmixWeb() {
-    const masterInput = document.getElementById('master');
     const master = getMaster();
     if (master === null) {
         hideVmixWeb();
-        masterInput.classList.add('input-error');
         return;
     }
-    masterInput.classList.remove('input-error');
     const vmixInfo = getVmixInfo(master);
     if (vmixInfo === null || vmixInfo.error) {
         hideVmixWeb();
@@ -91,7 +87,8 @@ async function renderVmixWeb() {
         inputElem.classList.add('hidden');
         inputElem.classList.remove('inline-block');
     }
-    ['M', 'A', 'B'].forEach((bus) => {
+    const enabledBuses = AUDIO_BUSES.filter((bus) => info.audio[getBusName(bus)] !== undefined);
+    AUDIO_BUSES.forEach((bus) => {
         const mixerElem = document.getElementById('mixer-' + bus);
         const busInfo = info.audio[getBusName(bus)];
         if (busInfo === undefined) {
@@ -172,17 +169,17 @@ async function renderVmixWeb() {
         audioRow.classList.remove('hidden');
         const audioValue = inputElem.querySelector('.input-audio-value');
         audioValue.innerHTML = getInputAudioText(input);
-        const busM = inputElem.querySelector('.bus-M');
-        setColor(busM, input.audiobusses.includes('M'));
-        const busA = inputElem.querySelector('.bus-A');
-        setColor(busA, input.audiobusses.includes('A'));
-        const busB = inputElem.querySelector('.bus-B');
-        setColor(busB, input.audiobusses.includes('B'));
+        AUDIO_BUSES.forEach((bus) => {
+            const busBtn = inputElem.querySelector('.bus-' + bus);
+            busBtn.classList.toggle('hidden', !enabledBuses.includes(bus));
+            setColor(busBtn, input.audiobusses.includes(bus));
+        });
     });
 }
 function getMaster() {
-    const master = parseInt(document.getElementById('master').value);
-    return isNaN(master) ? null : master;
+    ensureMasterBox();
+    const masterBox = getBoxes().find((box) => box.classList.contains('is-master'));
+    return masterBox ? getBoxNumber(masterBox) : null;
 }
 function getMasterInfo() {
     const master = getMaster();
@@ -193,9 +190,15 @@ function getMasterInfo() {
     }
     return info;
 }
-function getSlaves() {
-    const slaves = document.getElementById('slaves').value;
-    return parseNumbers(slaves);
+function getGroupTargetNumbers() {
+    const master = getMaster();
+    const masterBox = getBox(master);
+    if (masterBox === null || !getBoxGroup(masterBox)) {
+        return [];
+    }
+    return getBoxes()
+        .filter((box) => getBoxGroup(box) && getBoxNumber(box) !== master)
+        .map((box) => getBoxNumber(box));
 }
 function hideVmixWeb() {
     const vmixContainer = document.getElementById('vmix-container');
