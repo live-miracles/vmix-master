@@ -1,10 +1,16 @@
-function addBox(name = '', host = '', group = false) {
-    const boxes = document.getElementById('boxes');
+/// <reference path="./tools.ts" />
+/// <reference path="./box.ts" />
+/// <reference path="./vmix-info.ts" />
+/// <reference path="./vmix-web.ts" />
+/// <reference path="./custom-functions.ts" />
+
+function addBox(name = '', host = '', group = false): void {
+    const boxes = requireElementById('boxes');
     boxes.appendChild(createBox(name, host, getBoxCount() + 1, group));
     updateBoxNums();
 }
 
-function splitOnce(str, separator) {
+function splitOnce(str: string, separator: string): string[] {
     const index = str.indexOf(separator);
 
     if (index === -1) {
@@ -16,7 +22,7 @@ function splitOnce(str, separator) {
 
 function initBoxes() {
     const params = new URLSearchParams(window.location.search);
-    const boxesParam = params.get('boxes') ? params.get('boxes') : '';
+    const boxesParam = params.get('boxes') || '';
     if (boxesParam === '') addBox();
     boxesParam
         .split('¦')
@@ -25,7 +31,7 @@ function initBoxes() {
         .forEach((param) => addBox(param[0], param[1]));
 }
 
-async function refreshInstance(box) {
+async function refreshInstance(box: Element): Promise<void> {
     const num = getBoxNumber(box);
     const host = getBoxHost(box);
     if (host === '') {
@@ -56,14 +62,14 @@ async function refreshInstances(cnt = 0) {
 }
 
 function updateRefreshRates() {
-    const val1 = document.getElementById('refresh-rate').value;
+    const val1 = requireElementById<HTMLInputElement>('refresh-rate').value;
     refreshRate = val1 === '' ? -1 : Math.max(1, parseInt(val1));
 }
 
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
-const DEFAULT_HOST_OPTIONS = [{ name: 'My System', host: '192.168.154.x' }];
+const DEFAULT_HOST_OPTIONS: HostOption[] = [{ name: 'My System', host: '192.168.154.x' }];
 
-function getHostOptions() {
+function getHostOptions(): HostOption[] {
     const stored = localStorage.getItem(HOST_OPTIONS_KEY);
     if (!stored) return DEFAULT_HOST_OPTIONS;
 
@@ -78,8 +84,8 @@ function getHostOptions() {
 function saveHostOptions() {
     const options = Array.from(document.querySelectorAll('.host-option-row'))
         .map((row) => ({
-            name: row.querySelector('.host-option-name').value.trim(),
-            host: row.querySelector('.host-option-host').value.trim(),
+            name: requireElement('.host-option-name', row).value.trim(),
+            host: requireElement('.host-option-host', row).value.trim(),
         }))
         .filter((option) => option.host !== '');
 
@@ -88,7 +94,7 @@ function saveHostOptions() {
 }
 
 function renderHostDatalist() {
-    const hosts = document.getElementById('hosts');
+    const hosts = requireElementById<HTMLDataListElement>('hosts');
     hosts.innerHTML = '';
 
     getHostOptions().forEach((option) => {
@@ -102,8 +108,8 @@ function renderHostDatalist() {
     });
 }
 
-function addHostOptionRow(name = '', host = '') {
-    const hostOptions = document.getElementById('host-options');
+function addHostOptionRow(name = '', host = ''): void {
+    const hostOptions = requireElementById('host-options');
     const row = document.createElement('div');
     row.className = 'host-option-row flex items-center gap-2';
     row.innerHTML = `
@@ -125,12 +131,12 @@ function addHostOptionRow(name = '', host = '') {
           </svg>
         </button>`;
 
-    row.querySelector('.host-option-name').value = name;
-    row.querySelector('.host-option-host').value = host;
+    requireElement('.host-option-name', row).value = name;
+    requireElement('.host-option-host', row).value = host;
     row.querySelectorAll('input').forEach((input) =>
         input.addEventListener('change', saveHostOptions),
     );
-    row.querySelector('.remove-host-option').addEventListener('click', () => {
+    requireElement('.remove-host-option', row).addEventListener('click', () => {
         row.remove();
         saveHostOptions();
     });
@@ -138,7 +144,7 @@ function addHostOptionRow(name = '', host = '') {
 }
 
 function renderHostOptions() {
-    const hostOptions = document.getElementById('host-options');
+    const hostOptions = requireElementById('host-options');
     hostOptions.innerHTML = '';
 
     const options = getHostOptions();
@@ -147,7 +153,7 @@ function renderHostOptions() {
         return;
     }
 
-    options.forEach((option) => addHostOptionRow(option.name, option.host));
+    options.forEach((option: HostOption) => addHostOptionRow(option.name, option.host));
 }
 
 async function showVmixScriptVersions() {
@@ -158,6 +164,7 @@ async function showVmixScriptVersions() {
         const versions = await response.json();
         document.querySelectorAll('[data-script-version-key]').forEach((link) => {
             const key = link.getAttribute('data-script-version-key');
+            if (key === null) return;
             const version = versions[key];
             if (!version) return;
 
@@ -170,7 +177,7 @@ async function showVmixScriptVersions() {
 }
 
 let refreshRate = -1;
-const vmixInfos = [];
+const vmixInfos: (VmixFetchInfo | null)[] = [];
 
 (() => {
     setDocumentUrlParams();
@@ -189,23 +196,25 @@ const vmixInfos = [];
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
 
-    document.getElementById('add-box').addEventListener('click', openNewBoxForm);
-    document.getElementById('save-box-edit').addEventListener('click', saveBoxEdit);
-    document.querySelectorAll('.box-edit-name, .box-edit-host').forEach((input) => {
-        input.addEventListener('input', () => setInputValidationStyle(input));
-        input.addEventListener('change', () => setInputValidationStyle(input));
-    });
-    document.getElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
+    requireElementById('add-box').addEventListener('click', openNewBoxForm);
+    requireElementById('save-box-edit').addEventListener('click', saveBoxEdit);
+    document
+        .querySelectorAll<HTMLInputElement>('.box-edit-name, .box-edit-host')
+        .forEach((input) => {
+            input.addEventListener('input', () => setInputValidationStyle(input));
+            input.addEventListener('change', () => setInputValidationStyle(input));
+        });
+    requireElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
 
     updateRefreshRates();
-    document.getElementById('refresh-rate').addEventListener('change', updateRefreshRates);
+    requireElementById('refresh-rate').addEventListener('change', updateRefreshRates);
     refreshInstances();
 
     new Sortable(document.getElementById('boxes'), {
         animation: 150,
         handle: '.cursor-grab', // Draggable by the entire row
         ghostClass: 'bg-base-300', // Adds a class for the dragged item
-        onEnd: function (e) {
+        onEnd: function (_e: unknown) {
             updateBoxNums();
             updateBoxesParam();
             updateMasterParam();

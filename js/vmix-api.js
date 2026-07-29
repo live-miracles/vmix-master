@@ -1,3 +1,4 @@
+"use strict";
 // ===== vMix API Utils =====
 async function fetchUrl(url) {
     try {
@@ -34,9 +35,11 @@ function getApiUrl(host, request = '') {
 async function execute(url, isShow = true) {
     const res = await fetchUrl(url);
     const timestamp = new Date().toLocaleTimeString();
-    storeLog(url, res.status, res.value, res.error, timestamp);
+    const status = res.status ?? 0;
+    const value = res.value ?? '';
+    storeLog(url, status, value, res.error, timestamp);
     if (isShow) {
-        showLog(url, res.status, res.value, res.error, timestamp);
+        showLog(url, status, value, String(res.error), timestamp);
     }
 }
 // ===== vMix Web Commands =====

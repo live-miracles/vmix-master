@@ -1,3 +1,4 @@
+"use strict";
 function extractLeadingNumbers(input) {
     const match = input.match(/^(Virtual - )?(\d+(?:_\d+)?)/);
     if (match) {
@@ -30,7 +31,7 @@ function similarTypes(type1, type2) {
 function compareSlaves() {
     const modal = document.getElementById('compare-modal');
     const reportClassName = 'w-full max-w-none ';
-    const compareReport = document.getElementById('compare-report');
+    const compareReport = requireElementById('compare-report');
     modal.showModal();
     const infoMsg = `
       Click a vMix instance to set the selected vMix, then mark instances as Part of Group. The script will do the following:
@@ -160,7 +161,7 @@ function compareSlaves() {
                     return;
                 }
                 else if (over2 === undefined) {
-                    msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over2.number}>
+                    msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over1.number}>
                         is missing for ${name2}.`;
                     errors.push(getError('missing layer', msg));
                 }

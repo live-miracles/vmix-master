@@ -1,16 +1,16 @@
 class VmixInfo {
-    preset;
-    preview;
-    active;
-    recording;
-    external;
-    streaming;
-    fadeToBlack;
-    inputs;
-    overlays;
-    audio;
+    preset: string;
+    preview: number;
+    active: number;
+    recording: boolean;
+    external: boolean;
+    streaming: boolean;
+    fadeToBlack: boolean;
+    inputs: VmixInput[];
+    overlays: number[];
+    audio: Record<string, any>;
 
-    constructor(jsonData) {
+    constructor(jsonData: JsonObject) {
         this.preset = jsonData.vmix.preset
             ? jsonData.vmix.preset['#text'].split('\\').pop().slice(0, -5)
             : '';
@@ -21,17 +21,17 @@ class VmixInfo {
         this.streaming = jsonData.vmix.streaming['#text'] === 'True';
         this.fadeToBlack = jsonData.vmix.fadeToBlack['#text'] === 'True';
 
-        const keyMap = {};
+        const keyMap: Record<string, number> = {};
         jsonData.vmix.inputs.input.forEach(
-            (i) => (keyMap[i['@attributes'].key] = Number(i['@attributes'].number)),
+            (i: JsonObject) => (keyMap[i['@attributes'].key] = Number(i['@attributes'].number)),
         );
 
         this.inputs = [];
-        jsonData.vmix.inputs.input.forEach((i) => {
+        jsonData.vmix.inputs.input.forEach((i: JsonObject) => {
             const number = Number(i['@attributes'].number);
             this.inputs[number] = i['@attributes'];
             this.inputs[number].overlays = [];
-            ensureArray(i.overlay).forEach((overlay) => {
+            ensureArray<JsonObject>(i.overlay).forEach((overlay) => {
                 const overlayNumber = keyMap[overlay['@attributes'].key];
                 this.inputs[number].overlays.push({
                     index: parseInt(overlay['@attributes'].index),
@@ -41,23 +41,28 @@ class VmixInfo {
         });
         this.overlays = [];
         jsonData.vmix.overlays.overlay
-            .filter((o) => o['#text'] !== undefined)
-            .forEach((o) => (this.overlays[Number(o['@attributes'].number)] = Number(o['#text'])));
+            .filter((o: JsonObject) => o['#text'] !== undefined)
+            .forEach(
+                (o: JsonObject) =>
+                    (this.overlays[Number(o['@attributes'].number)] = Number(o['#text'])),
+            );
 
         this.audio = {};
-        Object.entries(jsonData.vmix.audio).forEach(([k, v]) => (this.audio[k] = v['@attributes']));
+        Object.entries(jsonData.vmix.audio).forEach(
+            ([k, v]) => (this.audio[k] = (v as JsonObject)['@attributes']),
+        );
     }
 }
 
 const parser = new DOMParser();
-async function fetchVmixInfo(host) {
+async function fetchVmixInfo(host: string): Promise<VmixFetchInfo> {
     const res = await fetchUrl(getApiUrl(host));
 
-    if (res.status === 200) {
+    if (res.status === 200 && res.value !== null) {
         const xmlData = parser.parseFromString(res.value, 'text/xml');
         const jsonData = xml2json(xmlData);
         return {
-            value: new VmixInfo(jsonData),
+            value: new VmixInfo(jsonData as JsonObject),
             error: null,
         };
     } else {
@@ -68,7 +73,7 @@ async function fetchVmixInfo(host) {
     }
 }
 
-function getVmixInfo(number) {
+function getVmixInfo(number: number | null): VmixFetchInfo | null {
     console.assert(number === null || Number.isInteger(number));
     if (number === null || getBox(number) === null) {
         return null;
@@ -76,15 +81,15 @@ function getVmixInfo(number) {
     return vmixInfos[number];
 }
 
-function setVmixInfo(number, info) {
+function setVmixInfo(number: number, info: VmixFetchInfo | null): void {
     console.assert(Number.isInteger(number));
     vmixInfos[number] = info;
 }
 
-function renderVmixInfo(box) {
+function renderVmixInfo(box: Element): void {
     const boxNum = getBoxNumber(box);
     const vmixInfo = getVmixInfo(boxNum);
-    const boxName = getBoxName(box) || `Box ${boxNum}`;
+    const boxName = getBoxName(box) || getDefaultBoxName(boxNum);
     const boxDisplayName = box.querySelector('.boxDisplayName');
     if (boxDisplayName) {
         boxDisplayName.textContent = boxName;
@@ -92,25 +97,25 @@ function renderVmixInfo(box) {
     }
 
     if (vmixInfo === null) {
-        box.querySelector('.vmixInfo').innerHTML = getVmixInfoHeader(box, null);
+        requireElement('.vmixInfo', box).innerHTML = getVmixInfoHeader(box, null);
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        box.querySelector('.vmixInfo').innerHTML = `
+        requireElement('.vmixInfo', box).innerHTML = `
           ${getVmixInfoHeader(box, null)}
           <div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
         return;
     }
     const active = info.inputs[info.active];
     const preview = info.inputs[info.preview];
-    box.querySelector('.vmixInfo').innerHTML = `
+    requireElement('.vmixInfo', box).innerHTML = `
       ${getVmixInfoHeader(box, info)}
       ${getProgramPreviewLine(active, 'badge-primary', info.inputs)}
       ${getProgramPreviewLine(preview, 'badge-warning', info.inputs)}`;
 }
 
-function getVmixInfoHeader(box, info) {
+function getVmixInfoHeader(box: Element, info: VmixInfo | null): string {
     if (!info) {
         return '<div class="mb-1 min-w-0 text-xs font-semibold text-base-content/70">vMix</div>';
     }
@@ -121,9 +126,9 @@ function getVmixInfoHeader(box, info) {
       </div>`;
 }
 
-function getVmixStatusBadges(info) {
+function getVmixStatusBadges(info: VmixInfo): string {
     const badgeClass =
-        'badge badge-error badge-outline h-[14px] min-h-0 rounded-xs px-1 text-[10px] leading-none';
+        'badge badge-error badge-outline h-3.5 min-h-0 rounded-xs px-1 text-[10px] leading-none';
     return [
         info.recording ? `<span class="${badgeClass}">REC</span>` : '',
         info.external ? `<span class="${badgeClass}">EXT</span>` : '',
@@ -132,22 +137,22 @@ function getVmixStatusBadges(info) {
     ].join('');
 }
 
-function getProgramPreviewLine(input, badgeClass, inputs) {
+function getProgramPreviewLine(input: VmixInput, badgeClass: string, inputs: VmixInput[]): string {
     return `
       <div class="flex min-w-0 items-center gap-1">
-        <span class="badge ${badgeClass} h-[16px] w-[24px] py-0">${input.number}</span>
+        <span class="badge ${badgeClass} h-4 w-6 py-0">${input.number}</span>
         ${input.duration !== '0' ? `<div class="inline-block min-w-[77px] text-center text-xs">${getShortInputProgress(input)}</div>` : ''}
         <span class="inline-flex min-w-0 flex-1 overflow-hidden whitespace-nowrap" title="${getHtmlAttributeText(getInputTitleTip(input, inputs))}">${getResponsiveTitle(input.title)}</span>
       </div>`;
 }
 
-function getBusName(bus, capital = false) {
+function getBusName(bus: string, capital = false): string {
     const name = bus === 'M' ? 'master' : `bus${bus}`;
     console.assert(name !== undefined, bus);
     return capital ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 }
 
-function getShortInputProgress(input) {
+function getShortInputProgress(input: VmixInput): string {
     if (input.duration === '0') return '';
 
     console.assert(['Video', 'AudioFile', 'Photos', 'PowerPoint'].includes(input.type), input.type);
@@ -161,7 +166,7 @@ function getShortInputProgress(input) {
     return `${formatTimeMMSS(duration)} | ${formatTimeMMSS(remaining)}`;
 }
 
-function getInputDuration(input) {
+function getInputDuration(input: VmixInput): string | number {
     if (input.duration === '0') return '';
 
     console.assert(['Video', 'AudioFile', 'Photos', 'PowerPoint'].includes(input.type), input.type);
@@ -173,7 +178,7 @@ function getInputDuration(input) {
     return formatTimeMMSS(duration);
 }
 
-function getVolumeInfo(input) {
+function getVolumeInfo(input: VmixInput): string {
     let gain = '';
     if (input.gainDb !== undefined && input.gainDb !== '0') {
         gain = ' | ' + Math.round(input.gainDb * 100) / 100 + 'dB';
@@ -181,8 +186,11 @@ function getVolumeInfo(input) {
     return Math.round(input.volume) + '%' + gain;
 }
 
-function drawAudioLevels(canvas, input) {
+function drawAudioLevels(canvas: HTMLCanvasElement, input: VmixInput): void {
     const ctx = canvas.getContext('2d');
+    if (ctx === null) {
+        return;
+    }
     ctx.clearRect(0, 0, 100, 100);
     const left = Math.log10(parseFloat(input.meterF1)) * 20;
     const right = Math.log10(parseFloat(input.meterF2)) * 20;

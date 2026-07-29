@@ -1,5 +1,7 @@
 // ===== vMix API Utils =====
-async function fetchUrl(url) {
+async function fetchUrl(
+    url: string,
+): Promise<{ status: number | null; value: string | null; error: unknown }> {
     try {
         const response = await fetch(url, { signal: AbortSignal.timeout(2000) });
         const data = await response.text();
@@ -17,7 +19,7 @@ async function fetchUrl(url) {
     }
 }
 
-function getApiUrl(host, request = '') {
+function getApiUrl(host: string, request = ''): string {
     const rawUrl = host.trim();
     const url = new URL(/^https?:\/\//i.test(rawUrl) ? rawUrl : 'http://' + rawUrl);
 
@@ -34,21 +36,23 @@ function getApiUrl(host, request = '') {
     return url.origin + url.pathname + '?' + request;
 }
 
-async function execute(url, isShow = true) {
+async function execute(url: string, isShow = true): Promise<void> {
     const res = await fetchUrl(url);
     const timestamp = new Date().toLocaleTimeString();
-    storeLog(url, res.status, res.value, res.error, timestamp);
+    const status = res.status ?? 0;
+    const value = res.value ?? '';
+    storeLog(url, status, value, res.error, timestamp);
     if (isShow) {
-        showLog(url, res.status, res.value, res.error, timestamp);
+        showLog(url, status, value, String(res.error), timestamp);
     }
 }
 
 // ===== vMix Web Commands =====
-function previewInput(inputNum) {
+function previewInput(inputNum: number): void {
     masterSlaveExecute('Function=PreviewInput&Input=' + inputNum);
 }
 
-function transition(type) {
+function transition(type: string): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -58,17 +62,17 @@ function transition(type) {
     masterSlaveExecute('Function=' + type + inputParam);
 }
 
-function clamp(value, min, max) {
+function clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, value));
 }
 
-function getEffectiveInputVolume(input) {
+function getEffectiveInputVolume(input: VmixInput): number {
     const volume = Number(input.volume);
     const gain = input.gainDb === undefined ? 0 : Number(input.gainDb);
     return volume * Math.pow(10, gain / 20);
 }
 
-function getIncreasedInputAudio(input) {
+function getIncreasedInputAudio(input: VmixInput): string[] {
     const volume = getEffectiveInputVolume(input);
     const dB = Math.round(20 * Math.log10(volume / 100));
 
@@ -78,7 +82,7 @@ function getIncreasedInputAudio(input) {
     return ['100', String(clamp(dB + 1, 0, 24))];
 }
 
-function getDecreasedInputAudio(input) {
+function getDecreasedInputAudio(input: VmixInput): string[] {
     const volume = getEffectiveInputVolume(input);
     const dB = Math.round(20 * Math.log10(volume / 100));
 
@@ -88,7 +92,7 @@ function getDecreasedInputAudio(input) {
     return ['100', String(clamp(dB - 1, 0, 24))];
 }
 
-function adjustInputAudio(inputNum, direction) {
+function adjustInputAudio(inputNum: number, direction: number): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -106,7 +110,7 @@ function adjustInputAudio(inputNum, direction) {
     }, 200);
 }
 
-function toggleAudioBus(inputNum, bus) {
+function toggleAudioBus(inputNum: number, bus: string): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -115,7 +119,7 @@ function toggleAudioBus(inputNum, bus) {
     masterSlaveExecute(`Function=AudioBus${on ? 'Off' : 'On'}&Value=${bus}&Input=${inputNum}`);
 }
 
-function toggleSendToMaster(bus) {
+function toggleSendToMaster(bus: string): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -124,7 +128,7 @@ function toggleSendToMaster(bus) {
     masterSlaveExecute(`Function=BusXSendToMaster${on ? 'Off' : 'On'}&Value=${bus}`);
 }
 
-function toggleBusAudio(bus) {
+function toggleBusAudio(bus: string): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -133,7 +137,7 @@ function toggleBusAudio(bus) {
     masterSlaveExecute(`Function=${getBusName(bus, true)}Audio${on ? 'Off' : 'On'}`);
 }
 
-function adjustBusVolume(bus, amount) {
+function adjustBusVolume(bus: string, amount: number): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -144,11 +148,11 @@ function adjustBusVolume(bus, amount) {
     );
 }
 
-function overlayInput(inputNum, overlayNum) {
+function overlayInput(inputNum: number, overlayNum: number): void {
     masterSlaveExecute('Function=OverlayInput' + overlayNum + '&Input=' + inputNum);
 }
 
-function muteInput(inputNum) {
+function muteInput(inputNum: number): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -157,7 +161,7 @@ function muteInput(inputNum) {
     masterSlaveExecute(`Function=${on ? 'AudioOff' : 'AudioOn'}&Input=${inputNum}`);
 }
 
-function loopInput(inputNum) {
+function loopInput(inputNum: number): void {
     const info = getMasterInfo();
     if (info === null) {
         return;
@@ -166,7 +170,7 @@ function loopInput(inputNum) {
     masterSlaveExecute(`Function=${on ? 'LoopOff' : 'LoopOn'}&Input=${inputNum}`);
 }
 
-function masterSlaveExecute(command) {
+function masterSlaveExecute(command: string): void {
     const master = getMaster();
     if (master === null) {
         return;
@@ -176,6 +180,6 @@ function masterSlaveExecute(command) {
     targets.unshift(master);
     removeDuplicates(targets)
         .filter((num) => getBox(num) !== null)
-        .map((num) => getBoxHost(getBox(num)))
+        .map((num) => getBoxHost(getBox(num)!))
         .forEach((host) => execute(getApiUrl(host, command)));
 }

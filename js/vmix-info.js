@@ -1,3 +1,4 @@
+"use strict";
 class VmixInfo {
     constructor(jsonData) {
         this.preset = jsonData.vmix.preset
@@ -35,7 +36,7 @@ class VmixInfo {
 const parser = new DOMParser();
 async function fetchVmixInfo(host) {
     const res = await fetchUrl(getApiUrl(host));
-    if (res.status === 200) {
+    if (res.status === 200 && res.value !== null) {
         const xmlData = parser.parseFromString(res.value, 'text/xml');
         const jsonData = xml2json(xmlData);
         return {
@@ -64,26 +65,26 @@ function setVmixInfo(number, info) {
 function renderVmixInfo(box) {
     const boxNum = getBoxNumber(box);
     const vmixInfo = getVmixInfo(boxNum);
-    const boxName = getBoxName(box) || `Box ${boxNum}`;
+    const boxName = getBoxName(box) || getDefaultBoxName(boxNum);
     const boxDisplayName = box.querySelector('.boxDisplayName');
     if (boxDisplayName) {
         boxDisplayName.textContent = boxName;
         boxDisplayName.setAttribute('title', boxName);
     }
     if (vmixInfo === null) {
-        box.querySelector('.vmixInfo').innerHTML = getVmixInfoHeader(box, null);
+        requireElement('.vmixInfo', box).innerHTML = getVmixInfoHeader(box, null);
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        box.querySelector('.vmixInfo').innerHTML = `
+        requireElement('.vmixInfo', box).innerHTML = `
           ${getVmixInfoHeader(box, null)}
           <div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
         return;
     }
     const active = info.inputs[info.active];
     const preview = info.inputs[info.preview];
-    box.querySelector('.vmixInfo').innerHTML = `
+    requireElement('.vmixInfo', box).innerHTML = `
       ${getVmixInfoHeader(box, info)}
       ${getProgramPreviewLine(active, 'badge-primary', info.inputs)}
       ${getProgramPreviewLine(preview, 'badge-warning', info.inputs)}`;
@@ -98,7 +99,7 @@ function getVmixInfoHeader(box, info) {
       </div>`;
 }
 function getVmixStatusBadges(info) {
-    const badgeClass = 'badge badge-error badge-outline h-[14px] min-h-0 rounded-xs px-1 text-[10px] leading-none';
+    const badgeClass = 'badge badge-error badge-outline h-3.5 min-h-0 rounded-xs px-1 text-[10px] leading-none';
     return [
         info.recording ? `<span class="${badgeClass}">REC</span>` : '',
         info.external ? `<span class="${badgeClass}">EXT</span>` : '',
@@ -109,7 +110,7 @@ function getVmixStatusBadges(info) {
 function getProgramPreviewLine(input, badgeClass, inputs) {
     return `
       <div class="flex min-w-0 items-center gap-1">
-        <span class="badge ${badgeClass} h-[16px] w-[24px] py-0">${input.number}</span>
+        <span class="badge ${badgeClass} h-4 w-6 py-0">${input.number}</span>
         ${input.duration !== '0' ? `<div class="inline-block min-w-[77px] text-center text-xs">${getShortInputProgress(input)}</div>` : ''}
         <span class="inline-flex min-w-0 flex-1 overflow-hidden whitespace-nowrap" title="${getHtmlAttributeText(getInputTitleTip(input, inputs))}">${getResponsiveTitle(input.title)}</span>
       </div>`;
@@ -150,6 +151,9 @@ function getVolumeInfo(input) {
 }
 function drawAudioLevels(canvas, input) {
     const ctx = canvas.getContext('2d');
+    if (ctx === null) {
+        return;
+    }
     ctx.clearRect(0, 0, 100, 100);
     const left = Math.log10(parseFloat(input.meterF1)) * 20;
     const right = Math.log10(parseFloat(input.meterF2)) * 20;

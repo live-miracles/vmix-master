@@ -1,4 +1,4 @@
-function extractLeadingNumbers(input) {
+function extractLeadingNumbers(input: string): string {
     const match = input.match(/^(Virtual - )?(\d+(?:_\d+)?)/);
     if (match) {
         return match[1] ? match[1] + match[2] : match[2];
@@ -6,21 +6,21 @@ function extractLeadingNumbers(input) {
     return '';
 }
 
-function getError(type, msg) {
+function getError(type: string, msg: string): string {
     return `<div><span class="text-error font-semibold">Error: ${type}.</span> ${msg}</div>`;
 }
 
-function getWarning(type, msg) {
+function getWarning(type: string, msg: string): string {
     return `<div><span class="text-warning font-semibold">Warning: ${type}.</span> ${msg}</div>`;
 }
 
-function getCompareBoxName(num) {
+function getCompareBoxName(num: number): string {
     const box = getBox(num);
     const name = box === null ? 'vMix instance' : getBoxName(box) || 'vMix instance';
     return `<span class="font-semibold text-accent">${new Option(name).innerHTML}</span>`;
 }
 
-function similarTypes(type1, type2) {
+function similarTypes(type1: string, type2: string): boolean {
     const audioTypes = ['Audio', 'VideoCall'];
     if (audioTypes.includes(type1) && audioTypes.includes(type2)) {
         return true;
@@ -35,7 +35,7 @@ function similarTypes(type1, type2) {
 function compareSlaves() {
     const modal = document.getElementById('compare-modal') as HTMLDialogElement;
     const reportClassName = 'w-full max-w-none ';
-    const compareReport = document.getElementById('compare-report');
+    const compareReport = requireElementById('compare-report');
     modal.showModal();
     const infoMsg = `
       Click a vMix instance to set the selected vMix, then mark instances as Part of Group. The script will do the following:
@@ -67,7 +67,7 @@ function compareSlaves() {
         return;
     }
 
-    const infos = [];
+    const infos: VmixInfo[] = [];
     for (let i = 0; i < nums.length; i++) {
         const number = nums[i];
         const info = getVmixInfo(number)?.value;
@@ -81,8 +81,8 @@ function compareSlaves() {
 
     let innerHtml = '';
     let msg = '';
-    const warnings = [];
-    const errors = [];
+    const warnings: string[] = [];
+    const errors: string[] = [];
 
     // check buses
     Object.entries(infos[1].audio).forEach(([k, v1]: [string, any]) => {
@@ -108,8 +108,8 @@ function compareSlaves() {
 
     // check vMix call settings
     infos[1].inputs
-        .filter((input) => input.type === 'VideoCall')
-        .forEach((input1) => {
+        .filter((input: VmixInput) => input.type === 'VideoCall')
+        .forEach((input1: VmixInput) => {
             for (let j = 2; j < infos.length; j++) {
                 const input2 = infos[j].inputs[input1.number];
                 const num2 = nums[j];
@@ -130,7 +130,7 @@ function compareSlaves() {
             }
         });
 
-    infos[0].inputs.forEach((input1, i) => {
+    infos[0].inputs.forEach((input1: VmixInput, i: number) => {
         const leadNum1 = extractLeadingNumbers(input1.title);
         for (let j = 1; j < infos.length; j++) {
             const input2 = infos[j].inputs[i];
@@ -168,14 +168,14 @@ function compareSlaves() {
             }
 
             // check layers
-            input1.overlays.forEach((over1, k) => {
+            input1.overlays.forEach((over1: VmixOverlay, k: number) => {
                 const overInput1 = infos[0].inputs[over1.number];
                 const overLeadNum = extractLeadingNumbers(overInput1.title);
                 const over2 = input2.overlays[k];
                 if (overLeadNum === '') {
                     return;
                 } else if (over2 === undefined) {
-                    msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over2.number}>
+                    msg = `Input #${i} ${input2.title} layer #${over1.index + 1} <${over1.number}>
                         is missing for ${name2}.`;
                     errors.push(getError('missing layer', msg));
                 } else if (over1.index !== over2.index || over1.number !== over2.number) {

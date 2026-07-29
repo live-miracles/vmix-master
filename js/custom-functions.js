@@ -1,3 +1,4 @@
+"use strict";
 function customExecution(request) {
     masterSlaveExecute(request);
 }
@@ -113,9 +114,9 @@ function renderCustomFunctions() {
             </div>
           </div>`;
     });
-    document.querySelector('.custom-functions-container').innerHTML += innerHTML;
-    const executeBtn = document.getElementById('execute-btn');
-    executeBtn.onclick = () => customExecution(document.getElementById('rawRequest').value);
+    requireElement('.custom-functions-container').innerHTML += innerHTML;
+    const executeBtn = requireElementById('execute-btn');
+    executeBtn.onclick = () => customExecution(requireElementById('rawRequest').value);
     document.querySelectorAll('.function-btn').forEach((btn) => {
         btn.onclick = () => {
             const container = btn.parentElement.parentElement;

@@ -1,7 +1,8 @@
+"use strict";
 function updateBoxNums() {
     let cnt = 1;
     Array.from(document.getElementsByClassName('box')).forEach((box) => {
-        box.querySelector('.box-number').innerHTML = String(cnt++);
+        box.querySelector('.box-number').textContent = String(cnt++);
     });
     ensureMasterBox();
     updateBoxMasterStyles();
@@ -40,7 +41,7 @@ function setInitialGroupBoxes() {
     const params = new URLSearchParams(window.location.search);
     const group = parseNumbers(params.get('group') || '');
     getBoxes().forEach((box) => {
-        box.querySelector('.group-input').value = group.includes(getBoxNumber(box)) ? '1' : '0';
+        requireElement('.group-input', box).value = group.includes(getBoxNumber(box)) ? '1' : '0';
     });
     updateBoxMasterStyles();
     updateGroupParam();
@@ -54,14 +55,14 @@ function setMasterBox(box) {
 }
 function updateBoxMasterStyles() {
     getBoxes().forEach((box) => {
-        const panel = box.querySelector('.box-panel');
+        const panel = requireElement('.box-panel', box);
         const isMaster = box.classList.contains('is-master');
         const isGroup = getBoxGroup(box);
         panel.classList.toggle('border-accent', isMaster);
         panel.classList.toggle('border-base-content/25', !isMaster);
-        box.querySelector('.boxDisplayName').classList.toggle('text-accent', !isGroup);
-        box.querySelector('.boxDisplayName').classList.toggle('text-primary', isGroup);
-        box.querySelector('.group-icon').classList.toggle('hidden', !isGroup);
+        requireElement('.boxDisplayName', box).classList.toggle('text-accent', !isGroup);
+        requireElement('.boxDisplayName', box).classList.toggle('text-primary', isGroup);
+        requireElement('.group-icon', box).classList.toggle('hidden', !isGroup);
     });
     updateGroupCompareButton();
 }
@@ -76,19 +77,19 @@ function updateGroupCompareButton() {
 function openBoxEdit(e) {
     const box = e.currentTarget.closest('.box');
     const modal = document.getElementById('box-edit-modal');
-    modal.querySelector('.box-edit-number').value = String(getBoxNumber(box));
-    modal.querySelector('.box-edit-name').value = getBoxName(box);
-    modal.querySelector('.box-edit-host').value = getBoxHost(box);
-    modal.querySelector('.box-edit-group').checked = getBoxGroup(box);
+    requireElement('.box-edit-number', modal).value = String(getBoxNumber(box));
+    requireElement('.box-edit-name', modal).value = getBoxName(box);
+    requireElement('.box-edit-host', modal).value = getBoxHost(box);
+    requireElement('.box-edit-group', modal).checked = getBoxGroup(box);
     clearBoxEditValidation();
     modal.showModal();
 }
 function openNewBoxForm() {
     const modal = document.getElementById('box-edit-modal');
-    modal.querySelector('.box-edit-number').value = '';
-    modal.querySelector('.box-edit-name').value = '';
-    modal.querySelector('.box-edit-host').value = '';
-    modal.querySelector('.box-edit-group').checked = false;
+    requireElement('.box-edit-number', modal).value = '';
+    requireElement('.box-edit-name', modal).value = getDefaultBoxName(getBoxCount() + 1);
+    requireElement('.box-edit-host', modal).value = '';
+    requireElement('.box-edit-group', modal).checked = false;
     clearBoxEditValidation();
     modal.showModal();
 }
@@ -103,10 +104,10 @@ function clearBoxEditValidation() {
 }
 function saveBoxEdit() {
     const modal = document.getElementById('box-edit-modal');
-    const nameInput = modal.querySelector('.box-edit-name');
-    const hostInput = modal.querySelector('.box-edit-host');
-    const groupInput = modal.querySelector('.box-edit-group');
-    const boxNumber = parseInt(modal.querySelector('.box-edit-number').value);
+    const nameInput = requireElement('.box-edit-name', modal);
+    const hostInput = requireElement('.box-edit-host', modal);
+    const groupInput = requireElement('.box-edit-group', modal);
+    const boxNumber = parseInt(requireElement('.box-edit-number', modal).value);
     const name = nameInput.value.trim();
     const host = hostInput.value.trim();
     const group = groupInput.checked;
@@ -128,9 +129,9 @@ function saveBoxEdit() {
     if (box === null) {
         return;
     }
-    box.querySelector('.name-input').value = name;
-    box.querySelector('.host-input').value = host;
-    box.querySelector('.group-input').value = group ? '1' : '0';
+    requireElement('.name-input', box).value = name;
+    requireElement('.host-input', box).value = host;
+    requireElement('.group-input', box).value = group ? '1' : '0';
     updateBoxesParam();
     updateGroupParam();
     updateBoxMasterStyles();
@@ -139,7 +140,7 @@ function saveBoxEdit() {
 }
 function createBox(name, host, num, group = false) {
     const box = document.createElement('div');
-    const boxName = name || `Box ${num}`;
+    const boxName = name || getDefaultBoxName(num);
     box.className = 'box w-64 shrink-0';
     box.innerHTML = `
         <div class="box-panel container max-w-full cursor-grab rounded-md border border-base-content/25 bg-base-200 p-2">
@@ -155,12 +156,12 @@ function createBox(name, host, num, group = false) {
               </svg>
             </div>
             <div class="flex shrink-0 items-center justify-center gap-0.5">
-              <button class="edit-btn focus btn btn-square btn-accent btn-outline h-[20px] min-h-0 w-[20px] p-0" title="Edit box" aria-label="Edit box">
+              <button class="edit-btn focus btn btn-square btn-accent btn-outline h-5 min-h-0 w-5 p-0" title="Edit box" aria-label="Edit box">
                 <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
                 </svg>
               </button>
-              <button class="close-btn focus btn btn-square btn-error btn-outline h-[20px] min-h-0 w-[20px] p-0" title="Delete box" aria-label="Delete box">
+              <button class="close-btn focus btn btn-square btn-error btn-outline h-5 min-h-0 w-5 p-0" title="Delete box" aria-label="Delete box">
                 <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M3 6h18" />
                   <path d="M8 6V4h8v2" />
@@ -172,12 +173,12 @@ function createBox(name, host, num, group = false) {
             </div>
           </div>
           <div class="vmixInfo min-w-0 text-sm"></div>
-          <input type="hidden" value="${getHtmlAttributeText(name)}" class="name-input" name="vmix-name">
+          <input type="hidden" value="${getHtmlAttributeText(boxName)}" class="name-input" name="vmix-name">
           <input type="hidden" value="${getHtmlAttributeText(host)}" class="host-input" name="vmix-host">
           <input type="hidden" value="${group ? '1' : '0'}" class="group-input" name="vmix-group">
         </div>`;
-    box.querySelector('.edit-btn').onclick = openBoxEdit;
-    box.querySelector('.close-btn').onclick = closeBox;
+    requireElement('.edit-btn', box).addEventListener('click', openBoxEdit);
+    requireElement('.close-btn', box).addEventListener('click', closeBox);
     box.querySelectorAll('button').forEach((button) => button.addEventListener('click', (e) => e.stopPropagation()));
     box.onclick = () => setMasterBox(box);
     return box;

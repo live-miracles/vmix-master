@@ -1,61 +1,84 @@
 const LOG_SIZE = 500;
 
+function requireElement<T extends Element = HTMLElement>(
+    selector: string,
+    parent: ParentNode = document,
+): T {
+    const element = parent.querySelector(selector);
+    if (element === null) {
+        throw new Error(`Missing required element: ${selector}`);
+    }
+    return element as T;
+}
+
+function requireElementById<T extends HTMLElement = HTMLElement>(id: string): T {
+    const element = document.getElementById(id);
+    if (element === null) {
+        throw new Error(`Missing required element: #${id}`);
+    }
+    return element as T;
+}
+
 // ===== Box Utils =====
-function getBoxes() {
+function getBoxes(): Element[] {
     return Array.from(document.querySelectorAll('.box'));
 }
 
-function getBox(num) {
+function getBox(num: number | null): Element | null {
     console.assert(num === null || Number.isInteger(num));
     const boxes = getBoxes();
-    if (!Number.isInteger(num) || num < 1 || num > boxes.length) {
+    if (num === null || !Number.isInteger(num) || num < 1 || num > boxes.length) {
         return null;
     }
     return boxes[num - 1];
 }
 
-function getBoxCount() {
+function getBoxCount(): number {
     return document.getElementsByClassName('box').length;
 }
 
-function getBoxNumber(box) {
-    console.assert(box.classList.contains('box'));
-    return parseInt(box.querySelector('.box-number').innerHTML);
+function getDefaultBoxName(num: number): string {
+    return `vMix ${num}`;
 }
 
-function getBoxName(box) {
+function getBoxNumber(box: Element): number {
     console.assert(box.classList.contains('box'));
-    return box.querySelector('.name-input').value;
+    return parseInt(requireElement('.box-number', box).innerHTML);
 }
 
-function getBoxHost(box) {
+function getBoxName(box: Element): string {
     console.assert(box.classList.contains('box'));
-    return box.querySelector('.host-input').value;
+    return requireElement('.name-input', box).value;
 }
 
-function getBoxGroup(box) {
+function getBoxHost(box: Element): string {
     console.assert(box.classList.contains('box'));
-    return box.querySelector('.group-input').value === '1';
+    return requireElement('.host-input', box).value;
 }
 
-function getBoxVmixInfo(box) {
+function getBoxGroup(box: Element): boolean {
+    console.assert(box.classList.contains('box'));
+    return requireElement('.group-input', box).value === '1';
+}
+
+function getBoxVmixInfo(box: Element): VmixFetchInfo | null {
     console.assert(box.classList.contains('box'));
     return getVmixInfo(getBoxNumber(box));
 }
 
 // ===== Document Config & Box URL Utils =====
-function getInputValue(input) {
+function getInputValue(input: HTMLInputElement): string {
     if (input.type === 'checkbox') {
         return input.checked ? '1' : '0';
     } else if (input.type === 'text' || input.type === 'number') {
         return input.value;
     } else {
         console.error('Unknown input type: ' + input.type);
-        return null;
+        return '';
     }
 }
 
-function setInputValue(input, value) {
+function setInputValue(input: HTMLInputElement, value: string): void {
     if (input.type === 'checkbox') {
         console.assert(['0', '1'].includes(value));
         input.checked = value === '1';
@@ -70,7 +93,7 @@ function setDocumentUrlParams() {
     const url = window.location.href;
     const searchParams = new URLSearchParams(new URL(url).search);
 
-    document.querySelectorAll('.url-param').forEach((input) => {
+    document.querySelectorAll<HTMLInputElement>('.url-param').forEach((input) => {
         const value = searchParams.get(input.id);
         if (value) {
             setInputValue(input, value);
@@ -78,9 +101,10 @@ function setDocumentUrlParams() {
     });
 }
 
-function updateUrlParam(e) {
-    const name = e.currentTarget.id;
-    const value = getInputValue(e.currentTarget);
+function updateUrlParam(e: Event): void {
+    const input = e.currentTarget as HTMLInputElement;
+    const name = input.id;
+    const value = getInputValue(input);
 
     const url = new URL(window.location.href);
     url.searchParams.set(name, value);
@@ -124,8 +148,8 @@ function updateGroupParam() {
 }
 
 // ===== Logging Utils =====
-function show(header, msg, isError = false) {
-    const logs = document.querySelector('.logs');
+function show(header: string, msg: string, isError = false): void {
+    const logs = requireElement('.logs');
     logs.innerHTML =
         `
         <div class="divider mb-1 mt-3 text-secondary">
@@ -135,11 +159,11 @@ function show(header, msg, isError = false) {
         logs.innerHTML;
 }
 
-function showError(header, msg) {
+function showError(header: string, msg: string): void {
     show(header, msg, true);
 }
 
-function showLog(url, status, value, error, time) {
+function showLog(url: string, status: number, value: string, error: string, time: string): void {
     const message = `[${time}]: ` + (value ? getShortText(value, 300) : 'Error');
     if (status === 200) {
         show(url, message);
@@ -148,35 +172,33 @@ function showLog(url, status, value, error, time) {
     }
 }
 
-function storeLog(url, status, value, error, time) {
-    const logs = localStorage.getItem('vmix-master-logs')
-        ? JSON.parse(localStorage.getItem('vmix-master-logs'))
-        : [];
+function storeLog(url: string, status: number, value: string, error: unknown, time: string): void {
+    const stored = localStorage.getItem('vmix-master-logs');
+    const logs: StoredLog[] = stored ? JSON.parse(stored) : [];
     logs.unshift({ time: time, url: url, status, value: value, error: String(error) });
     localStorage.setItem('vmix-master-logs', JSON.stringify(logs.slice(0, LOG_SIZE)));
 }
 
 function showStoredLogs() {
-    const logs = localStorage.getItem('vmix-master-logs')
-        ? JSON.parse(localStorage.getItem('vmix-master-logs'))
-        : [];
+    const stored = localStorage.getItem('vmix-master-logs');
+    const logs: StoredLog[] = stored ? JSON.parse(stored) : [];
     logs.reverse().forEach((log) => showLog(log.url, log.status, log.value, log.error, log.time));
 }
 
 // ===== General Purpose Utils =====
-function sleep(ms) {
+function sleep(ms: number): Promise<void> {
     return new Promise((r) => setTimeout(r, ms));
 }
 
-function removeDuplicates(arr) {
+function removeDuplicates<T>(arr: T[]): T[] {
     return arr.filter((val, i) => arr.indexOf(val) === i);
 }
 
-function getShortText(str, len) {
+function getShortText(str: string, len: number): string {
     return str.length > len ? str.slice(0, len / 2) + '...' + str.slice(-len / 2) : str;
 }
 
-function getResponsiveTitle(str) {
+function getResponsiveTitle(str: string): string {
     let splitIndex = Math.ceil(str.length * 0.5);
     while (splitIndex < str.length && !/[a-zA-Z0-9]/.test(str[splitIndex])) {
         splitIndex++;
@@ -189,7 +211,7 @@ function getResponsiveTitle(str) {
     );
 }
 
-function getHtmlAttributeText(str) {
+function getHtmlAttributeText(str: string): string {
     return str
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
@@ -197,7 +219,7 @@ function getHtmlAttributeText(str) {
         .replace(/>/g, '&gt;');
 }
 
-function getInputTitleTip(input, inputs) {
+function getInputTitleTip(input: VmixInput, inputs: VmixInput[]): string {
     const layerLines = input.overlays
         .map((layer) => {
             const layerInput = inputs[layer.number];
@@ -211,14 +233,14 @@ function getInputTitleTip(input, inputs) {
     return [getInputTitleTipHeader(input)].concat(layerLines).join('\n');
 }
 
-function getInputTitleTipHeader(input) {
+function getInputTitleTipHeader(input: VmixInput): string {
     if (input.duration === undefined || input.duration === '0') {
         return input.title;
     }
     return `${input.title} (${formatDurationText(input.duration)})`;
 }
 
-function formatDurationText(ms) {
+function formatDurationText(ms: number | string): string {
     const totalSeconds = Math.floor(Number(ms) / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -233,7 +255,7 @@ function formatDurationText(ms) {
     return `${seconds}s`;
 }
 
-function parseNumbers(str) {
+function parseNumbers(str: string): number[] {
     return str
         .split(' ')
         .map((num) => num.trim())
@@ -241,7 +263,7 @@ function parseNumbers(str) {
         .map((num) => parseInt(num));
 }
 
-function ensureArray(element) {
+function ensureArray<T>(element: T | T[] | undefined): T[] {
     if (element === undefined) return [];
     if (Array.isArray(element)) {
         return element;
@@ -250,18 +272,23 @@ function ensureArray(element) {
     }
 }
 
-function formatTimeMMSS(ms) {
+function formatTimeMMSS(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    const pad = (num) => String(num).padStart(2, '0');
+    const pad = (num: number) => String(num).padStart(2, '0');
     return `${hours === 0 ? '' : hours + ':'}${pad(minutes)}:${pad(seconds)}`;
 }
 
 // Draw the segmented dB meter with peak indicator
-function drawDbMeter(ctx, xOffset, dB, muted) {
+function drawDbMeter(
+    ctx: CanvasRenderingContext2D,
+    xOffset: number,
+    dB: number,
+    muted: boolean,
+): void {
     const canvasHeight = 100;
 
     // Define dB ranges and colors
@@ -297,17 +324,18 @@ function drawDbMeter(ctx, xOffset, dB, muted) {
     });
 }
 
-function xml2json(xml) {
+function xml2json(xml: Node): JsonObject | string | null {
     // Create the return object
-    var obj = {};
+    var obj: any = {};
 
     if (xml.nodeType == 1) {
         // element
         // do attributes
-        if (xml.attributes.length > 0) {
+        const xmlElement = xml as Element;
+        if (xmlElement.attributes.length > 0) {
             obj['@attributes'] = {};
-            for (var j = 0; j < xml.attributes.length; j++) {
-                var attribute = xml.attributes.item(j);
+            for (var j = 0; j < xmlElement.attributes.length; j++) {
+                var attribute = xmlElement.attributes.item(j)!;
                 obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
             }
         }

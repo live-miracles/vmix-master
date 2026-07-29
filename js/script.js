@@ -1,5 +1,11 @@
+"use strict";
+/// <reference path="./tools.ts" />
+/// <reference path="./box.ts" />
+/// <reference path="./vmix-info.ts" />
+/// <reference path="./vmix-web.ts" />
+/// <reference path="./custom-functions.ts" />
 function addBox(name = '', host = '', group = false) {
-    const boxes = document.getElementById('boxes');
+    const boxes = requireElementById('boxes');
     boxes.appendChild(createBox(name, host, getBoxCount() + 1, group));
     updateBoxNums();
 }
@@ -12,7 +18,7 @@ function splitOnce(str, separator) {
 }
 function initBoxes() {
     const params = new URLSearchParams(window.location.search);
-    const boxesParam = params.get('boxes') ? params.get('boxes') : '';
+    const boxesParam = params.get('boxes') || '';
     if (boxesParam === '')
         addBox();
     boxesParam
@@ -50,7 +56,7 @@ async function refreshInstances(cnt = 0) {
     requestAnimationFrame(() => refreshInstances((cnt + 1) % refreshRate));
 }
 function updateRefreshRates() {
-    const val1 = document.getElementById('refresh-rate').value;
+    const val1 = requireElementById('refresh-rate').value;
     refreshRate = val1 === '' ? -1 : Math.max(1, parseInt(val1));
 }
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
@@ -70,15 +76,15 @@ function getHostOptions() {
 function saveHostOptions() {
     const options = Array.from(document.querySelectorAll('.host-option-row'))
         .map((row) => ({
-        name: row.querySelector('.host-option-name').value.trim(),
-        host: row.querySelector('.host-option-host').value.trim(),
+        name: requireElement('.host-option-name', row).value.trim(),
+        host: requireElement('.host-option-host', row).value.trim(),
     }))
         .filter((option) => option.host !== '');
     localStorage.setItem(HOST_OPTIONS_KEY, JSON.stringify(options));
     renderHostDatalist();
 }
 function renderHostDatalist() {
-    const hosts = document.getElementById('hosts');
+    const hosts = requireElementById('hosts');
     hosts.innerHTML = '';
     getHostOptions().forEach((option) => {
         const hostOption = document.createElement('option');
@@ -91,7 +97,7 @@ function renderHostDatalist() {
     });
 }
 function addHostOptionRow(name = '', host = '') {
-    const hostOptions = document.getElementById('host-options');
+    const hostOptions = requireElementById('host-options');
     const row = document.createElement('div');
     row.className = 'host-option-row flex items-center gap-2';
     row.innerHTML = `
@@ -112,17 +118,17 @@ function addHostOptionRow(name = '', host = '') {
             <path d="M5 12h14" />
           </svg>
         </button>`;
-    row.querySelector('.host-option-name').value = name;
-    row.querySelector('.host-option-host').value = host;
+    requireElement('.host-option-name', row).value = name;
+    requireElement('.host-option-host', row).value = host;
     row.querySelectorAll('input').forEach((input) => input.addEventListener('change', saveHostOptions));
-    row.querySelector('.remove-host-option').addEventListener('click', () => {
+    requireElement('.remove-host-option', row).addEventListener('click', () => {
         row.remove();
         saveHostOptions();
     });
     hostOptions.appendChild(row);
 }
 function renderHostOptions() {
-    const hostOptions = document.getElementById('host-options');
+    const hostOptions = requireElementById('host-options');
     hostOptions.innerHTML = '';
     const options = getHostOptions();
     if (options.length === 0) {
@@ -139,6 +145,8 @@ async function showVmixScriptVersions() {
         const versions = await response.json();
         document.querySelectorAll('[data-script-version-key]').forEach((link) => {
             const key = link.getAttribute('data-script-version-key');
+            if (key === null)
+                return;
             const version = versions[key];
             if (!version)
                 return;
@@ -166,21 +174,23 @@ const vmixInfos = [];
     document
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
-    document.getElementById('add-box').addEventListener('click', openNewBoxForm);
-    document.getElementById('save-box-edit').addEventListener('click', saveBoxEdit);
-    document.querySelectorAll('.box-edit-name, .box-edit-host').forEach((input) => {
+    requireElementById('add-box').addEventListener('click', openNewBoxForm);
+    requireElementById('save-box-edit').addEventListener('click', saveBoxEdit);
+    document
+        .querySelectorAll('.box-edit-name, .box-edit-host')
+        .forEach((input) => {
         input.addEventListener('input', () => setInputValidationStyle(input));
         input.addEventListener('change', () => setInputValidationStyle(input));
     });
-    document.getElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
+    requireElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
     updateRefreshRates();
-    document.getElementById('refresh-rate').addEventListener('change', updateRefreshRates);
+    requireElementById('refresh-rate').addEventListener('change', updateRefreshRates);
     refreshInstances();
     new Sortable(document.getElementById('boxes'), {
         animation: 150,
         handle: '.cursor-grab', // Draggable by the entire row
         ghostClass: 'bg-base-300', // Adds a class for the dragged item
-        onEnd: function (e) {
+        onEnd: function (_e) {
             updateBoxNums();
             updateBoxesParam();
             updateMasterParam();
