@@ -178,7 +178,6 @@ async function showVmixScriptVersions() {
 }
 
 let refreshRate = -1;
-const vmixInfos: (VmixFetchInfo | null)[] = [];
 
 (() => {
     setDocumentUrlParams();
