@@ -45,6 +45,8 @@ Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration 
 Dim VOICE_THRESHOLD As Double = 0.1     ' 0.1 ~ -20dB; meterF1 value to consider as voice present
 Dim CHAIN_BUS As String = "B"           ' Script will be adjusting volume for this bus
 
+' 900 ms is good down time when using recommended setup with 800 ms delay for the translator,
+' but if translator directly goes to master without delay better to use 350 ms
 Dim VOLUME_DOWN_TIME As Integer = 900   ' How fast to fade volume down when translator starts speaking
 Dim VOLUME_REDUCED As Integer = 50      ' Source volume when translator is speaking
 
