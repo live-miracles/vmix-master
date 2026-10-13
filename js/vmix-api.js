@@ -56,6 +56,46 @@ function transition(type) {
     const inputParam = type === 'FadeToBlack' ? '' : '&Input=' + inputNum;
     masterSlaveExecute('Function=' + type + inputParam);
 }
+function getScreenInput(screen) {
+    const info = getMasterInfo();
+    return info === null ? null : info[screen];
+}
+function refreshMasterSoon() {
+    setTimeout(() => {
+        const masterBox = getBox(getMaster());
+        if (masterBox !== null) {
+            refreshInstance(masterBox);
+        }
+    }, 300);
+}
+function restartScreen(screen) {
+    const inputNum = getScreenInput(screen);
+    if (inputNum === null) {
+        return;
+    }
+    masterSlaveExecute('Function=Restart&Input=' + inputNum);
+    refreshMasterSoon();
+}
+function playPauseScreen(screen) {
+    const info = getMasterInfo();
+    if (info === null) {
+        return;
+    }
+    const inputNum = info[screen];
+    // Send an explicit Play or Pause from the master's state, so group members that were in
+    // a different state end up in the same one instead of all being toggled.
+    const running = info.inputs[inputNum].state === 'Running';
+    masterSlaveExecute(`Function=${running ? 'Pause' : 'Play'}&Input=${inputNum}`);
+    refreshMasterSoon();
+}
+function seekScreen(screen, ms) {
+    const inputNum = getScreenInput(screen);
+    if (inputNum === null) {
+        return;
+    }
+    masterSlaveExecute(`Function=SetPosition&Value=${Math.round(ms)}&Input=${inputNum}`);
+    refreshMasterSoon();
+}
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }

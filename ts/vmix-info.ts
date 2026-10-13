@@ -65,12 +65,20 @@ async function fetchVmixInfo(host: string): Promise<VmixFetchInfo> {
     const res = await fetchUrl(getApiUrl(host));
 
     if (res.status === 200 && res.value !== null) {
-        const xmlData = parser.parseFromString(res.value, 'text/xml');
-        const jsonData = xml2json(xmlData);
-        return {
-            value: new VmixInfo(jsonData as JsonObject),
-            error: null,
-        };
+        try {
+            const xmlData = parser.parseFromString(res.value, 'text/xml');
+            const jsonData = xml2json(xmlData);
+            return {
+                value: new VmixInfo(jsonData as JsonObject),
+                error: null,
+            };
+        } catch (error) {
+            // A reachable host that does not answer like the vMix API (e.g. another web server).
+            return {
+                value: null,
+                error: 'Not a vMix API response',
+            };
+        }
     } else {
         return {
             value: null,
@@ -92,6 +100,15 @@ function setVmixInfo(number: number, info: VmixFetchInfo | null): void {
     vmixInfos[number] = info;
 }
 
+function setBoxStatus(box: Element, status: 'ok' | 'error' | 'pending' | 'idle', title: string) {
+    const dot = requireElement('.status-dot', box);
+    dot.classList.toggle('bg-success', status === 'ok');
+    dot.classList.toggle('bg-error', status === 'error');
+    dot.classList.toggle('bg-base-content/30', status === 'idle' || status === 'pending');
+    dot.classList.toggle('animate-pulse', status === 'pending');
+    dot.title = title;
+}
+
 function renderVmixInfo(box: Element): void {
     const boxNum = getBoxNumber(box);
     const vmixInfo = getVmixInfo(boxNum);
@@ -102,33 +119,45 @@ function renderVmixInfo(box: Element): void {
         boxDisplayName.setAttribute('title', boxName + ' (double-click to rename)');
     }
 
+    const infoElem = requireElement('.vmixInfo', box);
+    const metaElem = requireElement('.vmixMeta', box);
+    metaElem.innerHTML = '';
     if (vmixInfo === null) {
         // Not fetched yet: stay blank without an address (or with refreshing off).
-        const waiting = getBoxHost(box) !== '' && refreshRate !== -1;
-        requireElement('.vmixInfo', box).innerHTML = waiting
-            ? '<div class="text-xs text-base-content/70">Connecting…</div>'
-            : '';
+        if (getBoxHost(box) === '') {
+            setBoxStatus(box, 'idle', 'No address');
+            infoElem.innerHTML = '';
+        } else if (refreshRate === -1) {
+            setBoxStatus(box, 'idle', 'Auto-refresh is off');
+            infoElem.innerHTML = '';
+        } else {
+            setBoxStatus(box, 'pending', 'Connecting…');
+            infoElem.innerHTML = '<div class="text-xs text-base-content/70">Connecting…</div>';
+        }
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        requireElement('.vmixInfo', box).innerHTML =
-            `<div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
+        const reason = String(vmixInfo.error);
+        setBoxStatus(box, 'error', 'Unreachable: ' + reason);
+        infoElem.innerHTML = `<div class="text-error" title="${getHtmlAttributeText(reason)}">Unavailable</div>`;
         return;
     }
+    setBoxStatus(box, 'ok', 'Connected');
     const active = info.inputs[info.active];
     const preview = info.inputs[info.preview];
-    requireElement('.vmixInfo', box).innerHTML = `
-      ${getVmixInfoHeader(box, info)}
+    metaElem.innerHTML = getVmixInfoHeader(info);
+    infoElem.innerHTML = `
       ${getProgramPreviewLine(active, 'badge-primary', info.inputs)}
       ${getProgramPreviewLine(preview, 'badge-warning', info.inputs)}`;
 }
 
-function getVmixInfoHeader(box: Element, info: VmixInfo): string {
-    return `<div class="mb-1 flex min-w-0 flex-wrap items-center gap-1">
-        <span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold text-base-content/70">${info.preset || 'vMix'}</span>
-        ${getVmixStatusBadges(info)}
-      </div>`;
+function getVmixInfoHeader(info: VmixInfo): string {
+    const preset = info.preset
+        ? `<span class="text-base-content/40">·</span>
+           <span class="min-w-0 truncate text-base-content/70">${getHtmlAttributeText(info.preset)}</span>`
+        : '';
+    return `${preset}<span class="ml-auto flex shrink-0 items-center gap-1">${getVmixStatusBadges(info)}</span>`;
 }
 
 function getVmixStatusBadges(info: VmixInfo): string {

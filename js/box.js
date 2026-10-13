@@ -7,14 +7,75 @@ function updateBoxNums() {
     ensureMasterBox();
     updateBoxMasterStyles();
 }
+let undoToastTimer;
+function hideUndoToast() {
+    window.clearTimeout(undoToastTimer);
+    document.getElementById('undo-toast')?.remove();
+}
+function showUndoToast(message, onUndo) {
+    hideUndoToast();
+    const toast = document.createElement('div');
+    toast.id = 'undo-toast';
+    toast.className = 'toast toast-end z-50';
+    toast.innerHTML = `
+        <div class="alert alert-soft py-2 text-sm">
+          <span class="undo-message"></span>
+          <button class="btn btn-soft btn-accent btn-xs">Undo</button>
+        </div>`;
+    requireElement('.undo-message', toast).textContent = message;
+    requireElement('button', toast).addEventListener('click', () => {
+        hideUndoToast();
+        onUndo();
+    });
+    document.body.appendChild(toast);
+    undoToastTimer = window.setTimeout(hideUndoToast, 8000);
+}
+function restoreBox(removed) {
+    const box = createBox(removed.name, removed.host, removed.index + 1, removed.group);
+    requireElementById('boxes').insertBefore(box, getBoxes()[removed.index] ?? null);
+    updateBoxNums();
+    if (removed.master) {
+        setMasterBox(box);
+    }
+    updateBoxesParam();
+    updateGroupParam();
+    updateMasterParam();
+    renderVmixWeb();
+    getBoxes().forEach((current) => refreshInstance(current));
+}
+let boxPendingDelete = null;
 function closeBox(e) {
     const box = e.currentTarget.closest('.box');
+    const modal = document.getElementById('box-delete-modal');
+    const host = getBoxHost(box);
+    boxPendingDelete = box;
+    requireElement('.box-delete-name', modal).textContent = getBoxName(box);
+    requireElement('.box-delete-host', modal).textContent = host ? ` (${host})` : '';
+    modal.showModal();
+}
+function confirmBoxDelete() {
+    const modal = document.getElementById('box-delete-modal');
+    modal.close();
+    if (boxPendingDelete !== null) {
+        deleteBox(boxPendingDelete);
+        boxPendingDelete = null;
+    }
+}
+function deleteBox(box) {
+    const removed = {
+        name: getBoxName(box),
+        host: getBoxHost(box),
+        group: getBoxGroup(box),
+        master: box.classList.contains('is-master'),
+        index: getBoxes().indexOf(box),
+    };
     box.parentNode.removeChild(box);
     updateBoxNums();
     updateBoxesParam();
     updateGroupParam();
     updateMasterParam();
     renderVmixWeb();
+    showUndoToast(`Removed "${removed.name}"`, () => restoreBox(removed));
 }
 function ensureMasterBox() {
     const boxes = getBoxes();
@@ -60,15 +121,16 @@ function updateBoxMasterStyles() {
         const isGroup = getBoxGroup(box);
         panel.classList.toggle('border-accent', isMaster);
         panel.classList.toggle('border-base-content/25', !isMaster);
-        requireElement('.boxDisplayName', box).classList.toggle('text-accent', !isGroup);
-        requireElement('.boxDisplayName', box).classList.toggle('text-primary', isGroup);
+        requireElement('.master-badge', box).classList.toggle('hidden', !isMaster);
         const groupBtn = requireElement('.group-btn', box);
         groupBtn.classList.toggle('btn-primary', isGroup);
         groupBtn.classList.toggle('btn-soft', isGroup);
         groupBtn.classList.toggle('btn-ghost', !isGroup);
-        groupBtn.classList.toggle('opacity-50', !isGroup);
+        groupBtn.classList.toggle('opacity-70', !isGroup);
         groupBtn.setAttribute('aria-pressed', String(isGroup));
-        groupBtn.title = isGroup ? 'In group (click to remove)' : 'Not in group (click to add)';
+        groupBtn.title =
+            (isGroup ? 'In group (click to remove)' : 'Not in group (click to add)') +
+                '\nActions on group members will propagate to the other group members.';
         requireElement('.group-on', box).classList.toggle('hidden', !isGroup);
         requireElement('.group-off', box).classList.toggle('hidden', isGroup);
     });
@@ -82,41 +144,14 @@ function updateGroupCompareButton() {
     }
     button.disabled = masterBox === null || !getBoxGroup(masterBox);
 }
-function openNewBoxForm() {
-    const modal = document.getElementById('box-edit-modal');
-    requireElement('.box-edit-name', modal).value = getDefaultBoxName(getBoxCount() + 1);
-    requireElement('.box-edit-host', modal).value = '';
-    requireElement('.box-edit-group', modal).checked = false;
-    clearBoxEditValidation();
-    modal.showModal();
-}
-function setInputValidationStyle(input) {
-    input.classList.toggle('input-error', !input.checkValidity());
-}
-function clearBoxEditValidation() {
-    const modal = document.getElementById('box-edit-modal');
-    modal.querySelectorAll('.box-edit-name, .box-edit-host').forEach((input) => {
-        input.classList.remove('input-error');
-    });
-}
-function saveBoxEdit() {
-    const modal = document.getElementById('box-edit-modal');
-    const nameInput = requireElement('.box-edit-name', modal);
-    const hostInput = requireElement('.box-edit-host', modal);
-    const groupInput = requireElement('.box-edit-group', modal);
-    const name = nameInput.value.trim();
-    const host = hostInput.value.trim();
-    nameInput.value = name;
-    hostInput.value = host;
-    setInputValidationStyle(nameInput);
-    setInputValidationStyle(hostInput);
-    if (!nameInput.reportValidity() || !hostInput.reportValidity()) {
-        return;
-    }
-    addBox(name, host, groupInput.checked);
+function addNewBox() {
+    addBox();
     updateBoxesParam();
-    updateGroupParam();
-    modal.close();
+    updateMasterParam();
+    const box = getBoxes()[getBoxCount() - 1];
+    box.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    refreshInstance(box);
+    startBoxFieldEdit(box, 'host');
 }
 function toggleBoxGroup(box) {
     requireElement('.group-input', box).value = getBoxGroup(box) ? '0' : '1';
@@ -153,7 +188,9 @@ function startBoxFieldEdit(box, field) {
     }
     input.value = store.value;
     input.setAttribute('aria-label', isName ? 'Box name' : 'vMix address');
+    const meta = isName ? null : requireElement('.vmixMeta', box);
     display.classList.add('hidden');
+    meta?.classList.add('hidden');
     display.after(input);
     input.focus();
     input.select();
@@ -166,6 +203,7 @@ function startBoxFieldEdit(box, field) {
         const value = input.value.trim();
         input.remove();
         display.classList.remove('hidden');
+        meta?.classList.remove('hidden');
         // An empty name is not allowed, so it keeps the previous one. An empty address is.
         if (!save || value === store.value || (isName && value === '')) {
             return;
@@ -198,11 +236,13 @@ function createBox(name, host, num, group = false) {
     const boxName = name || getDefaultBoxName(num);
     box.className = 'box w-72 shrink-0';
     box.innerHTML = `
-        <div class="box-panel container max-w-full cursor-grab rounded-md border border-base-content/25 bg-base-200 p-2">
+        <div class="box-panel container max-w-full cursor-grab rounded-md border border-base-content/25 bg-base-200 p-2.5">
           <span class="box-number hidden">${num}</span>
           <div class="mb-1 flex items-start gap-2">
-            <div class="flex min-w-0 flex-1 items-center gap-1">
-              <div class="boxDisplayName min-w-0 cursor-text select-none overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-accent" title="${getBoxNameTitle(boxName)}">${getHtmlAttributeText(boxName)}</div>
+            <div class="flex min-w-0 flex-1 items-center gap-1.5">
+              <span class="status-dot h-2 w-2 shrink-0 rounded-full bg-base-content/30" title="Not connected"></span>
+              <div class="boxDisplayName min-w-0 cursor-text select-none overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold" title="${getBoxNameTitle(boxName)}">${getHtmlAttributeText(boxName)}</div>
+              <span class="master-badge badge badge-soft badge-accent badge-xs hidden shrink-0">MASTER</span>
             </div>
             <div class="flex shrink-0 items-center justify-center gap-0.5">
               <button class="group-btn focus btn btn-square h-5 min-h-0 w-5 p-0" aria-pressed="false">
@@ -217,7 +257,7 @@ function createBox(name, host, num, group = false) {
                   <circle cx="9" cy="7" r="4" />
                 </svg>
               </button>
-              <button class="close-btn focus btn btn-square btn-error btn-outline h-5 min-h-0 w-5 p-0" title="Delete box" aria-label="Delete box">
+              <button class="close-btn focus btn btn-square btn-ghost h-5 min-h-0 w-5 p-0 text-base-content/50 hover:text-error" title="Delete box" aria-label="Delete box">
                 <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M3 6h18" />
                   <path d="M8 6V4h8v2" />
@@ -228,7 +268,10 @@ function createBox(name, host, num, group = false) {
               </button>
             </div>
           </div>
-          <div class="boxDisplayHost mb-1 min-w-0 cursor-text select-none truncate text-xs"></div>
+          <div class="mb-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
+            <div class="boxDisplayHost min-w-0 cursor-text select-none truncate"></div>
+            <div class="vmixMeta flex min-w-0 flex-1 items-center gap-1.5"></div>
+          </div>
           <div class="vmixInfo min-w-0 text-sm"></div>
           <input type="hidden" value="${getHtmlAttributeText(boxName)}" class="name-input" name="vmix-name">
           <input type="hidden" value="${getHtmlAttributeText(host)}" class="host-input" name="vmix-host">
