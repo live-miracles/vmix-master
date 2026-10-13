@@ -203,49 +203,112 @@
         </datalist>
       </section>
 
-      <section class="min-w-0 overflow-x-auto px-2 pt-5 pb-8">
-        <div class="vmix-web">
-          <div id="vmix-container" class="hidden pb-5">
-            <div class="mx-auto mt-3 flex w-fit items-start">
-              <div id="vmix-screens" class="wrap grid h-20 w-[995px] grid-cols-[400px_90px_90px_400px] grid-rows-[25px_25px_20px] gap-1 text-center">
-                <div id="preview-title" class="bg-warning text-primary-content col-span-1 row-span-2 mr-1 text-lg font-semibold"></div>
-                <div class="col-span-1 row-span-1">
-                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Stinger1')">Stinger 1</button>
+      <section class="min-w-0 px-2 pt-5 pb-8">
+        <div class="w-full">
+          <div class="vmix-web">
+            <div id="vmix-container" class="hidden pb-5">
+              <div id="vmix-screens" class="grid grid-cols-1 items-stretch gap-2 md:grid-cols-[1fr_auto_1fr]">
+                <div class="flex min-w-0 flex-col gap-1">
+                  <div
+                    id="preview-title"
+                    class="wrap bg-warning text-primary-content flex min-h-14 flex-1 items-center justify-center rounded px-3 py-2 text-center text-lg font-semibold"></div>
+                  <div
+                    id="preview-progress"
+                    class="flex min-h-9 shrink-0 items-center justify-center rounded bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
+                    title="Position / Duration / Remaining"></div>
+                  <div id="preview-controls" class="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      value="0"
+                      step="1"
+                      class="screen-slider range range-xs range-warning min-w-0 flex-1"
+                      aria-label="Preview position"
+                      disabled />
+                    <button class="restart-btn btn btn-neutral btn-sm" onclick="restartScreen('preview')" disabled>Restart</button>
+                    <button
+                      class="play-btn btn btn-neutral btn-sm btn-square"
+                      onclick="playPauseScreen('preview')"
+                      title="Play / Pause"
+                      aria-label="Play / Pause"
+                      disabled>
+                      <svg class="icon-play h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                      <svg class="icon-pause hidden h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div class="col-span-1 row-span-1">
-                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Fade')">Fade</button>
+                <div class="grid grid-cols-3 gap-1.5 md:grid-cols-2 md:grid-rows-3">
+                  <button
+                    class="btn btn-neutral h-full min-h-10 px-1 md:w-24"
+                    onclick="transition('QuickPlay')"
+                    title="Cut the preview input to program and play it from the start">
+                    Quick Play
+                  </button>
+                  <button class="btn btn-neutral h-full min-h-10 px-1 md:w-24" onclick="transition('Cut')">Cut</button>
+                  <button class="btn btn-neutral h-full min-h-10 px-1 md:w-24" onclick="transition('Stinger1')">Stinger 1</button>
+                  <button class="btn btn-neutral h-full min-h-10 px-1 md:w-24" onclick="transition('Stinger2')">Stinger 2</button>
+                  <button class="btn btn-neutral h-full min-h-10 px-1 md:w-24" onclick="transition('Fade')">Fade</button>
+                  <button class="ftb-btn btn btn-soft btn-error h-full min-h-10 px-1 md:w-24" onclick="transition('FadeToBlack')">FTB</button>
                 </div>
-                <div id="active-title" class="bg-primary text-primary-content col-span-1 row-span-2 ml-1 text-lg font-semibold"></div>
-                <div class="col-span-1 row-span-1">
-                  <button class="btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('Cut')">Cut</button>
+                <div class="flex min-w-0 flex-col gap-1">
+                  <div
+                    id="active-title"
+                    class="wrap bg-primary text-primary-content flex min-h-14 flex-1 items-center justify-center rounded px-3 py-2 text-center text-lg font-semibold"></div>
+                  <div
+                    id="active-progress"
+                    class="flex min-h-9 shrink-0 items-center justify-center rounded bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
+                    title="Position / Duration / Remaining"></div>
+                  <div id="active-controls" class="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      value="0"
+                      step="1"
+                      class="screen-slider range range-xs range-primary min-w-0 flex-1"
+                      aria-label="Active position"
+                      disabled />
+                    <button class="restart-btn btn btn-neutral btn-sm" onclick="restartScreen('active')" disabled>Restart</button>
+                    <button
+                      class="play-btn btn btn-neutral btn-sm btn-square"
+                      onclick="playPauseScreen('active')"
+                      title="Play / Pause"
+                      aria-label="Play / Pause"
+                      disabled>
+                      <svg class="icon-play h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                      <svg class="icon-pause hidden h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div class="col-span-1 row-span-1">
-                  <button class="ftb-btn btn btn-neutral btn-sm h-[23px] min-h-0 w-[85px] px-1" onclick="transition('FadeToBlack')">FTB</button>
-                </div>
-                <div id="preview-progress" class="col-span-1 row-span-1"></div>
-                <div class="col-span-1 row-span-1"></div>
-                <div class="col-span-1 row-span-1"></div>
-                <div id="active-progress" class="col-span-1 row-span-1"></div>
               </div>
+
+              <h3 class="mt-5 mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Audio buses</h3>
+              <div id="vmix-buses" class="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2"></div>
+
+              <h3 class="mt-5 mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Inputs</h3>
+              <div id="vmix-inputs" class="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2"></div>
             </div>
-
-            <div id="vmix-inputs" class="mt-2"></div>
           </div>
-        </div>
 
-        <div class="custom-functions mt-3 px-5">
-          <div class="flex flex-col items-center">
-            <div class="custom-functions-container flex w-full max-w-5xl flex-col gap-3">
-              <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
-                <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Raw Request</h3>
-                <div class="join w-full">
-                  <input
-                    id="rawRequest"
-                    type="text"
-                    name="rawRequest"
-                    placeholder="e.g. Function=Fade&Duration=1000&Input=5"
-                    class="url-param input input-xs join-item flex-1" />
-                  <button id="execute-btn" class="btn btn-soft btn-accent btn-xs join-item">Send</button>
+          <div class="custom-functions mt-3">
+            <div class="flex flex-col items-center">
+              <div class="custom-functions-container flex w-full flex-col gap-3">
+                <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
+                  <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Raw Request</h3>
+                  <div class="join w-full">
+                    <input
+                      id="rawRequest"
+                      type="text"
+                      name="rawRequest"
+                      placeholder="e.g. Function=Fade&Duration=1000&Input=5"
+                      class="url-param input input-xs join-item flex-1" />
+                    <button id="execute-btn" class="btn btn-soft btn-accent btn-xs join-item">Send</button>
+                  </div>
                 </div>
               </div>
             </div>

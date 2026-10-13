@@ -26,3 +26,14 @@
 .mixer-header.bg-success {
     @apply text-primary-content font-semibold;
 }
+
+/* FTB is a toggle: "on" is solid red, so while off it must stay soft when hovered or pressed. */
+.ftb-btn.btn-soft:hover,
+.ftb-btn.btn-soft:active,
+.ftb-btn.btn-soft:focus-visible {
+    --btn-fg: var(--color-error);
+    --btn-bg: color-mix(in oklab, var(--color-error) 22%, var(--color-base-100));
+    --btn-border: color-mix(in oklab, var(--color-error) 30%, var(--color-base-100));
+    --btn-shadow: none;
+    --btn-noise: none;
+}
