@@ -288,57 +288,17 @@
       </form>
     </dialog>
 
-    <dialog id="box-edit-modal" class="modal">
-      <div class="modal-box max-w-2xl">
-        <form method="dialog">
-          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close box editor">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
-              <path d="M6 6l12 12" />
-              <path d="M18 6L6 18" />
-            </svg>
-          </button>
-        </form>
-        <h2 class="mb-4 text-xl font-bold">Add vMix Instance</h2>
-        <div class="grid gap-3 sm:grid-cols-[160px_minmax(220px,1fr)_auto]">
-          <fieldset class="fieldset p-0">
-            <legend class="fieldset-legend py-0 pb-1">Name</legend>
-            <input type="text" class="box-edit-name input input-sm w-full" placeholder="Name" required />
-          </fieldset>
-          <fieldset class="fieldset p-0">
-            <legend class="fieldset-legend py-0 pb-1">Host / vMix API URL</legend>
-            <input type="text" class="box-edit-host input input-sm w-full" placeholder="IP, host:port, or full API URL" list="hosts" />
-          </fieldset>
-          <fieldset class="fieldset p-0">
-            <legend class="fieldset-legend flex items-center gap-1 py-0 pb-1">
-              Part of Group
-              <span class="inline-flex" title="Actions on group members will propagate to the other group members.">
-                <svg
-                  class="h-3.5 w-3.5 text-base-content/60"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-label="Group action help"
-                  role="img"
-                  title="Actions on group members will propagate to the other group members.">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 16v-4" />
-                  <path d="M12 8h.01" />
-                </svg>
-              </span>
-            </legend>
-            <label class="flex h-8 w-fit items-center">
-              <input type="checkbox" class="box-edit-group toggle toggle-accent toggle-sm" />
-            </label>
-          </fieldset>
-        </div>
+    <dialog id="box-delete-modal" class="modal">
+      <div class="modal-box max-w-sm">
+        <h2 class="text-lg font-bold">Delete vMix instance?</h2>
+        <p class="py-3 text-sm">
+          <span class="box-delete-name font-semibold"></span><span class="box-delete-host"></span> will be removed from this page.
+        </p>
         <div class="modal-action">
           <form method="dialog">
             <button class="btn btn-ghost btn-sm">Cancel</button>
           </form>
-          <button id="save-box-edit" class="btn btn-accent btn-sm">Save</button>
+          <button id="confirm-box-delete" class="btn btn-soft btn-error btn-sm">Delete</button>
         </div>
       </div>
       <form method="dialog" class="modal-backdrop">

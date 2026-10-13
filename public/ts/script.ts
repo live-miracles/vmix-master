@@ -199,14 +199,8 @@ let refreshRate = -1;
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
 
-    requireElementById('add-box').addEventListener('click', openNewBoxForm);
-    requireElementById('save-box-edit').addEventListener('click', saveBoxEdit);
-    document
-        .querySelectorAll<HTMLInputElement>('.box-edit-name, .box-edit-host')
-        .forEach((input) => {
-            input.addEventListener('input', () => setInputValidationStyle(input));
-            input.addEventListener('change', () => setInputValidationStyle(input));
-        });
+    requireElementById('add-box').addEventListener('click', addNewBox);
+    requireElementById('confirm-box-delete').addEventListener('click', confirmBoxDelete);
     requireElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
 
     updateRefreshRates();
