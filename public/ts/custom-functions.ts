@@ -128,8 +128,8 @@ function renderCustomFunctions() {
     ];
 
     const buttonColor = (func: string) => {
-        if (/^Start|On$/.test(func)) return 'btn-success';
-        if (/^Stop|Off$/.test(func)) return 'btn-error';
+        if (/Start|On$/.test(func)) return 'btn-success';
+        if (/Stop|Off$/.test(func)) return 'btn-error';
         return 'btn-accent';
     };
 
