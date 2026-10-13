@@ -233,18 +233,17 @@
 
         <div class="custom-functions mt-3 px-5">
           <div class="flex flex-col items-center">
-            <div class="custom-functions-container flex w-fit flex-wrap p-1">
-              <div class="rounded-box bg-neutral m-1 flex w-fit items-center gap-1 p-2">
-                <div class="w-fit">
+            <div class="custom-functions-container flex w-full max-w-5xl flex-col gap-3">
+              <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
+                <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Raw Request</h3>
+                <div class="join w-full">
                   <input
                     id="rawRequest"
                     type="text"
                     name="rawRequest"
                     placeholder="e.g. Function=Fade&Duration=1000&Input=5"
-                    class="url-param input input-xs w-125" />
-                </div>
-                <div class="w-fit">
-                  <button id="execute-btn" class="btn btn-accent btn-xs">Raw Request</button>
+                    class="url-param input input-xs join-item flex-1" />
+                  <button id="execute-btn" class="btn btn-soft btn-accent btn-xs join-item">Send</button>
                 </div>
               </div>
             </div>
