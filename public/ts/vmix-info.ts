@@ -65,12 +65,20 @@ async function fetchVmixInfo(host: string): Promise<VmixFetchInfo> {
     const res = await fetchUrl(getApiUrl(host));
 
     if (res.status === 200 && res.value !== null) {
-        const xmlData = parser.parseFromString(res.value, 'text/xml');
-        const jsonData = xml2json(xmlData);
-        return {
-            value: new VmixInfo(jsonData as JsonObject),
-            error: null,
-        };
+        try {
+            const xmlData = parser.parseFromString(res.value, 'text/xml');
+            const jsonData = xml2json(xmlData);
+            return {
+                value: new VmixInfo(jsonData as JsonObject),
+                error: null,
+            };
+        } catch (error) {
+            // A reachable host that does not answer like the vMix API (e.g. another web server).
+            return {
+                value: null,
+                error: 'Not a vMix API response',
+            };
+        }
     } else {
         return {
             value: null,
