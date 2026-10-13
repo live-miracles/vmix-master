@@ -57,6 +57,14 @@ function renderCustomFunctions() {
         min: '0',
         max: '60000',
     };
+    const output = {
+        name: 'output',
+        type: 'number',
+        placeholder: 'Output',
+        value: '',
+        width: 'w-16',
+        min: '0',
+    };
     const scriptName = {
         name: 'script-name',
         type: 'text',
@@ -65,61 +73,92 @@ function renderCustomFunctions() {
         width: 'w-26',
     };
 
-    const buttons: any[] = [
-        { func: 'StartExternal', inputs: [] },
-        { func: 'StopExternal', inputs: [] },
-        { func: 'FadeToBlack', inputs: [] },
-        { func: 'Stinger1', inputs: [input] },
-        { func: 'Fade', inputs: [input] },
-        { func: 'Cut', inputs: [input] },
-        { func: 'SetGain', inputs: [gain, input] },
-        { func: 'SetVolumeFade', inputs: [volume, ms, input] },
-        { func: 'SetMasterVolume', inputs: [volume] },
-        { func: 'SetBusAVolume', inputs: [volume] },
-        { func: 'SetBusBVolume', inputs: [volume] },
-        { func: 'AudioOn', inputs: [input] },
-        { func: 'AudioOff', inputs: [input] },
-        { func: 'MasterAudioOn', inputs: [] },
-        { func: 'MasterAudioOff', inputs: [] },
-        { func: 'BusAAudioOn', inputs: [] },
-        { func: 'BusAAudioOff', inputs: [] },
-        { func: 'BusBAudioOn', inputs: [] },
-        { func: 'BusBAudioOff', inputs: [] },
-        { func: 'SetPosition', inputs: [min, sec, input] },
-        { func: 'StartCountdown', inputs: [input] },
-        { func: 'StopCountdown', inputs: [input] },
-        { func: 'ScriptStart', inputs: [scriptName] },
-        { func: 'ScriptStop', inputs: [scriptName] },
+    const groups: { title: string; buttons: any[] }[] = [
+        {
+            title: 'Outputs',
+            buttons: [
+                { func: 'StartExternal', inputs: [] },
+                { func: 'StopExternal', inputs: [] },
+                { func: 'StartSRTOutput', inputs: [output] },
+                { func: 'StopSRTOutput', inputs: [output] },
+            ],
+        },
+        {
+            title: 'Transitions',
+            buttons: [
+                { func: 'FadeToBlack', inputs: [] },
+                { func: 'Stinger1', inputs: [input] },
+                { func: 'Fade', inputs: [input] },
+                { func: 'Cut', inputs: [input] },
+            ],
+        },
+        {
+            title: 'Audio',
+            buttons: [
+                { func: 'SetGain', inputs: [gain, input] },
+                { func: 'SetVolumeFade', inputs: [volume, ms, input] },
+                { func: 'SetMasterVolume', inputs: [volume] },
+                { func: 'SetBusAVolume', inputs: [volume] },
+                { func: 'SetBusBVolume', inputs: [volume] },
+                { func: 'AudioOn', inputs: [input] },
+                { func: 'AudioOff', inputs: [input] },
+                { func: 'MasterAudioOn', inputs: [] },
+                { func: 'MasterAudioOff', inputs: [] },
+                { func: 'BusAAudioOn', inputs: [] },
+                { func: 'BusAAudioOff', inputs: [] },
+                { func: 'BusBAudioOn', inputs: [] },
+                { func: 'BusBAudioOff', inputs: [] },
+            ],
+        },
+        {
+            title: 'Playback & Timers',
+            buttons: [
+                { func: 'SetPosition', inputs: [min, sec, input] },
+                { func: 'StartCountdown', inputs: [input] },
+                { func: 'StopCountdown', inputs: [input] },
+            ],
+        },
+        {
+            title: 'Scripts',
+            buttons: [
+                { func: 'ScriptStart', inputs: [scriptName] },
+                { func: 'ScriptStop', inputs: [scriptName] },
+            ],
+        },
     ];
 
-    let innerHTML = '';
-    buttons.forEach((b) => {
-        innerHTML += `
-          <div class="m-1 flex w-fit items-center gap-1 rounded-box bg-neutral p-2">
-            <div class="${b.inputs.length === 0 ? 'hidden' : 'w-fit'}">
-            ${
-                b.inputs.length === 0
-                    ? ''
-                    : b.inputs
-                          .map(
-                              (input: any) => `
+    const buttonColor = (func: string) => {
+        if (/Start|On$/.test(func)) return 'btn-success';
+        if (/Stop|Off$/.test(func)) return 'btn-error';
+        return 'btn-accent';
+    };
+
+    const renderButton = (b: any) => `
+            <div class="join">${b.inputs
+                .map(
+                    (input: any) => `
               <input
                 type="${input.type}"
                 placeholder="${input.placeholder}"
-                name: "${input.name}"
-                class="${input.name}-param input input-xs ${input.width}"
+                name="${input.name}"
+                class="${input.name}-param input input-xs join-item ${input.width}"
                 value="${input.value}"
                 min="${input.min ?? ''}"
                 max="${input.max ?? ''}" />`,
-                          )
-                          .join('')
-            }
-            </div>
-            <div class="w-fit">
-              <button class="function-btn btn btn-accent btn-xs">${b.func}</button>
-            </div>
-          </div>`;
-    });
+                )
+                .join('')}
+              <button class="function-btn btn btn-soft ${buttonColor(b.func)} btn-xs join-item">${b.func}</button>
+            </div>`;
+
+    const innerHTML = groups
+        .map(
+            (g) => `
+          <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
+            <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">${g.title}</h3>
+            <div class="flex flex-wrap gap-2">${g.buttons.map(renderButton).join('')}</div>
+          </div>`,
+        )
+        .join('');
 
     requireElement('.custom-functions-container').innerHTML += innerHTML;
 
@@ -129,7 +168,7 @@ function renderCustomFunctions() {
 
     document.querySelectorAll('.function-btn').forEach((btn) => {
         btn.onclick = () => {
-            const container = btn.parentElement!.parentElement!;
+            const container = btn.parentElement!;
             const inputParam = container.querySelector('.input-param');
             const gainParam = container.querySelector('.gain-param');
             const volumeParam = container.querySelector('.volume-param');
@@ -137,6 +176,7 @@ function renderCustomFunctions() {
             const secParam = container.querySelector('.sec-param');
             const msParam = container.querySelector('.ms-param');
             const scriptNameParam = container.querySelector('.script-name-param');
+            const outputParam = container.querySelector('.output-param');
 
             let request = 'Function=' + btn.innerHTML;
             if (inputParam?.value) {
@@ -156,6 +196,9 @@ function renderCustomFunctions() {
             }
             if (scriptNameParam?.value) {
                 request += '&Value=' + scriptNameParam.value;
+            }
+            if (outputParam?.value) {
+                request += '&Value=' + outputParam.value;
             }
             customExecution(request);
         };
