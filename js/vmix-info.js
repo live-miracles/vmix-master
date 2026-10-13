@@ -60,7 +60,7 @@ function getVmixInfo(number) {
     if (number === null || getBox(number) === null) {
         return null;
     }
-    return vmixInfos[number];
+    return vmixInfos[number] ?? null;
 }
 function setVmixInfo(number, info) {
     console.assert(Number.isInteger(number));
@@ -73,17 +73,20 @@ function renderVmixInfo(box) {
     const boxDisplayName = box.querySelector('.boxDisplayName');
     if (boxDisplayName) {
         boxDisplayName.textContent = boxName;
-        boxDisplayName.setAttribute('title', boxName);
+        boxDisplayName.setAttribute('title', boxName + ' (double-click to rename)');
     }
     if (vmixInfo === null) {
-        requireElement('.vmixInfo', box).innerHTML = getVmixInfoHeader(box, null);
+        // Not fetched yet: stay blank without an address (or with refreshing off).
+        const waiting = getBoxHost(box) !== '' && refreshRate !== -1;
+        requireElement('.vmixInfo', box).innerHTML = waiting
+            ? '<div class="text-xs text-base-content/70">Connecting…</div>'
+            : '';
         return;
     }
     const info = vmixInfo.value;
     if (info === null) {
-        requireElement('.vmixInfo', box).innerHTML = `
-          ${getVmixInfoHeader(box, null)}
-          <div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
+        requireElement('.vmixInfo', box).innerHTML =
+            `<div class="text-error">vMix unavailable (${vmixInfo.error})</div>`;
         return;
     }
     const active = info.inputs[info.active];
@@ -94,9 +97,6 @@ function renderVmixInfo(box) {
       ${getProgramPreviewLine(preview, 'badge-warning', info.inputs)}`;
 }
 function getVmixInfoHeader(box, info) {
-    if (!info) {
-        return '<div class="mb-1 min-w-0 text-xs font-semibold text-base-content/70">vMix</div>';
-    }
     return `<div class="mb-1 flex min-w-0 flex-wrap items-center gap-1">
         <span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold text-base-content/70">${info.preset || 'vMix'}</span>
         ${getVmixStatusBadges(info)}

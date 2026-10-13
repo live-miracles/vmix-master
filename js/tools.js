@@ -183,6 +183,9 @@ function getResponsiveTitle(str) {
     return (`<span class="overflow-hidden whitespace-nowrap text-ellipsis">${left}</span>` +
         `<span class="overflow-hidden whitespace-nowrap text-clip" style="direction: rtl">${right}</span>`);
 }
+function getBoxNameTitle(name) {
+    return getHtmlAttributeText(name) + ' (double-click to rename)';
+}
 function getHtmlAttributeText(str) {
     return str
         .replace(/&/g, '&amp;')
