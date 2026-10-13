@@ -213,6 +213,10 @@ function getResponsiveTitle(str: string): string {
     );
 }
 
+function getBoxNameTitle(name: string): string {
+    return getHtmlAttributeText(name) + ' (double-click to rename)';
+}
+
 function getHtmlAttributeText(str: string): string {
     return str
         .replace(/&/g, '&amp;')

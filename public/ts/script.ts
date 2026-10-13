@@ -38,6 +38,9 @@ async function refreshInstance(box: Element): Promise<void> {
     if (host === '') {
         setVmixInfo(num, null);
     } else {
+        if (getVmixInfo(num) === null) {
+            renderVmixInfo(box); // Show "Connecting…" until the first reply
+        }
         setVmixInfo(num, await fetchVmixInfo(host));
     }
     renderVmixInfo(box);
@@ -213,6 +216,8 @@ let refreshRate = -1;
     new Sortable(document.getElementById('boxes'), {
         animation: 150,
         handle: '.cursor-grab', // Draggable by the entire row
+        filter: '.box-field-edit', // Keep text selection working while renaming
+        preventOnFilter: false,
         ghostClass: 'bg-base-300', // Adds a class for the dragged item
         onEnd: function (_e: unknown) {
             updateBoxNums();

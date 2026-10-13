@@ -67,7 +67,15 @@ function updateBoxMasterStyles() {
         panel.classList.toggle('border-base-content/25', !isMaster);
         requireElement('.boxDisplayName', box).classList.toggle('text-accent', !isGroup);
         requireElement('.boxDisplayName', box).classList.toggle('text-primary', isGroup);
-        requireElement('.group-icon', box).classList.toggle('hidden', !isGroup);
+        const groupBtn = requireElement('.group-btn', box);
+        groupBtn.classList.toggle('btn-primary', isGroup);
+        groupBtn.classList.toggle('btn-soft', isGroup);
+        groupBtn.classList.toggle('btn-ghost', !isGroup);
+        groupBtn.classList.toggle('opacity-50', !isGroup);
+        groupBtn.setAttribute('aria-pressed', String(isGroup));
+        groupBtn.title = isGroup ? 'In group (click to remove)' : 'Not in group (click to add)';
+        requireElement('.group-on', box).classList.toggle('hidden', !isGroup);
+        requireElement('.group-off', box).classList.toggle('hidden', isGroup);
     });
     updateGroupCompareButton();
 }
@@ -81,20 +89,8 @@ function updateGroupCompareButton() {
     button.disabled = masterBox === null || !getBoxGroup(masterBox);
 }
 
-function openBoxEdit(e: Event): void {
-    const box = (e.currentTarget as Element).closest('.box')!;
-    const modal = document.getElementById('box-edit-modal') as HTMLDialogElement;
-    requireElement('.box-edit-number', modal).value = String(getBoxNumber(box));
-    requireElement('.box-edit-name', modal).value = getBoxName(box);
-    requireElement('.box-edit-host', modal).value = getBoxHost(box);
-    requireElement('.box-edit-group', modal).checked = getBoxGroup(box);
-    clearBoxEditValidation();
-    modal.showModal();
-}
-
 function openNewBoxForm() {
     const modal = document.getElementById('box-edit-modal') as HTMLDialogElement;
-    requireElement('.box-edit-number', modal).value = '';
     requireElement('.box-edit-name', modal).value = getDefaultBoxName(getBoxCount() + 1);
     requireElement('.box-edit-host', modal).value = '';
     requireElement('.box-edit-group', modal).checked = false;
@@ -118,10 +114,8 @@ function saveBoxEdit() {
     const nameInput = requireElement<HTMLInputElement>('.box-edit-name', modal);
     const hostInput = requireElement<HTMLInputElement>('.box-edit-host', modal);
     const groupInput = requireElement<HTMLInputElement>('.box-edit-group', modal);
-    const boxNumber = parseInt(requireElement<HTMLInputElement>('.box-edit-number', modal).value);
     const name = nameInput.value.trim();
     const host = hostInput.value.trim();
-    const group = groupInput.checked;
 
     nameInput.value = name;
     hostInput.value = host;
@@ -131,49 +125,111 @@ function saveBoxEdit() {
         return;
     }
 
-    if (isNaN(boxNumber)) {
-        addBox(name, host, group);
-        updateBoxesParam();
-        updateGroupParam();
-        modal.close();
-        return;
-    }
-
-    const box = getBox(boxNumber);
-    if (box === null) {
-        return;
-    }
-    requireElement('.name-input', box).value = name;
-    requireElement('.host-input', box).value = host;
-    requireElement('.group-input', box).value = group ? '1' : '0';
+    addBox(name, host, groupInput.checked);
     updateBoxesParam();
     updateGroupParam();
-    updateBoxMasterStyles();
-    renderVmixInfo(box);
     modal.close();
+}
+
+function toggleBoxGroup(box: Element): void {
+    requireElement('.group-input', box).value = getBoxGroup(box) ? '0' : '1';
+    updateGroupParam();
+    updateBoxMasterStyles();
+}
+
+function updateBoxHostDisplay(box: Element): void {
+    const host = getBoxHost(box);
+    const display = requireElement('.boxDisplayHost', box);
+    display.textContent = host || 'Set address';
+    display.title = host
+        ? host + ' (double-click to edit address)'
+        : 'Double-click to set the vMix address';
+    display.classList.toggle('italic', host === '');
+    display.classList.toggle('text-base-content', host !== '');
+    display.classList.toggle('text-base-content/80', host === '');
+}
+
+function startBoxFieldEdit(box: Element, field: 'name' | 'host'): void {
+    if (box.querySelector('.box-field-edit') !== null) {
+        return;
+    }
+    const isName = field === 'name';
+    const display = requireElement(isName ? '.boxDisplayName' : '.boxDisplayHost', box);
+    const store = requireElement(isName ? '.name-input' : '.host-input', box);
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'box-field-edit input input-xs w-full min-w-0';
+    if (isName) {
+        input.classList.add('flex-1', 'text-sm', 'font-semibold');
+    } else {
+        input.placeholder = 'IP, host:port, or full API URL';
+        input.setAttribute('list', 'hosts');
+    }
+    input.value = store.value;
+    input.setAttribute('aria-label', isName ? 'Box name' : 'vMix address');
+    display.classList.add('hidden');
+    display.after(input);
+    input.focus();
+    input.select();
+
+    let finished = false;
+    const finish = (save: boolean) => {
+        if (finished) {
+            return;
+        }
+        finished = true;
+        const value = input.value.trim();
+        input.remove();
+        display.classList.remove('hidden');
+        // An empty name is not allowed, so it keeps the previous one. An empty address is.
+        if (!save || value === store.value || (isName && value === '')) {
+            return;
+        }
+        store.value = value;
+        updateBoxesParam();
+        if (isName) {
+            renderVmixInfo(box);
+            return;
+        }
+        updateBoxHostDisplay(box);
+        setVmixInfo(getBoxNumber(box), null);
+        renderVmixInfo(box);
+        refreshInstance(box);
+    };
+    input.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+            finish(true);
+        } else if (e.key === 'Escape') {
+            finish(false);
+        }
+    });
+    input.addEventListener('click', (e) => e.stopPropagation());
+    input.addEventListener('blur', () => finish(true));
 }
 
 function createBox(name: string, host: string, num: number, group = false): HTMLDivElement {
     const box = document.createElement('div');
     const boxName = name || getDefaultBoxName(num);
-    box.className = 'box w-64 shrink-0';
+    box.className = 'box w-72 shrink-0';
     box.innerHTML = `
         <div class="box-panel container max-w-full cursor-grab rounded-md border border-base-content/25 bg-base-200 p-2">
           <span class="box-number hidden">${num}</span>
           <div class="mb-1 flex items-start gap-2">
             <div class="flex min-w-0 flex-1 items-center gap-1">
-              <div class="boxDisplayName min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-accent" title="${getHtmlAttributeText(boxName)}">${getHtmlAttributeText(boxName)}</div>
-              <svg class="group-icon hidden h-3.5 w-3.5 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-label="Part of group" role="img">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
+              <div class="boxDisplayName min-w-0 cursor-text select-none overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-accent" title="${getBoxNameTitle(boxName)}">${getHtmlAttributeText(boxName)}</div>
             </div>
             <div class="flex shrink-0 items-center justify-center gap-0.5">
-              <button class="edit-btn focus btn btn-square btn-accent btn-outline h-5 min-h-0 w-5 p-0" title="Edit box" aria-label="Edit box">
-                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              <button class="group-btn focus btn btn-square h-5 min-h-0 w-5 p-0" aria-pressed="false">
+                <svg class="group-on hidden h-3 w-3" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                <svg class="group-off h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
                 </svg>
               </button>
               <button class="close-btn focus btn btn-square btn-error btn-outline h-5 min-h-0 w-5 p-0" title="Delete box" aria-label="Delete box">
@@ -187,13 +243,25 @@ function createBox(name: string, host: string, num: number, group = false): HTML
               </button>
             </div>
           </div>
+          <div class="boxDisplayHost mb-1 min-w-0 cursor-text select-none truncate text-xs"></div>
           <div class="vmixInfo min-w-0 text-sm"></div>
           <input type="hidden" value="${getHtmlAttributeText(boxName)}" class="name-input" name="vmix-name">
           <input type="hidden" value="${getHtmlAttributeText(host)}" class="host-input" name="vmix-host">
           <input type="hidden" value="${group ? '1' : '0'}" class="group-input" name="vmix-group">
         </div>`;
 
-    requireElement('.edit-btn', box).addEventListener('click', openBoxEdit);
+    requireElement('.group-btn', box).addEventListener('click', () => toggleBoxGroup(box));
+    (['name', 'host'] as const).forEach((field) => {
+        const display = requireElement(
+            field === 'name' ? '.boxDisplayName' : '.boxDisplayHost',
+            box,
+        );
+        display.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
+            startBoxFieldEdit(box, field);
+        });
+    });
+    updateBoxHostDisplay(box);
     requireElement('.close-btn', box).addEventListener('click', closeBox);
     box.querySelectorAll('button').forEach((button) =>
         button.addEventListener('click', (e) => e.stopPropagation()),
