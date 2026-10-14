@@ -4,7 +4,7 @@
 
 **A complete control panel for vMix in your browser: one system, or several working as one. Nothing to install.**
 
-### [▶ Try the live demo](https://live-miracles.github.io/vmix-master/?demo) &nbsp;·&nbsp; [Open the app](https://live-miracles.github.io/vmix-master/)
+### [▶ Try the live demo](https://live-miracles.github.io/vmix-master/?demo) &nbsp;·&nbsp; [Open the app](https://live-miracles.github.io/vmix-master/) &nbsp;·&nbsp; [Documentation](docs/README.md)
 
 The demo runs three simulated vMix systems in your browser, so you can try everything without vMix and nothing is sent over the network.
 
@@ -56,7 +56,7 @@ Use the built-in Web Controller if you have a few inputs and only need simple sw
 ## Quick start
 
 0. Want to look around first? Open the [demo](https://live-miracles.github.io/vmix-master/?demo).
-1. Enable the vMix Web Controller (**Settings → Web Controller**). The default port is `8088`.
+1. Enable the Web Controller in vMix (**Settings → vMix Web Controller** tab). The default port is `8088`.
 2. Open [the hosted app](https://live-miracles.github.io/vmix-master/) in Chrome, allow the local network access prompt, and add your vMix machines by IP.
 3. Mark the master, tick **Part of Group** on the others, and start switching.
 4. For automatic follow-the-master, load `slave.vb` or `name-slave.vb` into each slave vMix and set the master IP.
@@ -65,17 +65,17 @@ Use the built-in Web Controller if you have a few inputs and only need simple sw
 
 ## vMix scripts
 
-Ready-to-use scripts for vMix's scripting feature are in [`vmix-scripts/`](vmix-scripts/). The app shows their current versions under **vMix Scripts**.
+Ready-to-use scripts for vMix's scripting feature (4K and Pro editions) are in [`vmix-scripts/`](vmix-scripts/). The [scripts guide](docs/2-scripts/1-overview.md) explains how to add them to vMix, and each script has its own page with its settings. The app shows their current versions under **vMix Scripts**.
 
-| Script                                          | What it does                                                                                                           |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [Slave](vmix-scripts/slave.vb)                  | Follows a master vMix: active input, preview, and playback position.                                                   |
-| [NameSlave](vmix-scripts/name-slave.vb)         | Follows a master by input name instead of number, with a fallback input when there is no match.                        |
-| [PreviewNext](vmix-scripts/preview-next.vb)     | Puts the next input into preview after each transition.                                                                |
-| [Translator](vmix-scripts/translator.vb)        | Sidechain ducking: lowers the program audio while the translator speaks, then raises it again in two smooth steps.     |
-| [AutoGain](vmix-scripts/auto-gain.vb)           | Adjusts the gain of audio and call inputs (and inputs named "AutoGain") to avoid clipping or low volume.               |
-| [AudioFade](vmix-scripts/audio-fade.vb)         | Fades audio in and out during transitions for inputs with "AudioFade" in their title.                                  |
-| [DurationTimer](vmix-scripts/duration-timer.vb) | Writes the remaining time of the current input into a title named "DurationTimer" (counts up if there is no duration). |
+| Script                                              | What it does                                                                                                           |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [Slave](docs/2-scripts/2-slave.md)                  | Follows a master vMix: active input, preview, and playback position.                                                   |
+| [NameSlave](docs/2-scripts/3-name-slave.md)         | Follows a master by input name instead of number, with a fallback input when there is no match.                        |
+| [PreviewNext](docs/2-scripts/4-preview-next.md)     | Puts the next input into preview after each transition.                                                                |
+| [Translator](docs/2-scripts/5-translator.md)        | Sidechain ducking: lowers the program audio while the translator speaks, then raises it again in two smooth steps.     |
+| [AutoGain](docs/2-scripts/6-auto-gain.md)           | Adjusts the gain of audio and call inputs (and inputs named "AutoGain") to avoid clipping or low volume.               |
+| [AudioFade](docs/2-scripts/7-audio-fade.md)         | Fades audio in and out during transitions for inputs with "AudioFade" in their title.                                  |
+| [DurationTimer](docs/2-scripts/8-duration-timer.md) | Writes the remaining time of the current input into a title named "DurationTimer" (counts up if there is no duration). |
 
 ## Development
 
