@@ -293,6 +293,74 @@
       }
     }
   }
+  .tooltip {
+    @layer daisyui.l1.l2.l3 {
+      position: relative;
+      display: inline-block;
+      --tt-bg: var(--color-neutral);
+      --tt-off: calc(100% + 0.5rem);
+      --tt-tail: calc(100% + 1px + 0.25rem);
+      & > .tooltip-content, &[data-tip]:before {
+        position: absolute;
+        max-width: 20rem;
+        border-radius: var(--radius-field);
+        padding-inline: calc(0.25rem * 2);
+        padding-block: calc(0.25rem * 1);
+        text-align: center;
+        white-space: normal;
+        color: var(--color-neutral-content);
+        opacity: 0%;
+        font-size: 0.875rem;
+        line-height: 1.25;
+        background-color: var(--tt-bg);
+        width: max-content;
+        pointer-events: none;
+        z-index: 2;
+        --tw-content: attr(data-tip);
+        content: var(--tw-content);
+      }
+      &:after {
+        opacity: 0%;
+        background-color: var(--tt-bg);
+        content: "";
+        pointer-events: none;
+        width: 0.625rem;
+        height: 0.25rem;
+        display: block;
+        position: absolute;
+        mask-repeat: no-repeat;
+        mask-position: -1px 0;
+        --mask-tooltip: url("data:image/svg+xml,%3Csvg width='10' height='4' viewBox='0 0 8 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.500009 1C3.5 1 3.00001 4 5.00001 4C7 4 6.5 1 9.5 1C10 1 10 0.499897 10 0H0C-1.99338e-08 0.5 0 1 0.500009 1Z' fill='black'/%3E%3C/svg%3E%0A");
+        mask-image: var(--mask-tooltip);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        & > .tooltip-content, &[data-tip]:before, &:after {
+          transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 75ms, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 75ms;
+        }
+      }
+      &:is([data-tip]:not([data-tip=""]), :has(.tooltip-content:not(:empty))) {
+        &.tooltip-open, &:hover, &:has(:focus-visible) {
+          & > .tooltip-content, &[data-tip]:before, &:after {
+            opacity: 100%;
+            --tt-pos: 0rem;
+            @media (prefers-reduced-motion: no-preference) {
+              transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+            }
+          }
+        }
+      }
+    }
+    @layer daisyui.l1.l2 {
+      > .tooltip-content, &[data-tip]:before {
+        transform: translateX(-50%) translateY(var(--tt-pos, 0.25rem));
+        inset: auto auto var(--tt-off) 50%;
+      }
+      &:after {
+        transform: translateX(-50%) translateY(var(--tt-pos, 0.25rem));
+        inset: auto auto var(--tt-tail) 50%;
+      }
+    }
+  }
   .menu {
     @layer daisyui.l1.l2.l3 {
       display: flex;
@@ -601,6 +669,58 @@
         --btn-fg: var(--color-base-content);
         @supports (color: color-mix(in lab, red, red)) {
           --btn-fg: color-mix(in oklch, var(--color-base-content) 20%, #0000);
+        }
+      }
+    }
+  }
+  .countdown {
+    &.countdown {
+      line-height: 1em;
+    }
+    @layer daisyui.l1.l2.l3 {
+      display: inline-flex;
+      & > * {
+        visibility: hidden;
+        position: relative;
+        display: inline-block;
+        overflow-y: clip;
+        transition: width 0.4s ease-out 0.2s;
+        height: 1em;
+        --value-v: calc(mod(max(0, var(--value)), 1000));
+        --value-hundreds: calc(round(to-zero, var(--value-v) / 100, 1));
+        --value-tens: calc(round(to-zero, mod(var(--value-v), 100) / 10, 1));
+        --value-ones: calc(mod(var(--value-v), 100));
+        --show-hundreds: clamp(clamp(0, var(--digits, 1) - 2, 1), var(--value-hundreds), 1);
+        --show-tens: clamp(
+        clamp(0, var(--digits, 1) - 1, 1),
+        var(--value-tens) + var(--show-hundreds),
+        1
+      );
+        --first-digits: calc(round(to-zero, var(--value-v) / 10, 1));
+        width: calc(1ch + var(--show-tens) * 1ch + var(--show-hundreds) * 1ch);
+        direction: ltr;
+        &:before, &:after {
+          visibility: visible;
+          position: absolute;
+          overflow-x: clip;
+          --tw-content: "00\A 01\A 02\A 03\A 04\A 05\A 06\A 07\A 08\A 09\A 10\A 11\A 12\A 13\A 14\A 15\A 16\A 17\A 18\A 19\A 20\A 21\A 22\A 23\A 24\A 25\A 26\A 27\A 28\A 29\A 30\A 31\A 32\A 33\A 34\A 35\A 36\A 37\A 38\A 39\A 40\A 41\A 42\A 43\A 44\A 45\A 46\A 47\A 48\A 49\A 50\A 51\A 52\A 53\A 54\A 55\A 56\A 57\A 58\A 59\A 60\A 61\A 62\A 63\A 64\A 65\A 66\A 67\A 68\A 69\A 70\A 71\A 72\A 73\A 74\A 75\A 76\A 77\A 78\A 79\A 80\A 81\A 82\A 83\A 84\A 85\A 86\A 87\A 88\A 89\A 90\A 91\A 92\A 93\A 94\A 95\A 96\A 97\A 98\A 99\A";
+          content: var(--tw-content);
+          font-variant-numeric: tabular-nums;
+          white-space: pre;
+          text-align: end;
+          direction: rtl;
+          transition: all 1s cubic-bezier(1, 0, 0, 1), width 0.2s ease-out 0.2s, opacity 0.2s ease-out 0.2s;
+        }
+        &:before {
+          width: calc(1ch + var(--show-hundreds) * 1ch);
+          top: calc(var(--first-digits) * -1em);
+          inset-inline-end: 0;
+          opacity: var(--show-tens);
+        }
+        &:after {
+          width: 1ch;
+          top: calc(var(--value-ones) * -1em);
+          inset-inline-start: 0;
         }
       }
     }
