@@ -314,7 +314,7 @@
 
           <div class="custom-functions mt-3">
             <div class="flex flex-col items-center">
-              <div class="custom-functions-container flex w-full flex-col gap-3">
+              <div class="custom-functions-container flex w-full max-w-5xl flex-col gap-3">
                 <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
                   <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Raw Request</h3>
                   <div class="join w-full">
@@ -400,11 +400,22 @@
         </form>
         <h2 class="mb-4 text-xl font-bold">Settings</h2>
 
-        <div class="mb-5">
-          <label class="input input-sm w-fit">
-            Refresh Rate (sec)
-            <input id="refresh-rate" class="url-param w-12" name="refreshRate" type="number" min="1" value="1" placeholder="sec" />
-          </label>
+        <div class="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <label for="refresh-rate" class="font-semibold">Refresh rate</label>
+            <p class="text-sm opacity-70">How often the status of every vMix is fetched again to update the dashboard.</p>
+          </div>
+          <div class="flex shrink-0 items-center gap-2">
+            <input
+              id="refresh-rate"
+              class="url-param input input-sm w-16 text-center"
+              name="refreshRate"
+              type="number"
+              min="1"
+              value="1"
+              placeholder="1" />
+            <span class="text-sm opacity-70">sec</span>
+          </div>
         </div>
 
         <div class="mb-3 flex items-center justify-between gap-3">

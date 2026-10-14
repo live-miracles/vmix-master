@@ -50,14 +50,11 @@ async function refreshInstance(box: Element): Promise<void> {
 }
 
 async function refreshInstances(cnt = 0) {
-    if (cnt === 0 && refreshRate !== -1) {
+    if (cnt === 0) {
         getBoxes().forEach(async (box) => refreshInstance(box));
     }
 
-    const masterBox = getBox(getMaster());
-    if (cnt !== 0 && masterBox !== null) {
-        refreshInstance(masterBox);
-    } else if (masterBox === null) {
+    if (getBox(getMaster()) === null) {
         renderVmixWeb();
     }
 
@@ -66,8 +63,9 @@ async function refreshInstances(cnt = 0) {
 }
 
 function updateRefreshRates() {
-    const val1 = requireElementById<HTMLInputElement>('refresh-rate').value;
-    refreshRate = val1 === '' ? -1 : Math.max(1, parseInt(val1));
+    const seconds = parseInt(requireElementById<HTMLInputElement>('refresh-rate').value);
+    // An empty or invalid value means the default of one second.
+    refreshRate = Number.isNaN(seconds) ? 1 : Math.max(1, seconds);
 }
 
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
@@ -180,7 +178,7 @@ async function showVmixScriptVersions() {
     }
 }
 
-let refreshRate = -1;
+let refreshRate = 1;
 
 (() => {
     applyDemoParam();

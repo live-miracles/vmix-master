@@ -23,7 +23,7 @@ function demoApplyValue(current, value, min, max) {
     return text === '' || Number.isNaN(number) ? current : demoClamp(number, min, max);
 }
 class DemoVmix {
-    constructor(preset, now, random, openingExtraMs = 0) {
+    constructor(preset, now, random, openingExtraMs = 0, language = '') {
         this.now = now;
         this.random = random;
         this.preview = 5;
@@ -57,16 +57,18 @@ class DemoVmix {
             buses: [],
             ...options,
         });
+        // Slides, videos and the translator are per language, cameras and the like are shared.
+        const named = (name, extension = '') => language === '' ? name + extension : `${name} - ${language}${extension}`;
         const live = () => ({ running: true, hasAudio: true, buses: ['M', 'A'] });
         const video = (duration) => ({ duration, hasAudio: true, buses: ['M', 'A'] });
         this.inputs = [
             make(1, 'Colour', '01 Black'),
             make(2, 'Capture', '02 Stage Camera', live()),
             make(3, 'Capture', '03 Speaker Close-up', live()),
-            make(4, 'Image', '04 Welcome Slide.png'),
-            make(5, 'Video', '05 Opening Video.mp4', video(270000 + openingExtraMs)),
-            make(6, 'Video', '06 Pranayama Intro.mp4', video(754000)),
-            make(7, 'AudioFile', '07 Meditation Music.mp3', {
+            make(4, 'Image', named('04 Welcome Slide', '.png')),
+            make(5, 'Video', named('05 Opening Video', '.mp4'), video(270000 + openingExtraMs)),
+            make(6, 'Video', named('06 Pranayama Intro', '.mp4'), video(754000)),
+            make(7, 'AudioFile', named('07 Meditation Music', '.mp3'), {
                 duration: 480000,
                 hasAudio: true,
                 buses: ['M'],
@@ -74,14 +76,14 @@ class DemoVmix {
                 loop: true,
             }),
             make(8, 'Photos', '08 Photo Slideshow', { duration: 12, position: 3 }),
-            make(9, 'Image', '09 Q&A Slide.png'),
-            make(10, 'Audio', '10 Translator Mic', {
+            make(9, 'Image', named('09 Q&A Slide', '.png')),
+            make(10, 'Audio', named('10 Translator Mic'), {
                 running: true,
                 hasAudio: true,
                 buses: ['M', 'B'],
             }),
-            make(11, 'Image', '11 Break Slide.png'),
-            make(12, 'Video', '12 Closing Video.mp4', video(90000)),
+            make(11, 'Image', named('11 Break Slide', '.png')),
+            make(12, 'Video', named('12 Closing Video', '.mp4'), video(90000)),
         ];
     }
     findInput(raw) {
@@ -288,6 +290,7 @@ class DemoVmix {
 }
 // ===== Request handling =====
 const DEMO_PRESETS = ['English Satsang', 'Hindi Satsang', 'Spanish Satsang'];
+const DEMO_LANGUAGES = ['EN', 'HI', 'ES'];
 const demoInstances = {};
 function getDemoHostname(url) {
     try {
@@ -302,7 +305,7 @@ function createDemoVmix(hostname) {
     const index = Number(hostname.slice('demo'.length)) || 1;
     const preset = DEMO_PRESETS[index - 1] ?? `Demo ${index}`;
     // The third system has a slightly longer opening video, so "Group Compare" has something to find.
-    return new DemoVmix(preset, Date.now, Math.random, index === 3 ? 12000 : 0);
+    return new DemoVmix(preset, Date.now, Math.random, index === 3 ? 12000 : 0, DEMO_LANGUAGES[index - 1] ?? '');
 }
 // Returns the response body for a demo host, or null when the URL is not a demo host.
 function handleDemoRequest(url) {

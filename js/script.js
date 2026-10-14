@@ -46,22 +46,19 @@ async function refreshInstance(box) {
     }
 }
 async function refreshInstances(cnt = 0) {
-    if (cnt === 0 && refreshRate !== -1) {
+    if (cnt === 0) {
         getBoxes().forEach(async (box) => refreshInstance(box));
     }
-    const masterBox = getBox(getMaster());
-    if (cnt !== 0 && masterBox !== null) {
-        refreshInstance(masterBox);
-    }
-    else if (masterBox === null) {
+    if (getBox(getMaster()) === null) {
         renderVmixWeb();
     }
     await sleep(1000);
     requestAnimationFrame(() => refreshInstances((cnt + 1) % refreshRate));
 }
 function updateRefreshRates() {
-    const val1 = requireElementById('refresh-rate').value;
-    refreshRate = val1 === '' ? -1 : Math.max(1, parseInt(val1));
+    const seconds = parseInt(requireElementById('refresh-rate').value);
+    // An empty or invalid value means the default of one second.
+    refreshRate = Number.isNaN(seconds) ? 1 : Math.max(1, seconds);
 }
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
 const DEFAULT_HOST_OPTIONS = [{ name: 'My System', host: '192.168.154.x' }];
@@ -162,7 +159,7 @@ async function showVmixScriptVersions() {
         console.warn('Could not load vMix script versions', ex);
     }
 }
-let refreshRate = -1;
+let refreshRate = 1;
 (() => {
     applyDemoParam();
     setDocumentUrlParams();

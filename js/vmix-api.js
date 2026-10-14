@@ -64,21 +64,12 @@ function getScreenInput(screen) {
     const info = getMasterInfo();
     return info === null ? null : info[screen];
 }
-function refreshMasterSoon() {
-    setTimeout(() => {
-        const masterBox = getBox(getMaster());
-        if (masterBox !== null) {
-            refreshInstance(masterBox);
-        }
-    }, 300);
-}
 function restartScreen(screen) {
     const inputNum = getScreenInput(screen);
     if (inputNum === null) {
         return;
     }
     masterSlaveExecute('Function=Restart&Input=' + inputNum);
-    refreshMasterSoon();
 }
 function playPauseScreen(screen) {
     const info = getMasterInfo();
@@ -90,7 +81,6 @@ function playPauseScreen(screen) {
     // a different state end up in the same one instead of all being toggled.
     const running = info.inputs[inputNum].state === 'Running';
     masterSlaveExecute(`Function=${running ? 'Pause' : 'Play'}&Input=${inputNum}`);
-    refreshMasterSoon();
 }
 function seekScreen(screen, ms) {
     const inputNum = getScreenInput(screen);
@@ -98,7 +88,6 @@ function seekScreen(screen, ms) {
         return;
     }
     masterSlaveExecute(`Function=SetPosition&Value=${Math.round(ms)}&Input=${inputNum}`);
-    refreshMasterSoon();
 }
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -194,9 +183,18 @@ function masterSlaveExecute(command) {
     }
     const targets = getGroupTargetNumbers();
     targets.unshift(master);
-    removeDuplicates(targets)
-        .filter((num) => getBox(num) !== null)
-        .map((num) => getBoxHost(getBox(num)))
-        .forEach((host) => execute(getApiUrl(host, command)));
+    const nums = removeDuplicates(targets).filter((num) => getBox(num) !== null);
+    nums.map((num) => getBoxHost(getBox(num))).forEach((host) => execute(getApiUrl(host, command)));
+    refreshSoon(nums);
+}
+// Shows the result of a command without waiting for the next refresh cycle.
+function refreshSoon(nums) {
+    setTimeout(() => {
+        nums.forEach((num) => {
+            const box = getBox(num);
+            if (box !== null)
+                refreshInstance(box);
+        });
+    }, 300);
 }
 //# sourceMappingURL=vmix-api.js.map
