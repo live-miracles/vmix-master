@@ -205,10 +205,11 @@ function getResponsiveTitle(str: string): string {
     while (splitIndex < str.length && !/[a-zA-Z0-9]/.test(str[splitIndex])) {
         splitIndex++;
     }
-    const left = str.slice(0, splitIndex);
-    const right = str.slice(splitIndex);
+    const left = getHtmlAttributeText(str.slice(0, splitIndex));
+    const right = getHtmlAttributeText(str.slice(splitIndex));
+    // whitespace-pre keeps a space at the split point, which would otherwise collapse.
     return (
-        `<span class="overflow-hidden whitespace-nowrap text-ellipsis">${left}</span>` +
+        `<span class="overflow-hidden whitespace-pre text-ellipsis">${left}</span>` +
         `<span class="overflow-hidden whitespace-nowrap text-clip" style="direction: rtl">${right}</span>`
     );
 }
