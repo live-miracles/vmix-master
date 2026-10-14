@@ -139,18 +139,31 @@ function updateBoxMasterStyles() {
         const panel = requireElement('.box-panel', box);
         const isMaster = box.classList.contains('is-master');
         const isGroup = getBoxGroup(box);
-        panel.classList.toggle('border-accent', isMaster);
+        // Master only changes behaviour when it is in a group (actions then fan out), so the
+        // MASTER label and the green outline are for the group master. Otherwise it is just selected.
+        const isGroupMaster = isMaster && isGroup;
+        panel.classList.toggle('border-primary', isGroupMaster);
+        panel.classList.toggle('border-accent', isMaster && !isGroup);
         panel.classList.toggle('border-base-content/25', !isMaster);
-        requireElement('.master-badge', box).classList.toggle('hidden', !isMaster);
         const groupBtn = requireElement('.group-btn', box);
         groupBtn.classList.toggle('btn-primary', isGroup);
         groupBtn.classList.toggle('btn-soft', isGroup);
         groupBtn.classList.toggle('btn-ghost', !isGroup);
         groupBtn.classList.toggle('opacity-70', !isGroup);
         groupBtn.setAttribute('aria-pressed', String(isGroup));
+        // The group master shows its role next to the icon, so the button grows to fit the label.
+        groupBtn.classList.toggle('btn-square', !isGroupMaster);
+        groupBtn.classList.toggle('w-5', !isGroupMaster);
+        groupBtn.classList.toggle('p-0', !isGroupMaster);
+        groupBtn.classList.toggle('px-1.5', isGroupMaster);
+        requireElement('.master-label', box).classList.toggle('hidden', !isGroupMaster);
+        const groupState = isGroupMaster
+            ? 'Group master (click to remove from group)'
+            : isGroup
+              ? 'In group (click to remove)'
+              : 'Not in group (click to add)';
         groupBtn.title =
-            (isGroup ? 'In group (click to remove)' : 'Not in group (click to add)') +
-            '\nActions on group members will propagate to the other group members.';
+            groupState + '\nActions on group members will propagate to the other group members.';
         requireElement('.group-on', box).classList.toggle('hidden', !isGroup);
         requireElement('.group-off', box).classList.toggle('hidden', isGroup);
     });
@@ -267,10 +280,9 @@ function createBox(name: string, host: string, num: number, group = false): HTML
             <div class="flex min-w-0 flex-1 items-center gap-1.5">
               <span class="status-dot h-2 w-2 shrink-0 rounded-full bg-base-content/30" title="Not connected"></span>
               <div class="boxDisplayName min-w-0 cursor-text select-none overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold" title="${getBoxNameTitle(boxName)}">${getHtmlAttributeText(boxName)}</div>
-              <span class="master-badge badge badge-soft badge-accent badge-xs hidden shrink-0">MASTER</span>
             </div>
             <div class="flex shrink-0 items-center justify-center gap-0.5">
-              <button class="group-btn focus btn btn-square h-5 min-h-0 w-5 p-0" aria-pressed="false">
+              <button class="group-btn focus btn btn-square h-5 min-h-0 w-5 gap-1 p-0" aria-pressed="false">
                 <svg class="group-on hidden h-3 w-3" viewBox="0 0 24 24" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
@@ -281,6 +293,7 @@ function createBox(name: string, host: string, num: number, group = false): HTML
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
                 </svg>
+                <span class="master-label hidden text-[10px] leading-none font-semibold">MASTER</span>
               </button>
               <button class="close-btn focus btn btn-square btn-ghost h-5 min-h-0 w-5 p-0 text-base-content/50 hover:text-error" title="Delete box" aria-label="Delete box">
                 <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
