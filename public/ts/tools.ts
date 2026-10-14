@@ -121,6 +121,7 @@ function updateBoxesParam() {
     const url = new URL(window.location.href);
     url.searchParams.set('boxes', param);
     window.history.replaceState({}, '', url);
+    updateDemoUi();
 }
 
 function updateMasterParam() {

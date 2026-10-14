@@ -11,6 +11,7 @@
     <script src="./Sortable.min.js" defer></script>
     <script src="./js/tools.js" defer></script>
     <script src="./js/vmix-api.js" defer></script>
+    <script src="./js/demo.js" defer></script>
     <script src="./js/box.js" defer></script>
     <script src="./js/vmix-info.js" defer></script>
     <script src="./js/vmix-web.js" defer></script>
@@ -200,6 +201,10 @@
     </div>
 
     <main class="min-h-[calc(100vh-2.5rem)]">
+      <div id="demo-banner" class="bg-info/15 text-info hidden px-3 py-1 text-center text-xs">
+        Demo mode: these are simulated vMix systems, nothing is sent to your network.
+        <a class="link font-semibold" href="./">Exit demo</a>
+      </div>
       <section class="border-base-300 bg-base-100 border-b px-2 py-3">
         <div class="flex w-full flex-wrap items-start gap-2" id="boxes"></div>
         <datalist id="hosts">
@@ -209,6 +214,14 @@
 
       <section class="min-w-0 px-2 pt-5 pb-8">
         <div class="w-full">
+          <div id="welcome" class="mx-auto mb-5 max-w-2xl rounded-box border border-base-content/10 bg-base-200 p-5 text-center">
+            <h2 class="text-lg font-semibold">Control vMix from your browser</h2>
+            <p class="mt-2 text-sm opacity-80">
+              Enter the address of your vMix in the box above, for example <code>192.168.1.20</code>. Add more systems with the + button to control
+              several at once. Just looking? Try three simulated systems, no vMix needed.
+            </p>
+            <a class="btn btn-accent btn-sm mt-3" href="?demo">Try the demo</a>
+          </div>
           <div class="vmix-web">
             <div id="vmix-container" class="hidden pb-5">
               <div id="vmix-screens" class="grid grid-cols-1 items-stretch gap-2 md:grid-cols-[1fr_auto_1fr]">
