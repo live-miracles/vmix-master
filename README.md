@@ -29,9 +29,7 @@ vMix Master puts the whole show on one page: every input by name, program and pr
 - **Zero install:** it is a static page. Open the hosted site, or run it from a local copy.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="vMix Master controlling three grouped vMix systems" width="720">
-  &nbsp;
-  <img src="docs/mobile.png" alt="vMix Master on a phone" width="190" align="top">
+  <img src="docs/screenshot.png" alt="vMix Master controlling three grouped vMix systems" width="860">
 </p>
 
 ## How it compares
