@@ -86,12 +86,13 @@
                 d="M12 .5A11.5 11.5 0 0 0 8.36 22.9c.58.1.79-.25.79-.56v-2.02c-3.2.7-3.88-1.37-3.88-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .98-.31 3.18 1.18A11 11 0 0 1 12 6.1c.98 0 1.96.13 2.88.39 2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.77.12 3.06.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.13v3.15c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z" />
             </svg>
           </a>
-          <button
-            type="button"
+          <a
+            href="https://live-miracles.github.io/projects/vmix-master/docs/"
+            target="_blank"
+            rel="noopener"
             class="btn btn-outline btn-accent btn-square btn-xs"
             aria-label="Documentation"
-            title="Documentation"
-            onclick="document.getElementById('documentation-modal').showModal()">
+            title="Documentation">
             <svg
               class="h-4 w-4"
               viewBox="0 0 24 24"
@@ -105,7 +106,7 @@
               <path
                 d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3H3Z" />
             </svg>
-          </button>
+          </a>
           <button
             type="button"
             class="btn btn-outline btn-accent btn-square btn-xs"
@@ -436,102 +437,6 @@
           </button>
         </div>
         <div id="host-options" class="flex flex-col gap-2"></div>
-      </div>
-      <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-      </form>
-    </dialog>
-
-    <dialog id="documentation-modal" class="modal">
-      <div class="modal-box max-h-[90vh] max-w-4xl">
-        <form method="dialog">
-          <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2" aria-label="Close documentation">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
-              <path d="M6 6l12 12" />
-              <path d="M18 6L6 18" />
-            </svg>
-          </button>
-        </form>
-
-        <div class="prose max-w-none">
-          <h2>Documentation</h2>
-
-          <p>
-            Chrome now allows this HTTPS page to connect to vMix over HTTP on your local network. If you still want to run the app locally, clone the
-            <b>gh-pages</b> branch if you have <b>Git</b> installed, or open the <b>gh-pages</b> branch on GitHub and click <b>Code</b> ->
-            <b>Download ZIP</b>. After this go to the cloned or extracted folder and open the <code>index.html</code> file in Chrome.
-          </p>
-
-          <h3>vMix Scripts</h3>
-          <h4>vMix Audio Handling</h4>
-          <p>
-            The audio volume science is a little bit hard to understand and vMix in addition also makes it even more complicated by using different
-            scales. Here is some background on the Decibel (dB) based scales (like "volumeThreshold"), the formulas how the scales can be converted,
-            and some examples:
-          </p>
-
-          <pre>
-Scales:
-    Volume:      0 to 100    (used for UI volume bars, SetVolumeFade)
-    Amplitude:   0 to 1      (used for API audio bus meter, @meterF1)
-    Amplitude2:  0 to 100    (used for API input volume input, @volume)
-    Decibels:    -oo to 0    (used in audio science)
-
-Formulas:
-    Amplitude    = Amplitude2 / 100
-    Amplitude2   = Amplitude * 100
-    Volume       = (Amplitude ^ 0.25) * 100
-    Amplitude    = (Volume / 100) ^ 4
-    Decibels     = 20 * Math.Log10(Amplitude)
-    Amplitude    = 10 ^ (Decibels / 20)
-
-Examples:
-    ==== METER (measured) ===============      ==== CONTROL =============
-    Volume (%) Amplitude  Decibel (dB FS)      Volume (%) Decibel (dB FS) *
-    ---------- ---------- ---------------      ---------- ---------------
-    100        1,0000        0,00              100        - 18,00
-     95        0,8145     -  1,78               95        - 19,78
-     90        0,6561     -  3,66               90        - 21,66
-     85        0,5220     -  5,65               85        - 23,65
-     80        0,4096     -  7,75               80        - 25,75
-     75        0,3164     - 10,00               75        - 28,00
-     70        0,2401     - 12,39               70        - 30,39
-     65        0,1785     - 14,97               65        - 32,97
-     60        0,1296     - 17,75               60        - 35,75
-     55        0,0915     - 20,77               55        - 38,77
-     50        0,0625     - 24,08               50        - 42,08
-     45        0,0410     - 27,74               45        - 45,74
-     40        0,0256     - 31,84               40        - 49,84
-     35        0,0150     - 36,47               35        - 54,47
-     30        0,0081     - 41,83               30        - 59,83
-     25        0,0039     - 48,16               25        - 66,16
-     20        0,0016     - 55,92               20        - 73,92
-     15        0,0005     - 65,91               15        - 83,91
-     10        0,0001     - 80,00               10        - 98,00
-      5        0,0000     -104,08                5        -122,08
-      1        0,0000     -160,00                1        -178,08
-      0        0,0000     -    oo                0        -    oo
-
-  (*) for a usual incoming voice signal of -18 dB FS
-</pre
-          >
-
-          <p>
-            <strong>Attention:</strong> Keep in mind that 100% of a Volume Meter corresponds to 0 dB FS, while 100% of the Volume Bar corresponds to
-            the full incoming signal (usually about the target loudness of -18 dB FS for voice). So, if you attenuate by targeting a Volume Bar of
-            50%, you are reducing your incoming signal BY(!) -24 dB relative, and NOT TO(!) -24 dB absolute.
-          </p>
-
-          <h3>Links</h3>
-          <p>You can check out some usefull scripts</p>
-          <ul>
-            <li>
-              Official vMix API documentation:
-              <a href="https://www.vmix.com/help29/DeveloperAPI.html">www.vmix.com/help29/DeveloperAPI.html</a>
-            </li>
-            <li>Usefull vMix Scripts by RSE: <a href="https://github.com/rse/vmix-scripts">github.com/rse/vmix-scripts</a></li>
-          </ul>
-        </div>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>

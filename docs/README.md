@@ -19,3 +19,8 @@
 ## Reference
 
 - [Audio levels](3-reference/1-audio-levels.md): the volume, amplitude and decibel scales vMix uses
+
+## Links
+
+- [vMix API documentation](https://www.vmix.com/help29/DeveloperAPI.html): the functions and the status XML that vMix Master and the scripts use
+- [vMix scripts by RSE](https://github.com/rse/vmix-scripts): another collection of vMix scripts
