@@ -66,6 +66,20 @@ describe('demo hosts', () => {
         );
     });
 
+    it('tags language-specific inputs per system and shares the rest', () => {
+        const title = (host: string, n: number) =>
+            attr(input(handleDemoRequest(`http://${host}:8088/api/`) ?? '', n), 'title');
+        assert.equal(title('demo', 5), '05 Opening Video - EN.mp4');
+        assert.equal(title('demo2', 5), '05 Opening Video - HI.mp4');
+        assert.equal(title('demo3', 9), '09 Q&amp;A Slide - ES.png');
+        assert.equal(title('demo2', 10), '10 Translator Mic - HI');
+        // Cameras and the black are the same on every system.
+        assert.equal(title('demo2', 2), '02 Stage Camera');
+        assert.equal(title('demo3', 1), '01 Black');
+        // Further demo systems have no language to tag.
+        assert.equal(title('demo4', 5), '05 Opening Video.mp4');
+    });
+
     it('makes the third system differ so Group Compare has something to report', () => {
         const duration = (host: string) =>
             attr(input(handleDemoRequest(`http://${host}:8088/api/`) ?? '', 5), 'duration');
