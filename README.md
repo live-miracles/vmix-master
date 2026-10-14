@@ -24,7 +24,7 @@ vMix Master puts the whole show on one page: every input by name, program and pr
 - **Edit in place:** double-click a name or an address to change it, and toggle group membership with one click.
 - **Function buttons:** start and stop outputs (external, SRT), audio, playback, timers, and scripts, grouped by category, plus a raw request box for any vMix API function.
 - **Setup check:** compare group members for mismatched buses, call sources, input types, layers, and durations before you go live.
-- **Follow-the-master scripts:** drop-in vMix scripts keep slaves in step with the master, see [vMix scripts](#vmix-scripts).
+- **Follow-the-master scripts:** drop-in vMix scripts make the other systems copy the master's active input, preview, and playback position, see [vMix scripts](#vmix-scripts).
 - **Works on a phone or tablet** and can be installed as an app from Chrome.
 - **Zero install:** it is a static page. Open the hosted site, or run it from a local copy.
 
@@ -36,16 +36,16 @@ vMix Master puts the whole show on one page: every input by name, program and pr
 
 Each tool fits a different job.
 
-|                           | **vMix Master**                                   | vMix Web Controller (built-in)                    | Bitfocus Companion                                     |
-| ------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------ |
-| Best for                  | Full control of one vMix, or several kept in step | A few inputs and simple switching and transitions | Custom button surfaces and hardware (e.g. Stream Deck) |
-| Install                   | None, runs in the browser                         | None, built into vMix                             | A separate app running on a machine                    |
-| Multiple vMix instances   | ✅ Yes, via master/group                          | ❌ One instance per page                          | ⚠️ Yes, but you build the pages and sync logic         |
-| Input labels              | ✅ Names, e.g. `05 Opening Video.mp4`             | ❌ Type letter and number only, e.g. `V 5`        | ⚠️ Whatever you label each button as                   |
-| Follow-the-master scripts | ✅ Included                                       | ❌                                                | ❌                                                     |
-| Setup comparison          | ✅                                                | ❌                                                | ❌                                                     |
-| Hardware control surfaces | ❌                                                | ❌                                                | ✅                                                     |
-| Free and open source      | ✅                                                | ❌ Part of vMix (not open source)                 | ✅                                                     |
+|                           | **vMix Master**                                         | vMix Web Controller (built-in)                    | Bitfocus Companion                                     |
+| ------------------------- | ------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| Best for                  | Full control of one vMix, or several switching together | A few inputs and simple switching and transitions | Custom button surfaces and hardware (e.g. Stream Deck) |
+| Install                   | None, runs in the browser                               | None, built into vMix                             | A separate app running on a machine                    |
+| Multiple vMix instances   | ✅ Yes, via master/group                                | ❌ One instance per page                          | ⚠️ Yes, but you build the pages and sync logic         |
+| Input labels              | ✅ Names, e.g. `05 Opening Video.mp4`                   | ❌ Type letter and number only, e.g. `V 5`        | ⚠️ Whatever you label each button as                   |
+| Follow-the-master scripts | ✅ Included                                             | ❌                                                | ❌                                                     |
+| Setup comparison          | ✅                                                      | ❌                                                | ❌                                                     |
+| Hardware control surfaces | ❌                                                      | ❌                                                | ✅                                                     |
+| Free and open source      | ✅                                                      | ❌ Part of vMix (not open source)                 | ✅                                                     |
 
 ✅ yes &nbsp; ❌ no &nbsp; ⚠️ possible with extra work
 
