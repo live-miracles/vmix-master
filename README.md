@@ -37,15 +37,17 @@ vMix Master is a web control panel for productions that use more than one vMix m
 
 vMix Master doesn't replace the tools below. It covers the multi-instance case that they leave to you.
 
-|                           | **vMix Master**                   | vMix Web Controller (built-in) | Bitfocus Companion                                     |
-| ------------------------- | --------------------------------- | ------------------------------ | ------------------------------------------------------ |
-| Best for                  | Several vMix systems kept in step | Quick control of a single vMix | Custom button surfaces and hardware (e.g. Stream Deck) |
-| Install                   | None, runs in the browser         | None, built into vMix          | A separate app running on a machine                    |
-| Multiple vMix instances   | Yes, via master/group             | One instance per page          | Yes, but you build the pages and sync logic            |
-| Follow-the-master scripts | Included                          | No                             | No                                                     |
-| Setup comparison          | Yes                               | No                             | No                                                     |
-| Hardware control surfaces | No                                | No                             | Yes                                                    |
-| Free and open source      | Yes                               | Included with vMix             | Yes                                                    |
+|                           | **vMix Master**                   | vMix Web Controller (built-in)    | Bitfocus Companion                                     |
+| ------------------------- | --------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| Best for                  | Several vMix systems kept in step | Quick control of a single vMix    | Custom button surfaces and hardware (e.g. Stream Deck) |
+| Install                   | None, runs in the browser         | None, built into vMix             | A separate app running on a machine                    |
+| Multiple vMix instances   | ✅ Yes, via master/group          | ❌ One instance per page          | ⚠️ Yes, but you build the pages and sync logic         |
+| Follow-the-master scripts | ✅ Included                       | ❌                                | ❌                                                     |
+| Setup comparison          | ✅                                | ❌                                | ❌                                                     |
+| Hardware control surfaces | ❌                                | ❌                                | ✅                                                     |
+| Free and open source      | ✅                                | ❌ Part of vMix (not open source) | ✅                                                     |
+
+✅ yes &nbsp; ❌ no &nbsp; ⚠️ possible with extra work
 
 Use the built-in Web Controller for a single machine, and Companion if you want physical buttons. Use vMix Master when several vMix machines need to switch together.
 
