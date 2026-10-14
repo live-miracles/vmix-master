@@ -73,22 +73,12 @@ function getScreenInput(screen: 'preview' | 'active'): number | null {
     return info === null ? null : info[screen];
 }
 
-function refreshMasterSoon(): void {
-    setTimeout(() => {
-        const masterBox = getBox(getMaster());
-        if (masterBox !== null) {
-            refreshInstance(masterBox);
-        }
-    }, 300);
-}
-
 function restartScreen(screen: 'preview' | 'active'): void {
     const inputNum = getScreenInput(screen);
     if (inputNum === null) {
         return;
     }
     masterSlaveExecute('Function=Restart&Input=' + inputNum);
-    refreshMasterSoon();
 }
 
 function playPauseScreen(screen: 'preview' | 'active'): void {
@@ -101,7 +91,6 @@ function playPauseScreen(screen: 'preview' | 'active'): void {
     // a different state end up in the same one instead of all being toggled.
     const running = info.inputs[inputNum].state === 'Running';
     masterSlaveExecute(`Function=${running ? 'Pause' : 'Play'}&Input=${inputNum}`);
-    refreshMasterSoon();
 }
 
 function seekScreen(screen: 'preview' | 'active', ms: number): void {
@@ -110,7 +99,6 @@ function seekScreen(screen: 'preview' | 'active', ms: number): void {
         return;
     }
     masterSlaveExecute(`Function=SetPosition&Value=${Math.round(ms)}&Input=${inputNum}`);
-    refreshMasterSoon();
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -229,8 +217,19 @@ function masterSlaveExecute(command: string): void {
 
     const targets = getGroupTargetNumbers();
     targets.unshift(master);
-    removeDuplicates(targets)
-        .filter((num) => getBox(num) !== null)
-        .map((num) => getBoxHost(getBox(num)!))
-        .forEach((host) => execute(getApiUrl(host, command)));
+    const nums = removeDuplicates(targets).filter((num) => getBox(num) !== null);
+    nums.map((num) => getBoxHost(getBox(num)!)).forEach((host) =>
+        execute(getApiUrl(host, command)),
+    );
+    refreshSoon(nums);
+}
+
+// Shows the result of a command without waiting for the next refresh cycle.
+function refreshSoon(nums: number[]): void {
+    setTimeout(() => {
+        nums.forEach((num) => {
+            const box = getBox(num);
+            if (box !== null) refreshInstance(box);
+        });
+    }, 300);
 }

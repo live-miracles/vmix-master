@@ -124,12 +124,9 @@ function renderVmixInfo(box: Element): void {
     const metaElem = requireElement('.vmixMeta', box);
     metaElem.innerHTML = '';
     if (vmixInfo === null) {
-        // Not fetched yet: stay blank without an address (or with refreshing off).
+        // Not fetched yet: stay blank without an address.
         if (getBoxHost(box) === '') {
             setBoxStatus(box, 'idle', 'No address');
-            infoElem.innerHTML = '';
-        } else if (refreshRate === -1) {
-            setBoxStatus(box, 'idle', 'Auto-refresh is off');
             infoElem.innerHTML = '';
         } else {
             setBoxStatus(box, 'pending', 'Connecting…');
