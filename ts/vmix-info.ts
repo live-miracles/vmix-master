@@ -54,9 +54,10 @@ class VmixInfo {
             );
 
         this.audio = {};
-        Object.entries(jsonData.vmix.audio).forEach(
-            ([k, v]) => (this.audio[k] = (v as JsonObject)['@attributes']),
-        );
+        // Skip the whitespace between the XML elements, which would otherwise show up as a bus.
+        Object.entries(jsonData.vmix.audio)
+            .filter(([, v]) => (v as JsonObject)['@attributes'] !== undefined)
+            .forEach(([k, v]) => (this.audio[k] = (v as JsonObject)['@attributes']));
     }
 }
 

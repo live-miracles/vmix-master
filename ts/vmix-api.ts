@@ -4,6 +4,10 @@
 async function fetchUrl(
     url: string,
 ): Promise<{ status: number | null; value: string | null; error: unknown }> {
+    const demoResponse = handleDemoRequest(url);
+    if (demoResponse !== null) {
+        return { status: 200, value: demoResponse, error: null };
+    }
     try {
         const response = await fetch(url, { signal: AbortSignal.timeout(2000) });
         const data = await response.text();

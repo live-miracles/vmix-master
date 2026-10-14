@@ -164,10 +164,12 @@ async function showVmixScriptVersions() {
 }
 let refreshRate = -1;
 (() => {
+    applyDemoParam();
     setDocumentUrlParams();
     initBoxes();
     setInitialMasterBox();
     setInitialGroupBoxes();
+    updateDemoUi();
     renderCustomFunctions();
     prerenderVmixWeb();
     renderHostDatalist();

@@ -34,7 +34,10 @@ class VmixInfo {
             .filter((o) => o['#text'] !== undefined)
             .forEach((o) => (this.overlays[Number(o['@attributes'].number)] = Number(o['#text'])));
         this.audio = {};
-        Object.entries(jsonData.vmix.audio).forEach(([k, v]) => (this.audio[k] = v['@attributes']));
+        // Skip the whitespace between the XML elements, which would otherwise show up as a bus.
+        Object.entries(jsonData.vmix.audio)
+            .filter(([, v]) => v['@attributes'] !== undefined)
+            .forEach(([k, v]) => (this.audio[k] = v['@attributes']));
     }
 }
 const parser = new DOMParser();

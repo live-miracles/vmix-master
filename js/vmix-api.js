@@ -2,6 +2,10 @@
 /// <reference path="./types.d.ts" />
 // ===== vMix API Utils =====
 async function fetchUrl(url) {
+    const demoResponse = handleDemoRequest(url);
+    if (demoResponse !== null) {
+        return { status: 200, value: demoResponse, error: null };
+    }
     try {
         const response = await fetch(url, { signal: AbortSignal.timeout(2000) });
         const data = await response.text();
