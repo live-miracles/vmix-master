@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Live demo](https://img.shields.io/badge/live-demo-brightgreen.svg)](https://live-miracles.github.io/vmix-master/?demo)
 
-**Run several vMix systems as one: from a browser, with nothing to install.**
+**A complete control panel for vMix in your browser: one system, or several working as one. Nothing to install.**
 
 ### [▶ Try the live demo](https://live-miracles.github.io/vmix-master/?demo) &nbsp;·&nbsp; [Open the app](https://live-miracles.github.io/vmix-master/)
 
@@ -12,7 +12,7 @@ The demo runs three simulated vMix systems in your browser, so you can try every
   <img src="docs/demo.gif" alt="Quick Play on the master starts the video on all three grouped vMix systems" width="860">
 </p>
 
-vMix Master is a web control panel for productions that use more than one vMix machine: a main stream plus translated streams, a hot backup, or several rooms that must switch together. Pick one vMix as the master, add the others to its group, and every switch, audio change, or custom API command is sent to all of them.
+vMix Master puts the whole show on one page: every input by name, program and preview with timers, overlays, audio buses with meters, playback controls, and any vMix function. It works just as well for a single vMix. When a production uses more than one machine, such as a main stream plus translated streams, a hot backup, or several rooms that must switch together, pick one vMix as the master and add the others to its group. Every switch, audio change, or custom API command is then sent to all of them.
 
 ## Features
 
@@ -36,24 +36,24 @@ vMix Master is a web control panel for productions that use more than one vMix m
 
 ## How it compares
 
-vMix Master doesn't replace the tools below. It covers the multi-instance case that they leave to you.
+Each tool fits a different job.
 
-|                           | **vMix Master**                       | vMix Web Controller (built-in)             | Bitfocus Companion                                     |
-| ------------------------- | ------------------------------------- | ------------------------------------------ | ------------------------------------------------------ |
-| Best for                  | Several vMix systems kept in step     | Quick control of a single vMix             | Custom button surfaces and hardware (e.g. Stream Deck) |
-| Install                   | None, runs in the browser             | None, built into vMix                      | A separate app running on a machine                    |
-| Multiple vMix instances   | ✅ Yes, via master/group              | ❌ One instance per page                   | ⚠️ Yes, but you build the pages and sync logic         |
-| Input labels              | ✅ Names, e.g. `05 Opening Video.mp4` | ❌ Type letter and number only, e.g. `V 5` | ⚠️ Whatever you label each button as                   |
-| Follow-the-master scripts | ✅ Included                           | ❌                                         | ❌                                                     |
-| Setup comparison          | ✅                                    | ❌                                         | ❌                                                     |
-| Hardware control surfaces | ❌                                    | ❌                                         | ✅                                                     |
-| Free and open source      | ✅                                    | ❌ Part of vMix (not open source)          | ✅                                                     |
+|                           | **vMix Master**                                   | vMix Web Controller (built-in)                    | Bitfocus Companion                                     |
+| ------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| Best for                  | Full control of one vMix, or several kept in step | A few inputs and simple switching and transitions | Custom button surfaces and hardware (e.g. Stream Deck) |
+| Install                   | None, runs in the browser                         | None, built into vMix                             | A separate app running on a machine                    |
+| Multiple vMix instances   | ✅ Yes, via master/group                          | ❌ One instance per page                          | ⚠️ Yes, but you build the pages and sync logic         |
+| Input labels              | ✅ Names, e.g. `05 Opening Video.mp4`             | ❌ Type letter and number only, e.g. `V 5`        | ⚠️ Whatever you label each button as                   |
+| Follow-the-master scripts | ✅ Included                                       | ❌                                                | ❌                                                     |
+| Setup comparison          | ✅                                                | ❌                                                | ❌                                                     |
+| Hardware control surfaces | ❌                                                | ❌                                                | ✅                                                     |
+| Free and open source      | ✅                                                | ❌ Part of vMix (not open source)                 | ✅                                                     |
 
 ✅ yes &nbsp; ❌ no &nbsp; ⚠️ possible with extra work
 
 **Easy to read at a glance.** In a live show you shouldn't have to remember that `V 5` is the opening video. vMix Master shows every input by its name and number, with its audio level, marks what is on air and in preview, and shows a large timer for both. The built-in Web Controller labels inputs only with a type letter and a number (for example `C 2` or `V 5`), as described in [vMix's own guide](https://www.vmix.com/knowledgebase/article.aspx/69/how-to-control-vmix-from-a-web-browser-using-vmix-web-controller).
 
-Use the built-in Web Controller for a single machine, and Companion if you want physical buttons. Use vMix Master when several vMix machines need to switch together.
+Use the built-in Web Controller if you have a few inputs and only need simple switching and transitions, and Companion if you want physical buttons. Use vMix Master when you want fuller control from a browser, and whenever several vMix machines need to switch together.
 
 ## Quick start
 
