@@ -60,6 +60,33 @@ voice that arrives at -18 dB FS.
 
 \* For a usual incoming voice signal of -18 dB FS.
 
+## Volumes in decibels
+
+The volume bar can also be described in decibels, as the change it makes to the signal:
+`Decibels = 20 * Math.Log10(Amplitude)`, which together with the conversions above gives
+
+```
+Volume   = 100 * 10 ^ (Decibels / 80)
+Decibels = 80 * Math.Log10(Volume / 100)
+```
+
+The [Translator](../2-scripts/5-translator.md) settings use this, because a decibel is the same
+change of loudness anywhere on the scale, and a step of 1 on the volume scale is not.
+
+| Decibels | Volume (%) |
+| -------- | ---------- |
+| 0        | 100        |
+| -3       | 91.7       |
+| -6       | 84.1       |
+| -9       | 77.2       |
+| -12      | 70.8       |
+| -15      | 64.9       |
+| -18      | 59.6       |
+| -24      | 50.1       |
+| -30      | 42.2       |
+| -36      | 35.5       |
+| -48      | 25.1       |
+
 ## What to keep in mind
 
 - A **meter** at 100 % is 0 dB FS, the loudest possible signal. A **volume bar** at 100 % is
@@ -69,12 +96,12 @@ voice that arrives at -18 dB FS.
 
 ## Thresholds in the scripts
 
-| Setting                                                      | Value  | In decibels |
-| ------------------------------------------------------------ | ------ | ----------- |
-| [Translator](../2-scripts/5-translator.md) `VOICE_THRESHOLD` | `0.1`  | -20 dB      |
-| [AutoGain](../2-scripts/6-auto-gain.md) `VOICE_THRESHOLD`    | `0.1`  | -20 dB      |
-| [AutoGain](../2-scripts/6-auto-gain.md) `PEAK_THRESHOLD`     | `0.45` | about -7 dB |
-| [AutoGain](../2-scripts/6-auto-gain.md) `CLIP_THRESHOLD`     | `0.9`  | about -1 dB |
+| Setting                                                         | Value    | Equivalent    |
+| --------------------------------------------------------------- | -------- | ------------- |
+| [Translator](../2-scripts/5-translator.md) `VOICE_THRESHOLD_DB` | `-20` dB | 0.1 amplitude |
+| [AutoGain](../2-scripts/6-auto-gain.md) `VOICE_THRESHOLD`       | `0.1`    | -20 dB        |
+| [AutoGain](../2-scripts/6-auto-gain.md) `PEAK_THRESHOLD`        | `0.45`   | about -7 dB   |
+| [AutoGain](../2-scripts/6-auto-gain.md) `CLIP_THRESHOLD`        | `0.9`    | about -1 dB   |
 
 To pick your own threshold, take the level you want in decibels and use
 `Amplitude = 10 ^ (Decibels / 20)`.

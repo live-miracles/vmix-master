@@ -72,7 +72,7 @@ Ready-to-use scripts for vMix's scripting feature (4K and Pro editions) are in [
 | [Slave](docs/2-scripts/2-slave.md)                  | Follows a master vMix: active input, preview, and playback position.                                                   |
 | [NameSlave](docs/2-scripts/3-name-slave.md)         | Follows a master by input name instead of number, with a fallback input when there is no match.                        |
 | [PreviewNext](docs/2-scripts/4-preview-next.md)     | Puts the next input into preview after each transition.                                                                |
-| [Translator](docs/2-scripts/5-translator.md)        | Sidechain ducking: lowers the program audio while the translator speaks, then raises it again in two smooth steps.     |
+| [Translator](docs/2-scripts/5-translator.md)        | Sidechain ducking: lowers the program audio while the translator speaks, then raises it again smoothly.                |
 | [AutoGain](docs/2-scripts/6-auto-gain.md)           | Adjusts the gain of audio and call inputs (and inputs named "AutoGain") to avoid clipping or low volume.               |
 | [AudioFade](docs/2-scripts/7-audio-fade.md)         | Fades audio in and out during transitions for inputs with "AudioFade" in their title.                                  |
 | [DurationTimer](docs/2-scripts/8-duration-timer.md) | Writes the remaining time of the current input into a title named "DurationTimer" (counts up if there is no duration). |
