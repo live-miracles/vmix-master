@@ -42,8 +42,9 @@ Add `Translator` to the title of the input to be sure the right one is used.
 2. Check `CHAIN_BUS`, and the times below if your setup differs.
 3. Start the script.
 
-If it cannot find an input, it prints `No mic / vMix Call input detected.` and looks again
-after five seconds.
+If it cannot find an input, it prints
+`Translator | No input found. Looked for an input with 'Translator' in its title, then an input of type Audio, then an input of type VideoCall. Trying again in 5 seconds.`
+and looks again after five seconds.
 
 ## Settings
 

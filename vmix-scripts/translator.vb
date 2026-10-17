@@ -33,7 +33,7 @@
 ' T3 - translator didn't speak for SILENCE_LIMIT and we start raising the source volume.
 
 Dim SCRIPT_NAME As String = "translator"
-Dim SCRIPT_VERSION As String = "1.3.0"
+Dim SCRIPT_VERSION As String = "1.3.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -121,7 +121,7 @@ Do While True
 
         If micNode Is Nothing Then
             timestamp = DateTime.Now.ToString("HH:mm:ss")
-            Console.WriteLine(timestamp & " Translator | No mic / vMix Call input detected.")
+            Console.WriteLine(timestamp & " Translator | No input found. Looked for an input with 'Translator' in its title, then an input of type Audio, then an input of type VideoCall. Trying again in 5 seconds.")
             Sleep(5000)
             Continue Do
         End If

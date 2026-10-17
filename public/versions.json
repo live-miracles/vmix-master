@@ -1,9 +1,9 @@
 {
     "slave": "1.4.3",
-    "audio-fade": "1.0.7",
+    "audio-fade": "1.0.8",
     "auto-gain": "1.3.0",
-    "duration-timer": "1.2.1",
+    "duration-timer": "1.2.2",
     "name-slave": "1.1.1",
     "preview-next": "1.0.1",
-    "translator": "1.3.0"
+    "translator": "1.3.1"
 }

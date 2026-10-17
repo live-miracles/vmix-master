@@ -10,7 +10,7 @@
 ' - turn on "Display 00:00:00 when Stopped"
 
 Dim SCRIPT_NAME As String = "duration-timer"
-Dim SCRIPT_VERSION As String = "1.2.1"
+Dim SCRIPT_VERSION As String = "1.2.2"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -59,7 +59,7 @@ Dim textNode As XmlNode = x.SelectSingleNode("//input[@title='" & GT_INPUT_TITLE
 
 If textNode Is Nothing Then
     timestamp = DateTime.Now.ToString("HH:mm:ss")
-    Console.WriteLine(timestamp & " DurationTimer | Could not find a GT input named '" & GT_INPUT_TITLE & "'.")
+    Console.WriteLine(timestamp & " DurationTimer | No input found. Looked for an input titled '" & GT_INPUT_TITLE & "'.")
 
     Dim firstTitle As String = Nothing
     Dim inputNodes As System.Xml.XmlNodeList = x.SelectNodes("//input")
@@ -70,7 +70,7 @@ If textNode Is Nothing Then
         If inputType = "GT" Then
             firstTitle = inputNode.Attributes("title").Value
             API.Function("SetInputName", firstTitle, GT_INPUT_TITLE)
-            Console.WriteLine("Renamed the first found GT '" & firstTitle & "' into '" & GT_INPUT_TITLE & "'.")
+            Console.WriteLine(timestamp & " DurationTimer | Renamed the first GT title input '" & firstTitle & "' to '" & GT_INPUT_TITLE & "'.")
             Exit For
         End If
     Next
@@ -80,7 +80,7 @@ If textNode Is Nothing Then
         API.Function("SetInputName", "Text Middle Centre Outline.gtzip", GT_INPUT_TITLE)
         API.Function("MoveInput", GT_INPUT_TITLE, "1")
         API.Function("SetZoom", GT_INPUT_TITLE, "5")
-        Console.WriteLine("Created a new GT input named '" & GT_INPUT_TITLE & "'.")
+        Console.WriteLine(timestamp & " DurationTimer | No GT title input to rename, so created a new one titled '" & GT_INPUT_TITLE & "'.")
     End If
 End If
 

@@ -12,7 +12,7 @@
 ' and rewinds. When it comes back on-air it unmutes and fades up to MAX_VOLUME.
 
 Dim SCRIPT_NAME As String = "audio-fade"
-Dim SCRIPT_VERSION As String = "1.0.7"
+Dim SCRIPT_VERSION As String = "1.0.8"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -64,6 +64,13 @@ For Each inputNode In nodeList
     API.Function("AutoRestartOff", inputNumber)
     API.Function("AutoPauseOff", inputNumber)
 Next
+
+timestamp = DateTime.Now.ToString("HH:mm:ss")
+If nodeList.Count = 0 Then
+    Console.WriteLine(timestamp & " AudioFade | No input found. Looked for inputs with 'AudioFade' in their title. Add 'AudioFade' to the titles and start the script again.")
+Else
+    Console.WriteLine(timestamp & " AudioFade | Set up " & nodeList.Count & " input(s) with 'AudioFade' in their title.")
+End If
 
 Do While True
     Sleep(500)
