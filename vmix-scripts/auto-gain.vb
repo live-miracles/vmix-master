@@ -2,15 +2,14 @@
 '
 ' It monitors the input which has AutoGain in the name or has type Audio or VideoCall
 ' and automatically adjusts the gain to prevent clipping or low volume.
-' It keeps the average level of the voice at the target level, so the voice
-' stays equally loud whether the speaker moves closer, further away, or speaks
-' louder or softer. A clip lowers the gain at once.
-' You can configure the target level and the thresholds below.
+' It keeps the top peaks of the voice in a range: a peak above the top of the range
+' lowers the gain, and no peak reaching the bottom of the range for a while raises it.
+' A clip lowers the gain too. You can configure the range and the thresholds below.
 '
 ' Decibels = 20 * Math.Log10(Amplitude)
 
 Dim SCRIPT_NAME As String = "auto-gain"
-Dim SCRIPT_VERSION As String = "1.3.0"
+Dim SCRIPT_VERSION As String = "1.4.0"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -19,24 +18,17 @@ Console.WriteLine(timestamp & " AutoGain " & SCRIPT_VERSION)
 ' ===== Configurations =====
 Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
 
-Dim TARGET_LEVEL_DB As Double = -14     ' Average voice level (dB) to aim for
-Dim TOLERANCE_DB As Double = 2          ' The gain is kept while the average is within this many dB of the target
-Dim AVERAGE_TIME As Integer = 10000     ' Time constant of the average level in ms; longer is steadier but slower
-Dim AVERAGE_THRESHOLD_DB As Double = -30 ' meterF1 level in dB below which values are left out of the average
-
 Dim CLIP_THRESHOLD_DB As Double = -1    ' meterF1 level in dB to consider as clipping
-Dim CLIP_WAIT As Integer = 5000         ' Time to wait after the last clip before allowing gain increase
-Dim GAIN_DOWN_TIME As Integer = 1000    ' Minimum time between gain decreases
-Dim GAIN_UP_TIME As Integer = 3000      ' Minimum time between gain increases
+Dim CLIP_DOWN_TIME As Integer = 1000    ' Minimum time between gain decreases caused by clipping
+
+Dim PEAK_HIGH_DB As Double = -5         ' Top of the peak range in dB; a peak above it lowers the gain
+Dim PEAK_LOW_DB As Double = -6          ' Bottom of the peak range in dB; peaks must reach it or the gain is raised
+Dim PEAK_WAIT As Integer = 5000         ' Time to wait after last peak above PEAK_LOW_DB before allowing gain increase
+Dim GAIN_CHANGE_TIME As Integer = 3000  ' Minimum time after any gain change before the peak range raises or lowers it
 
 Dim VOICE_THRESHOLD_DB As Double = -20  ' meterF1 level in dB to consider as voice present (-20 dB is 0.1 amplitude)
 Dim VOICE_DURATION As Integer = 250     ' Time of continuous voice detection to consider as speaking
 Dim VOICE_WAIT As Integer = 5000        ' If there is no voice for this time, script stops adjusting gain
-
-' meterF1 is an amplitude: amplitude = 10 ^ (dB / 20)
-Dim AVERAGE_THRESHOLD As Double = Math.Pow(10, AVERAGE_THRESHOLD_DB / 20)
-Dim CLIP_THRESHOLD As Double = Math.Pow(10, CLIP_THRESHOLD_DB / 20)
-Dim VOICE_THRESHOLD As Double = Math.Pow(10, VOICE_THRESHOLD_DB / 20)
 
 ' --- VERSION CHECK ---
 Try
@@ -66,16 +58,20 @@ Catch ex As Exception
     Console.WriteLine(timestamp & " AutoGain | Could not check for updates: " & ex.Message)
 End Try
 
+' meterF1 is an amplitude: amplitude = 10 ^ (dB / 20)
+Dim CLIP_THRESHOLD As Double = Math.Pow(10, CLIP_THRESHOLD_DB / 20)
+Dim PEAK_HIGH As Double = Math.Pow(10, PEAK_HIGH_DB / 20)
+Dim PEAK_LOW As Double = Math.Pow(10, PEAK_LOW_DB / 20)
+Dim VOICE_THRESHOLD As Double = Math.Pow(10, VOICE_THRESHOLD_DB / 20)
+
 ' ====== Timestamps ======
 Dim now As Double = 0
-Dim lastLoopTimestamp As Double = 0     ' When the previous loop iteration read the level
-Dim clipTimestamp As Double = 0         ' When input last reached CLIP_THRESHOLD
+Dim peakTimestamp As Double = 0         ' When input last reached PEAK_LOW
+Dim highPeakTimestamp As Double = 0     ' When input last went above PEAK_HIGH
 Dim voiceThresholdTimestamp As Double = 0  ' When input made sound above VOICE_THRESHOLD
 Dim voiceTimestamp As Double = 0        ' When input continuously spoke above VOICE_THRESHOLD for VOICE_DURATION
-Dim gainDownTimestamp As Double = 0     ' When gain was last decreased
-Dim gainUpTimestamp As Double = 0       ' When gain was last increased
-
-Dim averageLevel As Double = 0          ' Moving average of meterF1 while the voice is present, 0 if unknown
+Dim clipDownTimestamp As Double = 0     ' When gain was last decreased because of clipping
+Dim gainChangeTimestamp As Double = 0   ' When gain was last changed for any reason
 
 Dim xml = New System.Xml.XmlDocument()
 
@@ -86,11 +82,6 @@ Do While True
         ' Load vMix XML
         xml.LoadXml(API.XML())
         now = (DateTime.Now - New DateTime(2000, 1, 1)).TotalMilliseconds
-        Dim elapsed As Double = LOOP_TIME
-        If lastLoopTimestamp > 0 Then
-            elapsed = now - lastLoopTimestamp
-        End If
-        lastLoopTimestamp = now
 
         ' Get AutoGain mic input node
         Dim micNode = xml.SelectSingleNode("//input[contains(@title, 'AutoGain')]")
@@ -120,8 +111,12 @@ Do While True
         Dim inputNumber As String = micNode.Attributes("number").Value
         Dim gainDb As Integer = CInt(micNode.Attributes("gainDb").Value)
 
-        If meterF1 > CLIP_THRESHOLD Then
-            clipTimestamp = now
+        If meterF1 > PEAK_LOW Then
+            peakTimestamp = now
+        End If
+
+        If meterF1 > PEAK_HIGH Then
+            highPeakTimestamp = now
         End If
 
         ' Detect voice only when it is present for a duration
@@ -141,45 +136,28 @@ Do While True
             Continue Do
         End If
 
-        ' Average the level over the voice, so peaks and pauses do not decide the gain
-        If meterF1 > AVERAGE_THRESHOLD Then
-            If averageLevel = 0 Then
-                averageLevel = meterF1
-            Else
-                averageLevel += (1 - Math.Exp(-elapsed / AVERAGE_TIME)) * (meterF1 - averageLevel)
-            End If
-        End If
-
         Dim gainChange As Integer = 0
-        Dim averageDb As Double = -100
-        If averageLevel > 0 Then
-            averageDb = 20 * Math.Log10(averageLevel)
-        End If
-
-        If meterF1 > CLIP_THRESHOLD And now - gainDownTimestamp > GAIN_DOWN_TIME Then
+        If meterF1 > CLIP_THRESHOLD And now - clipDownTimestamp > CLIP_DOWN_TIME Then
             ' Decrease gain to prevent clipping
             gainChange = -1
-        ElseIf averageDb > TARGET_LEVEL_DB + TOLERANCE_DB And now - gainDownTimestamp > GAIN_DOWN_TIME Then
-            ' Decrease gain, the voice is louder than the target
-            gainChange = -1
-        ElseIf averageLevel > 0 And averageDb < TARGET_LEVEL_DB - TOLERANCE_DB And now - clipTimestamp > CLIP_WAIT And now - gainUpTimestamp > GAIN_UP_TIME Then
-            ' Increase gain, the voice is quieter than the target and has not clipped for CLIP_WAIT
-            gainChange = 1
+            clipDownTimestamp = now
+        ElseIf now - gainChangeTimestamp > GAIN_CHANGE_TIME Then
+            If highPeakTimestamp > gainChangeTimestamp Then
+                ' Decrease gain, a peak went above the range since the last gain change
+                gainChange = -1
+            ElseIf now - peakTimestamp > PEAK_WAIT Then
+                ' Increase gain, no peak reached the range for PEAK_WAIT
+                gainChange = 1
+            End If
         End If
 
         If gainChange <> 0 Then
+            gainChangeTimestamp = now
             Dim newGainDb As Integer = Math.Max(Math.Min(gainDb + gainChange, 24), 0)
             If newGainDb <> gainDb Then
                 API.Function("SetGain", Input:=inputNumber, Value:=CStr(newGainDb))
-                ' The meter is after the gain, so the average moves with it
-                averageLevel = averageLevel * Math.Pow(10, (newGainDb - gainDb) / 20)
                 timestamp = DateTime.Now.ToString("HH:mm:ss")
-                Console.WriteLine(timestamp & " AutoGain | Gain " & gainDb & " -> " & newGainDb & " dB, average level " & averageDb.ToString("0.0") & " dB")
-            End If
-            If gainChange < 0 Then
-                gainDownTimestamp = now
-            Else
-                gainUpTimestamp = now
+                Console.WriteLine(timestamp & " AutoGain | Gain " & gainDb & " -> " & newGainDb & " dB")
             End If
         End If
 

@@ -100,8 +100,8 @@ change of loudness anywhere on the scale, and a step of 1 on the volume scale is
 | --------------------------------------------------------------- | -------- | -------------------- |
 | [Translator](../2-scripts/5-translator.md) `VOICE_THRESHOLD_DB` | `-20` dB | 0.1 amplitude        |
 | [AutoGain](../2-scripts/6-auto-gain.md) `VOICE_THRESHOLD_DB`    | `-20` dB | 0.1 amplitude        |
-| [AutoGain](../2-scripts/6-auto-gain.md) `TARGET_LEVEL_DB`       | `-14` dB | 0.2 amplitude        |
-| [AutoGain](../2-scripts/6-auto-gain.md) `AVERAGE_THRESHOLD_DB`  | `-30` dB | about 0.03 amplitude |
+| [AutoGain](../2-scripts/6-auto-gain.md) `PEAK_LOW_DB`           | `-6` dB  | 0.5 amplitude        |
+| [AutoGain](../2-scripts/6-auto-gain.md) `PEAK_HIGH_DB`          | `-5` dB  | about 0.56 amplitude |
 | [AutoGain](../2-scripts/6-auto-gain.md) `CLIP_THRESHOLD_DB`     | `-1` dB  | about 0.9 amplitude  |
 
 To pick your own threshold, take the level you want in decibels and use
