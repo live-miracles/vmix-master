@@ -97,8 +97,7 @@ The project uses npm scripts only. The website root lives in `public/`, and the 
 
 The demo is a small simulated vMix in [`public/ts/demo.ts`](public/ts/demo.ts). Boxes whose host is `demo`, `demo2`, and so on are answered by it instead of the network, and `?demo` opens three grouped ones.
 
-Every push to `master` runs GitHub Actions, executes the unit tests, builds the ignored assets, and publishes the current site to the `gh-pages` branch. If a `stable` branch exists, the workflow also builds that branch into the `/stable/` folder on GitHub Pages.
-
+Every push to `master` runs GitHub Actions, executes the unit tests, builds the ignored assets, and publishes the current site to the `gh-pages` branch.
 ## Feedback
 
 Found a bug or have an idea? Please [open an issue](https://github.com/live-miracles/vmix-master/issues). vMix Master is released under the [MIT License](LICENSE).
