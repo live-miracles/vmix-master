@@ -56,13 +56,6 @@ Dim SILENCE_LIMIT As Integer = 2000     ' If translator doesn't speak for this d
 Dim VOLUME_UP_TIME As Integer = 5000    ' How fast to raise volume
 Dim VOLUME_FULL_DB As Double = -6       ' Source volume in dB after raising (-6 dB is 84 on the vMix volume scale)
 
-' meterF1 is an amplitude: amplitude = 10 ^ (dB / 20)
-Dim VOICE_THRESHOLD As Double = Math.Pow(10, VOICE_THRESHOLD_DB / 20)
-
-' vMix volume scale = 100 * 10 ^ (dB / 80), it is the amplitude raised to the power of a quarter.
-Dim VOLUME_REDUCED As Integer = CInt(Math.Round(Math.Min(100, 100 * Math.Pow(10, VOLUME_REDUCED_DB / 80))))
-Dim VOLUME_FULL As Integer = CInt(Math.Round(Math.Min(100, 100 * Math.Pow(10, VOLUME_FULL_DB / 80))))
-
 ' --- VERSION CHECK ---
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
@@ -90,6 +83,13 @@ Catch ex As Exception
     timestamp = DateTime.Now.ToString("HH:mm:ss")
     Console.WriteLine(timestamp & " Translator | Could not check for updates: " & ex.Message)
 End Try
+
+' meterF1 is an amplitude: amplitude = 10 ^ (dB / 20)
+Dim VOICE_THRESHOLD As Double = Math.Pow(10, VOICE_THRESHOLD_DB / 20)
+
+' vMix volume scale = 100 * 10 ^ (dB / 80), it is the amplitude raised to the power of a quarter.
+Dim VOLUME_REDUCED As Integer = CInt(Math.Round(Math.Min(100, 100 * Math.Pow(10, VOLUME_REDUCED_DB / 80))))
+Dim VOLUME_FULL As Integer = CInt(Math.Round(Math.Min(100, 100 * Math.Pow(10, VOLUME_FULL_DB / 80))))
 
 ' ====== State ======
 Dim now As Double = 0
