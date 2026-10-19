@@ -19,11 +19,14 @@ an `AudioFade` input later, stop and start the script again so it gets them too.
 
 ## Settings
 
-| Setting          | Default | Meaning                                                                   |
-| ---------------- | ------- | ------------------------------------------------------------------------- |
-| `MAX_VOLUME`     | `91`    | The volume, from 0 to 100, that the input fades up to when it goes on air |
-| `FADE_DOWN_TIME` | `3000`  | How long the fade out takes, in milliseconds                              |
-| `FADE_UP_TIME`   | `1000`  | How long the fade in takes, in milliseconds                               |
+See [Audio levels](../3-reference/1-audio-levels.md) for how decibels relate to the vMix volume
+scale.
+
+| Setting          | Default | Meaning                                                                                                                |
+| ---------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `MAX_VOLUME_DB`  | `-3`    | The volume the input fades up to when it goes on air, in dB. `-3` is 92 on vMix's volume scale, and `0` is full volume |
+| `FADE_DOWN_TIME` | `3000`  | How long the fade out takes, in milliseconds                                                                           |
+| `FADE_UP_TIME`   | `1000`  | How long the fade in takes, in milliseconds                                                                            |
 
 ## How it works
 
@@ -41,7 +44,7 @@ After that, twice a second, the script looks at each of these inputs.
 - **It is unmuted but no longer on program.** The volume fades to 0 over `FADE_DOWN_TIME`,
   and then the input is muted, paused and set back to position 0.
 - **It is muted and now on program.** The input is unmuted and the volume fades up to
-  `MAX_VOLUME` over `FADE_UP_TIME`.
+  `MAX_VOLUME_DB` over `FADE_UP_TIME`.
 
 ## Good to know
 
@@ -53,7 +56,7 @@ After that, twice a second, the script looks at each of these inputs.
 - The script waits while a fade runs, so with several `AudioFade` inputs, a second one starts
   its fade after the first has finished.
 - The sound is faded with the input's own volume. If you set an input's volume yourself, the
-  next fade replaces it with `MAX_VOLUME`.
+  next fade replaces it with `MAX_VOLUME_DB`.
 
 ## Log messages
 
