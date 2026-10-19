@@ -176,8 +176,6 @@ let refreshRate = 1;
     document
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
-    // The stable copy doesn't need a link to itself.
-    requireElementById('stable-link').classList.toggle('hidden', location.pathname.startsWith('/vmix-master/stable/'));
     requireElementById('add-box').addEventListener('click', addNewBox);
     requireElementById('confirm-box-delete').addEventListener('click', confirmBoxDelete);
     requireElementById('add-host-option').addEventListener('click', () => addHostOptionRow());
