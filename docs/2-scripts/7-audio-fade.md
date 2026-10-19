@@ -57,6 +57,11 @@ After that, twice a second, the script looks at each of these inputs.
 
 ## Log messages
 
+- `AudioFade | Set up 2 input(s) with 'AudioFade' in their title.`: printed at start-up, with
+  the number of inputs the script found and set up.
+- `AudioFade | No input found. Looked for inputs with 'AudioFade' in their title. Add 'AudioFade' to the titles and start the script again.`:
+  printed at start-up when no title contains `AudioFade`. The script keeps running, but an
+  input renamed later misses the set-up above, so start the script again.
 - `AudioFade | Fading out input 7`: input 7 left the program and is fading out.
 - `AudioFade | Fading in input 7`: input 7 came on air and is fading in.
 - `AudioFade | Unexpected error: ...`: a function call failed, and the script retries.

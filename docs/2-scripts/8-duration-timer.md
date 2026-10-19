@@ -60,9 +60,9 @@ Twice a second the script looks at the program input.
 
 ## Log messages
 
-- `DurationTimer | Could not find a GT input named 'DurationTimer'.`: the title was not found,
+- `DurationTimer | No input found. Looked for an input titled 'DurationTimer'.`: the title was not found,
   and the script is about to rename or create one.
-- `Renamed the first found GT '...' into 'DurationTimer'.`: an existing title was renamed.
-- `Created a new GT input named 'DurationTimer'.`: a new title was added.
+- `DurationTimer | Renamed the first GT title input '...' to 'DurationTimer'.`: an existing title was renamed.
+- `DurationTimer | No GT title input to rename, so created a new one titled 'DurationTimer'.`: a new title was added.
 - `DurationTimer | Unexpected error: ...`: a read or a function call failed, and the script
   retries.
