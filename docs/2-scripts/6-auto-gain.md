@@ -79,6 +79,6 @@ the loudest peaks between `PEAK_LOW_DB` and `PEAK_HIGH_DB`.
 
 ## Log messages
 
-The script prints its start-up lines, the missing-input notice, and
-`AutoGain | Unexpected error: ...` when a read fails. Each time it changes the gain it prints
-`AutoGain | Gain 12 -> 13 dB`.
+The script is quiet while it works. It prints its start-up lines, the missing-input notice, and
+`AutoGain | Unexpected error: ...` when a read fails. It does not log gain changes; watch the
+input's gain in vMix to follow them.

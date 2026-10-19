@@ -9,7 +9,7 @@
 ' Decibels = 20 * Math.Log10(Amplitude)
 
 Dim SCRIPT_NAME As String = "auto-gain"
-Dim SCRIPT_VERSION As String = "1.4.0"
+Dim SCRIPT_VERSION As String = "1.4.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -156,8 +156,6 @@ Do While True
             Dim newGainDb As Integer = Math.Max(Math.Min(gainDb + gainChange, 24), 0)
             If newGainDb <> gainDb Then
                 API.Function("SetGain", Input:=inputNumber, Value:=CStr(newGainDb))
-                timestamp = DateTime.Now.ToString("HH:mm:ss")
-                Console.WriteLine(timestamp & " AutoGain | Gain " & gainDb & " -> " & newGainDb & " dB")
             End If
         End If
 
