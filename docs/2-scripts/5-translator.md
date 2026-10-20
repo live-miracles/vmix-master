@@ -59,7 +59,7 @@ All times are in milliseconds. Volumes are in decibels, see
 | `VOLUME_DOWN_TIME`   | `900`   | How long the fade down takes when the translator starts                                                     |
 | `VOLUME_REDUCED_DB`  | `-24`   | The volume of the chain bus while the translator speaks, in dB. `-24` is 50 on vMix's volume scale          |
 | `SILENCE_LIMIT`      | `2000`  | How long the translator must be silent before the volume starts to come up                                  |
-| `VOLUME_UP_TIME`     | `5000`  | How long the raise takes                                                                                    |
+| `VOLUME_UP_TIME`     | `2000`  | How long the raise takes                                                                                    |
 | `VOLUME_FULL_DB`     | `-6`    | The volume after the raise, in dB. `-6` is 84 on vMix's volume scale, and `0` is full volume                |
 
 `VOLUME_DOWN_TIME = 900` fits the 800 ms delay. If the translator goes straight to the

@@ -34,24 +34,24 @@
 
 ' ===== Configurations (all times in ms) =====
 Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
-Dim VOICE_THRESHOLD_DB As Double = -20  ' meterF1 level in dB to consider as voice present (-20 dB is 0.1 amplitude)
+Dim VOICE_THRESHOLD_DB As Double = -20  ' meterF1 level in dB to consider as voice present
 Dim CHAIN_BUS As String = "B"           ' Script will be adjusting volume for this bus
 
 ' VOLUME_DOWN_TIME = 900 ms is good down time when using recommended setup with 800 ms delay for the translator,
 ' but if translator directly goes to master without delay better to use 350 ms
 Dim VOLUME_DOWN_TIME As Integer = 900   ' How fast to fade volume down when translator starts speaking
-Dim VOLUME_REDUCED_DB As Double = -24   ' Source volume in dB when translator is speaking (-24 dB is 50 on the vMix volume scale)
+Dim VOLUME_REDUCED_DB As Double = -24   ' Source volume in dB when translator is speaking
 
 ' The below configurations with VOLUME_FULL_DB = -6 are good for a translation scenario when
 ' the translator is almost always speaking. If there is music or other parts which should be in full use
 ' volume you can adjust the settings accordingly: VOLUME_FULL_DB = 0 (full volume if no translation for a while)
 Dim SILENCE_LIMIT As Integer = 2000     ' If translator doesn't speak for this duration we will start raising volume
-Dim VOLUME_UP_TIME As Integer = 5000    ' How fast to raise volume
-Dim VOLUME_FULL_DB As Double = -6       ' Source volume in dB after raising (-6 dB is 84 on the vMix volume scale)
+Dim VOLUME_UP_TIME As Integer = 2000    ' How fast to raise volume
+Dim VOLUME_FULL_DB As Double = -6       ' Source volume in dB after raising
 
 ' --- VERSION CHECK ---
 Dim SCRIPT_NAME As String = "translator"
-Dim SCRIPT_VERSION As String = "1.3.1"
+Dim SCRIPT_VERSION As String = "1.3.2"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
