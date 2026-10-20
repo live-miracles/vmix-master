@@ -73,6 +73,14 @@ Things to check when a system will not connect:
 - You allowed the local network prompt in Chrome. You can change it under the site
   settings of the page.
 
+## Known issues
+
+- **`localhost` and `127.0.0.1` can show Unavailable** even though the vMix on the same computer
+  answers on its network address, for example `192.168.1.20`. Chrome asks for a separate
+  permission to reach the device the page runs on, apart from the local network one, and
+  it may not have been granted. Use the computer's network address instead, or allow the
+  permission under the site settings of the page.
+
 ## Try it without vMix
 
 Use the host names `demo`, `demo2` and `demo3` for simulated systems that never touch the
