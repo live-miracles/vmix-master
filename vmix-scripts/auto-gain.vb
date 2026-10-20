@@ -2,9 +2,10 @@
 '
 ' It monitors the input which has AutoGain in the name or has type Audio or VideoCall
 ' and automatically adjusts the gain to prevent clipping or low volume.
-' It keeps the top peaks of the voice in a range: after each gain change it collects
-' PEAK_WINDOW of readings, then lowers the gain when the highest peak is above the range
-' and raises it when the highest peak is below. A clip lowers the gain at once.
+' It keeps the top peaks of the voice in a range: it takes the highest peak of each
+' PEAK_WINDOW, then lowers the gain when that peak is above the range and raises it when
+' it is below. A new window starts after each one and after each gain change. A clip
+' lowers the gain at once.
 ' You can configure the range and the thresholds below.
 '
 ' Decibels = 20 * Math.Log10(Amplitude)
@@ -25,7 +26,7 @@ Dim VOICE_WAIT As Integer = 5000        ' If there is no voice for this time, sc
 
 ' --- VERSION CHECK ---
 Dim SCRIPT_NAME As String = "auto-gain"
-Dim SCRIPT_VERSION As String = "1.5.0"
+Dim SCRIPT_VERSION As String = "1.6.0"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
 
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
@@ -71,9 +72,7 @@ Dim voiceThresholdTimestamp As Double = 0  ' When input made sound above VOICE_T
 Dim voiceTimestamp As Double = 0        ' When input continuously spoke above VOICE_THRESHOLD for VOICE_DURATION
 Dim clipDownTimestamp As Double = 0     ' When gain was last decreased because of clipping
 
-' meterF1 readings of the last PEAK_WINDOW at the current gain, oldest first
-Dim peakTimes As New System.Collections.Generic.List(Of Double)
-Dim peakLevels As New System.Collections.Generic.List(Of Double)
+Dim windowMax As Double = 0             ' Highest meterF1 reading since windowStartTimestamp, at the current gain
 
 Dim xml = New System.Xml.XmlDocument()
 
@@ -106,8 +105,8 @@ Do While True
         If micNode.Attributes("muted").Value = "True" Then
             ' Skip if muted
             voiceThresholdTimestamp = 0
-            peakTimes.Clear()
-            peakLevels.Clear()
+            windowMax = 0
+            windowStartTimestamp = 0
             Continue Do
         End If
 
@@ -115,16 +114,20 @@ Do While True
         Dim inputNumber As String = micNode.Attributes("number").Value
         Dim gainDb As Integer = CInt(micNode.Attributes("gainDb").Value)
 
-        ' Keep the readings of the last PEAK_WINDOW
-        While peakTimes.Count > 0 AndAlso now - peakTimes(0) > PEAK_WINDOW
-            peakTimes.RemoveAt(0)
-            peakLevels.RemoveAt(0)
-        End While
-        If peakTimes.Count = 0 Then
+        ' Keep the highest reading of the current window
+        If windowStartTimestamp = 0 Then
             windowStartTimestamp = now
         End If
-        peakTimes.Add(now)
-        peakLevels.Add(meterF1)
+        windowMax = Math.Max(windowMax, meterF1)
+
+        ' When the window is full, take its highest peak and start the next window,
+        ' even when no gain change follows, so a peak is never judged in a later window
+        Dim windowPeak As Double = -1
+        If now - windowStartTimestamp >= PEAK_WINDOW Then
+            windowPeak = windowMax
+            windowMax = 0
+            windowStartTimestamp = now
+        End If
 
         ' Detect voice only when it is present for a duration
         ' to avoid false positives from short noises
@@ -148,15 +151,11 @@ Do While True
             ' Decrease gain to prevent clipping
             gainChange = -1
             clipDownTimestamp = now
-        ElseIf now - windowStartTimestamp >= PEAK_WINDOW Then
-            Dim maxPeak As Double = 0
-            For Each level As Double In peakLevels
-                maxPeak = Math.Max(maxPeak, level)
-            Next
-            If maxPeak > PEAK_HIGH Then
+        ElseIf windowPeak >= 0 Then
+            If windowPeak > PEAK_HIGH Then
                 ' Decrease gain, the highest peak of the window is above the range
                 gainChange = -1
-            ElseIf maxPeak < PEAK_LOW Then
+            ElseIf windowPeak < PEAK_LOW Then
                 ' Increase gain, the highest peak of the window is below the range
                 gainChange = 1
             End If
@@ -167,8 +166,8 @@ Do While True
             If newGainDb <> gainDb Then
                 API.Function("SetGain", Input:=inputNumber, Value:=CStr(newGainDb))
                 ' The meter is after the gain, so start a new window at the new gain
-                peakTimes.Clear()
-                peakLevels.Clear()
+                windowMax = 0
+                windowStartTimestamp = 0
             End If
         End If
 

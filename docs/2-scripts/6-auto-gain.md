@@ -45,13 +45,16 @@ vMix scales. Times are in milliseconds.
 The script changes the input's gain in steps of 1 dB, between **0 and 24 dB**. It aims to keep
 the loudest peaks between `PEAK_LOW_DB` and `PEAK_HIGH_DB`.
 
-- **Window.** The script keeps the readings of the last `PEAK_WINDOW` and looks at the highest
-  one. Once the window is full, it judges that peak:
+- **Window.** The script keeps the highest reading of the current window of `PEAK_WINDOW`.
+  When the window is full, it judges that peak:
     - above `PEAK_HIGH_DB`: the gain is lowered by 1 dB;
     - below `PEAK_LOW_DB`: the gain is raised by 1 dB;
-    - in between: the gain is left alone, and the window keeps moving with the speech.
+    - in between: the gain is left alone.
+
+    Then the next window starts from zero, so a peak is judged only once.
+
 - **New window after a change.** The meter shows the level after the gain, so after any gain
-  change, including a clip, the readings are cleared and a full new window is collected at the
+  change, including a clip, the window is restarted and a full new window is collected at the
   new gain. Every decision is made on `PEAK_WINDOW` of speech at the current gain, and the range
   changes the gain at most once per `PEAK_WINDOW`. A speaker who is too quiet gets about one more
   decibel every five seconds, until the peaks reach the range.
