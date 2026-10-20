@@ -64,8 +64,6 @@ function updateRefreshRates() {
 }
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
 const DEFAULT_HOST_OPTIONS = [{ name: 'My System', host: '192.168.154.x' }];
-// Always first in the address dropdown, and not part of the editable list in Settings.
-const LOCALHOST_OPTION = { name: 'This computer', host: 'localhost' };
 function getHostOptions() {
     const stored = localStorage.getItem(HOST_OPTIONS_KEY);
     if (!stored)
@@ -91,8 +89,7 @@ function saveHostOptions() {
 function renderHostDatalist() {
     const hosts = requireElementById('hosts');
     hosts.innerHTML = '';
-    const options = getHostOptions().filter((option) => option.host.toLowerCase() !== LOCALHOST_OPTION.host);
-    [LOCALHOST_OPTION, ...options].forEach((option) => {
+    getHostOptions().forEach((option) => {
         const hostOption = document.createElement('option');
         hostOption.value = option.host;
         if (option.name) {
