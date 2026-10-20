@@ -381,7 +381,7 @@ function applyDemoParam(): void {
         url.searchParams.set('group', '1 2 3');
         url.searchParams.set('master', '1');
     }
-    window.history.replaceState({}, '', url);
+    replaceUrl(url);
 }
 
 // Shows the demo banner, or the welcome card while no box has an address yet.

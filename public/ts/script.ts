@@ -24,7 +24,10 @@ function splitOnce(str: string, separator: string): string[] {
 function initBoxes() {
     const params = new URLSearchParams(window.location.search);
     const boxesParam = params.get('boxes') || '';
-    if (boxesParam === '') addBox();
+    if (boxesParam === '') {
+        addBox();
+        startBoxFieldEdit(getBoxes()[0]!, 'host');
+    }
     boxesParam
         .split('¦')
         .filter(Boolean)
@@ -70,6 +73,8 @@ function updateRefreshRates() {
 
 const HOST_OPTIONS_KEY = 'vmix-master-host-options';
 const DEFAULT_HOST_OPTIONS: HostOption[] = [{ name: 'My System', host: '192.168.154.x' }];
+// Always first in the address dropdown, and not part of the editable list in Settings.
+const LOCALHOST_OPTION: HostOption = { name: 'This computer', host: 'localhost' };
 
 function getHostOptions(): HostOption[] {
     const stored = localStorage.getItem(HOST_OPTIONS_KEY);
@@ -99,7 +104,10 @@ function renderHostDatalist() {
     const hosts = requireElementById<HTMLDataListElement>('hosts');
     hosts.innerHTML = '';
 
-    getHostOptions().forEach((option) => {
+    const options = getHostOptions().filter(
+        (option) => option.host.toLowerCase() !== LOCALHOST_OPTION.host,
+    );
+    [LOCALHOST_OPTION, ...options].forEach((option) => {
         const hostOption = document.createElement('option');
         hostOption.value = option.host;
         if (option.name) {
@@ -181,6 +189,7 @@ async function showVmixScriptVersions() {
 let refreshRate = 1;
 
 (() => {
+    restoreAppState();
     applyDemoParam();
     setDocumentUrlParams();
     initBoxes();

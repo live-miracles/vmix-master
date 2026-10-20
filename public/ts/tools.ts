@@ -91,6 +91,30 @@ function setInputValue(input: HTMLInputElement, value: string): void {
     }
 }
 
+const APP_STATE_KEY = 'vmix-master-app-state';
+
+function isInstalledApp(): boolean {
+    return window.matchMedia('(display-mode: standalone)').matches;
+}
+
+// The page keeps its state in the URL, but the installed app always opens at the bare start URL.
+// So the app stores the query each time it changes and puts it back when it opens without one.
+function restoreAppState(): void {
+    if (!isInstalledApp() || window.location.search !== '') return;
+    const search = localStorage.getItem(APP_STATE_KEY);
+    if (!search) return;
+    const url = new URL(window.location.href);
+    url.search = search;
+    window.history.replaceState({}, '', url);
+}
+
+function replaceUrl(url: URL): void {
+    window.history.replaceState({}, '', url);
+    if (isInstalledApp()) {
+        localStorage.setItem(APP_STATE_KEY, url.search);
+    }
+}
+
 function setDocumentUrlParams() {
     const url = window.location.href;
     const searchParams = new URLSearchParams(new URL(url).search);
@@ -110,7 +134,7 @@ function updateUrlParam(e: Event): void {
 
     const url = new URL(window.location.href);
     url.searchParams.set(name, value);
-    window.history.replaceState({}, '', url);
+    replaceUrl(url);
 }
 
 function updateBoxesParam() {
@@ -120,7 +144,7 @@ function updateBoxesParam() {
 
     const url = new URL(window.location.href);
     url.searchParams.set('boxes', param);
-    window.history.replaceState({}, '', url);
+    replaceUrl(url);
     updateDemoUi();
 }
 
@@ -132,7 +156,7 @@ function updateMasterParam() {
     } else {
         url.searchParams.set('master', String(master));
     }
-    window.history.replaceState({}, '', url);
+    replaceUrl(url);
 }
 
 function updateGroupParam() {
@@ -147,7 +171,7 @@ function updateGroupParam() {
     } else {
         url.searchParams.set('group', group);
     }
-    window.history.replaceState({}, '', url);
+    replaceUrl(url);
 }
 
 // ===== Logging Utils =====

@@ -63,7 +63,9 @@ Your boxes are stored in the page address, so you can bookmark it or send it to 
 | `master`       | The number of the master box                   | `1`                                    |
 | `refresh-rate` | Seconds between status refreshes               | `1`                                    |
 
-The saved address suggestions from Settings are stored in your browser. Because the boxes
+The installed app always opens at the plain page address, so it also saves this setup in your
+browser and puts it back each time you open the app. The saved address suggestions from
+Settings are stored in your browser too. Because the boxes
 are kept in the address, avoid `.` and `¦` in box names.
 
 ## Scripts
