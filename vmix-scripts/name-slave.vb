@@ -8,13 +8,6 @@
 ' Update the master IP below:
 Dim masterAPI As String = "http://192.168.x.x:8088/api"
 
-Dim SCRIPT_NAME As String = "name-slave"
-Dim SCRIPT_VERSION As String = "1.1.1"
-Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
-
-Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " NameSlave " & SCRIPT_VERSION)
-
 ' ===== Configurations =====
 Dim LOOP_TIME As Integer = 300          ' Poll interval in ms
 Dim TRANSITION As String = "Stinger1"   ' vMix transition function used when switching active input
@@ -22,6 +15,13 @@ Dim TRANSITION_BUFFER As Integer = 3000 ' Wait after a transition before next sy
 Dim DEFAULT_INPUT As String = "1"       ' Fallback input number when no name match is found
 
 ' --- VERSION CHECK ---
+Dim SCRIPT_NAME As String = "name-slave"
+Dim SCRIPT_VERSION As String = "1.1.1"
+Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
+
+Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
+Console.WriteLine(timestamp & " NameSlave " & SCRIPT_VERSION)
+
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
     verRequest.Timeout = 5000

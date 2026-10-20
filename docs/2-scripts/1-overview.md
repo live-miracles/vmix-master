@@ -112,5 +112,5 @@ the safety net.
 ## Updating a script
 
 Copy the new version over the old one in vMix. This replaces your settings and the master's
-address with the defaults, so enter them again. The `SCRIPT_VERSION` line at the top tells you
-which version you have.
+address with the defaults, so enter them again. The `SCRIPT_VERSION` line, just below the
+settings, tells you which version you have. The script also prints it when it starts.

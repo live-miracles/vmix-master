@@ -11,6 +11,12 @@
 ' When a matching input goes off-air it fades to 0 over FADE_DOWN_TIME, then pauses
 ' and rewinds. When it comes back on-air it unmutes and fades up to MAX_VOLUME_DB.
 
+' ===== Configurations =====
+Dim MAX_VOLUME_DB As Double = -3     ' Volume in dB when input is live (-3 dB is 92 on the vMix volume scale)
+Dim FADE_DOWN_TIME As Integer = 3000 ' Fade-out duration in ms when going off-air
+Dim FADE_UP_TIME As Integer = 1000   ' Fade-in duration in ms when coming on-air
+
+' --- VERSION CHECK ---
 Dim SCRIPT_NAME As String = "audio-fade"
 Dim SCRIPT_VERSION As String = "1.1.0"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
@@ -18,12 +24,6 @@ Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versio
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " AudioFade " & SCRIPT_VERSION)
 
-' ===== Configurations =====
-Dim MAX_VOLUME_DB As Double = -3     ' Volume in dB when input is live (-3 dB is 92 on the vMix volume scale)
-Dim FADE_DOWN_TIME As Integer = 3000 ' Fade-out duration in ms when going off-air
-Dim FADE_UP_TIME As Integer = 1000   ' Fade-in duration in ms when coming on-air
-
-' --- VERSION CHECK ---
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
     verRequest.Timeout = 5000

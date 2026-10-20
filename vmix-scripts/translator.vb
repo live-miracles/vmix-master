@@ -32,13 +32,6 @@
 ' T2 - translator stopped speaking
 ' T3 - translator didn't speak for SILENCE_LIMIT and we start raising the source volume.
 
-Dim SCRIPT_NAME As String = "translator"
-Dim SCRIPT_VERSION As String = "1.3.1"
-Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
-
-Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
-Console.WriteLine(timestamp & " Translator " & SCRIPT_VERSION)
-
 ' ===== Configurations (all times in ms) =====
 Dim LOOP_TIME As Integer = 50           ' Wait time between each loop iteration in ms
 Dim VOICE_THRESHOLD_DB As Double = -20  ' meterF1 level in dB to consider as voice present (-20 dB is 0.1 amplitude)
@@ -57,6 +50,13 @@ Dim VOLUME_UP_TIME As Integer = 5000    ' How fast to raise volume
 Dim VOLUME_FULL_DB As Double = -6       ' Source volume in dB after raising (-6 dB is 84 on the vMix volume scale)
 
 ' --- VERSION CHECK ---
+Dim SCRIPT_NAME As String = "translator"
+Dim SCRIPT_VERSION As String = "1.3.1"
+Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
+
+Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
+Console.WriteLine(timestamp & " Translator " & SCRIPT_VERSION)
+
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
     verRequest.Timeout = 5000

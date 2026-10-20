@@ -9,6 +9,12 @@
 ' - turn on "Reverse"
 ' - turn on "Display 00:00:00 when Stopped"
 
+' ===== Configurations =====
+Dim GT_INPUT_TITLE As String = "DurationTimer" ' Name of the GT title input to update
+Dim YELLOW_TIME As Integer = 60                ' Seconds remaining when timer turns orange
+Dim RED_TIME As Integer = 11                   ' Seconds remaining when timer turns red
+
+' --- VERSION CHECK ---
 Dim SCRIPT_NAME As String = "duration-timer"
 Dim SCRIPT_VERSION As String = "1.2.2"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
@@ -16,12 +22,6 @@ Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versio
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " DurationTimer " & SCRIPT_VERSION)
 
-' ===== Configurations =====
-Dim GT_INPUT_TITLE As String = "DurationTimer" ' Name of the GT title input to update
-Dim YELLOW_TIME As Integer = 60                ' Seconds remaining when timer turns orange
-Dim RED_TIME As Integer = 11                   ' Seconds remaining when timer turns red
-
-' --- VERSION CHECK ---
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
     verRequest.Timeout = 5000

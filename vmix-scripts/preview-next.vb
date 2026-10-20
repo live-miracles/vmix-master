@@ -3,6 +3,11 @@
 ' Automatically puts the next input into preview after each transition.
 ' If the active input is the last one, vMix will ignore the out-of-range preview request gracefully.
 
+' ===== Configurations =====
+Dim LOOP_TIME As Integer = 300  ' Poll interval in ms
+Dim DELAY_TIME As Integer = 1000  ' How long to wait after a transition before updating preview
+
+' --- VERSION CHECK ---
 Dim SCRIPT_NAME As String = "preview-next"
 Dim SCRIPT_VERSION As String = "1.0.1"
 Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versions.json"
@@ -10,11 +15,6 @@ Dim VERSIONS_URL As String = "https://live-miracles.github.io/vmix-master/versio
 Dim timestamp As String = DateTime.Now.ToString("HH:mm:ss")
 Console.WriteLine(timestamp & " PreviewNext " & SCRIPT_VERSION)
 
-' ===== Configurations =====
-Dim LOOP_TIME As Integer = 300  ' Poll interval in ms
-Dim DELAY_TIME As Integer = 1000  ' How long to wait after a transition before updating preview
-
-' --- VERSION CHECK ---
 Try
     Dim verRequest As System.Net.HttpWebRequest = System.Net.HttpWebRequest.Create(VERSIONS_URL)
     verRequest.Timeout = 5000
