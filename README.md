@@ -1,6 +1,8 @@
+<img src="public/logo.svg" alt="vMix Master logo" width="96" align="right" />
+
 # vMix Master
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Live demo](https://img.shields.io/badge/live-demo-brightgreen.svg)](https://live-miracles.github.io/vmix-master/?demo)
+[![CI](https://github.com/live-miracles/vmix-master/actions/workflows/ci.yml/badge.svg)](https://github.com/live-miracles/vmix-master/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Live demo](https://img.shields.io/badge/live-demo-brightgreen.svg)](https://live-miracles.github.io/vmix-master/?demo)
 
 **A complete control panel for vMix in your browser: one system, or several working as one. Nothing to install.**
 
