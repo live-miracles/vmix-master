@@ -1,4 +1,4 @@
-# vMix scripts: sync, audio ducking, auto gain and more
+# vMix scripts: sync, ducking, auto gain
 
 vMix Master controls vMix from the outside, through its Web Controller. Some jobs have to
 happen inside vMix itself, such as making a second vMix follow the first, or lowering the

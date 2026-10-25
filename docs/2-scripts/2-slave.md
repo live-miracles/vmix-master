@@ -1,4 +1,4 @@
-# Slave: make one vMix follow another (vMix script)
+# Slave: make one vMix follow another
 
 Slave makes a vMix follow another one, the **master**. When the master puts an input on
 program, the slave takes the same input to program. Its preview matches the master's, and

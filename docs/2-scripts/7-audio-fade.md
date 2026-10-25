@@ -1,4 +1,4 @@
-# AudioFade: automatic audio fade in and out (vMix script)
+# AudioFade: fade audio in and out
 
 AudioFade fades the sound of media inputs in and out when they go on and off air, instead of
 cutting it abruptly. A music clip or a jingle fades out as you leave it, and is stopped and
