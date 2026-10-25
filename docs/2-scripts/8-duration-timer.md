@@ -1,4 +1,4 @@
-# DurationTimer
+# DurationTimer: countdown of the current clip in a title (vMix script)
 
 DurationTimer shows the time left of whatever is on program in a **title input**, so
 presenters and the crew can see how long a clip has left. Under a minute it turns orange, and

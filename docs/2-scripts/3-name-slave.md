@@ -1,4 +1,4 @@
-# NameSlave
+# NameSlave: follow a master vMix by input name (vMix script)
 
 NameSlave makes a vMix follow another one, the **master**, by input **name** instead of by
 input number. When the master puts an input called `X` on program, this vMix takes its own

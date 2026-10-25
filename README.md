@@ -67,7 +67,7 @@ Use the built-in Web Controller if you have a few inputs and only need simple sw
 
 ## vMix scripts
 
-Ready-to-use scripts for vMix's scripting feature (4K and Pro editions) are in [`vmix-scripts/`](vmix-scripts/). The [scripts guide](docs/2-scripts/1-overview.md) explains how to add them to vMix, and each script has its own page with its settings. The app shows their current versions under **vMix Scripts**.
+Free, ready-to-use VB.NET scripts for vMix's scripting feature (4K and Pro editions): follow a master vMix, duck audio for interpreters, auto-adjust microphone gain, fade audio, and more. They are in [`vmix-scripts/`](vmix-scripts/). The [scripts guide](docs/2-scripts/1-overview.md) explains how to add them to vMix, and each script has its own page with its settings. The app shows their current versions under **vMix Scripts**.
 
 | Script                                              | What it does                                                                                                           |
 | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |

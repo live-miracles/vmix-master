@@ -1,4 +1,4 @@
-# Translator
+# Translator: sidechain audio ducking for interpreters (vMix script)
 
 Translator lowers the program audio while a translator, or interpreter, is speaking, and
 brings it back up when they stop. It is a **sidechain**: it watches the level of the

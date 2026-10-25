@@ -1,4 +1,4 @@
-# AutoGain
+# AutoGain: automatic microphone gain control (vMix script)
 
 AutoGain watches a microphone, or a call, and adjusts its **gain** by itself. It keeps the
 **top peaks** of the voice in a range you set: it looks at the highest peak of the last few

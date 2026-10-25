@@ -1,4 +1,4 @@
-# PreviewNext
+# PreviewNext: automatically preview the next input (vMix script)
 
 PreviewNext puts the next input into preview after every transition. For a rundown of
 numbered inputs it saves the operator from selecting the next item by hand: take the current
