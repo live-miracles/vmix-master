@@ -104,4 +104,4 @@ Every push to `master` runs GitHub Actions, executes the unit tests, builds the 
 
 ## Feedback
 
-Found a bug or have an idea? Please [open an issue](https://github.com/live-miracles/vmix-master/issues). vMix Master is released under the [MIT License](LICENSE).
+Have a question or an idea? Start a [discussion](https://github.com/live-miracles/vmix-master/discussions). Found a bug? Please [open an issue](https://github.com/live-miracles/vmix-master/issues/new/choose). vMix Master is released under the [MIT License](LICENSE).
