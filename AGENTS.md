@@ -24,3 +24,13 @@ before calling a vMix function. Do not make users enter raw Volume numbers like 
   both when the behaviour or the settings of a script change.
 - Keep the script's header comment, its docs page and the README table in step with the code.
 - Run `npm run format:check` before committing, CI checks it.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for `live-miracles/vmix-master`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
