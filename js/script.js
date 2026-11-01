@@ -179,6 +179,7 @@ let refreshRate = 1;
     document
         .querySelectorAll('.url-param')
         .forEach((input) => input.addEventListener('change', updateUrlParam));
+    requireElementById('active-only').addEventListener('change', renderVmixWeb);
     requireElementById('add-box').addEventListener('click', addNewBox);
     requireElementById('confirm-box-delete').addEventListener('click', confirmBoxDelete);
     requireElementById('add-host-option').addEventListener('click', () => addHostOptionRow());

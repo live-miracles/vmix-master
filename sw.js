@@ -1,9 +1,12 @@
-const CACHE_NAME = 'vmix-master-v3';
+const CACHE_NAME = 'vmix-master-v5';
 const CORE_ASSETS = [
     './',
     './index.html',
     './output.css',
     './logo.svg',
+    './patterns/seigaiha.svg',
+    './fonts/inter-latin-wght-normal.woff2',
+    './fonts/inter-latin-ext-wght-normal.woff2',
     './manifest.webmanifest',
     './versions.json',
     './Sortable.min.js',

@@ -127,7 +127,7 @@ function renderVmixInfo(box) {
 }
 function getVmixInfoHeader(info) {
     const preset = info.preset
-        ? `<span class="text-base-content/40">·</span>
+        ? `<span class="text-base-content/50">·</span>
            <span class="min-w-0 truncate text-base-content/70">${getHtmlAttributeText(info.preset)}</span>`
         : '';
     return `${preset}<span class="ml-auto flex shrink-0 items-center gap-1">${getVmixStatusBadges(info)}</span>`;

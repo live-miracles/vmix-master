@@ -106,7 +106,7 @@ function ensureMasterBox() {
 function setInitialMasterBox() {
     const params = new URLSearchParams(window.location.search);
     const master = parseInt(params.get('master') || '');
-    const masterBox = getBox(master);
+    const masterBox = getBox(Number.isNaN(master) ? null : master);
     if (masterBox !== null) {
         getBoxes().forEach((box) => box.classList.remove('is-master'));
         masterBox.classList.add('is-master');
@@ -144,7 +144,7 @@ function updateBoxMasterStyles() {
         const isGroupMaster = isMaster && isGroup;
         panel.classList.toggle('border-primary', isGroupMaster);
         panel.classList.toggle('border-accent', isMaster && !isGroup);
-        panel.classList.toggle('border-base-content/25', !isMaster);
+        panel.classList.toggle('border-hairline-strong', !isMaster);
         const groupBtn = requireElement('.group-btn', box);
         groupBtn.classList.toggle('btn-primary', isGroup);
         groupBtn.classList.toggle('btn-soft', isGroup);
@@ -274,7 +274,7 @@ function createBox(name: string, host: string, num: number, group = false): HTML
     const boxName = name || getDefaultBoxName(num);
     box.className = 'box w-72 shrink-0';
     box.innerHTML = `
-        <div class="box-panel container max-w-full cursor-grab rounded-md border border-base-content/25 bg-base-200 p-2.5">
+        <div class="box-panel container max-w-full cursor-grab rounded-md border border-hairline-strong bg-base-200 p-2.5">
           <span class="box-number hidden">${num}</span>
           <div class="mb-1 flex items-start gap-2">
             <div class="flex min-w-0 flex-1 items-center gap-1.5">

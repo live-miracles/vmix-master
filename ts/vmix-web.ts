@@ -9,16 +9,18 @@ function prerenderVmixWeb() {
     AUDIO_BUSES.forEach(
         (bus) =>
             (busHTML += `
-      <div id="mixer-${bus}" class="relative hidden rounded border border-base-content/25 bg-base-200 pr-3 shadow-sm">
+      <div id="mixer-${bus}" class="relative hidden rounded border border-hairline-strong bg-base-200 pr-3 shadow-sm">
         <canvas class="volume-canvas absolute right-0 top-0 h-full w-2.5" width="100" height="100"></canvas>
         <div class="mixer-header btn flex h-fit min-h-0 w-full justify-start gap-0 rounded-none p-0">
           <span class="badge badge-neutral mx-1 my-1 w-6">${bus}</span>
           <span class="whitespace-nowrap">${getBusName(bus, true)}</span>
         </div>
-        <div class="m-1 flex min-h-5 flex-wrap items-center gap-0.5">
-          <button class="bus-volume-minus btn btn-neutral h-5 min-h-0 w-5.5 rounded-xs p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', -3)">-</button>
-          <span class="volume-value badge badge-neutral h-5 w-12 rounded-xs px-0 text-xs font-semibold"></span>
-          <button class="bus-volume-plus btn btn-neutral h-5 min-h-0 w-5.5 rounded-xs p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', 3)">+</button>
+        <div class="ctl-row m-1 flex min-h-5 flex-wrap items-center gap-1">
+          <div class="seg">
+            <button class="bus-volume-minus btn btn-neutral h-5 min-h-0 w-5.5 p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', -3)">-</button>
+            <span class="volume-value badge h-5 w-12 px-0 text-xs font-semibold"></span>
+            <button class="bus-volume-plus btn btn-neutral h-5 min-h-0 w-5.5 p-0 text-xs font-semibold" onclick="adjustBusVolume('${bus}', 3)">+</button>
+          </div>
           <button class="mute-btn btn btn-neutral h-5 min-h-0 w-6 rounded-xs p-0" onclick="toggleBusAudio('${bus}')" aria-label="Toggle bus audio" title="Toggle bus audio">
             <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
           </button>
@@ -29,34 +31,40 @@ function prerenderVmixWeb() {
 
     for (let i = 1; i <= INPUTS_SIZE; i++) {
         inputsHTML += `
-          <div id="input-${i}" class="relative hidden rounded border border-base-content/25 bg-base-200 pr-3 shadow-sm">
+          <div id="input-${i}" class="relative hidden rounded border border-hairline-strong bg-base-200 pr-3 shadow-sm">
             <canvas class="volume-canvas absolute right-0 top-0 w-2.5 h-full" width="100" height="100"></canvas>
             <button class="preview-btn btn w-full whitespace-nowrap overflow-hidden flex h-fit min-h-0 justify-start p-0 gap-0 rounded-none" onclick="previewInput(${i})">
               <span class="badge badge-neutral mx-1 my-1 w-6">${i}</span>
               <span class="input-title whitespace-nowrap overflow-hidden inline-flex flex-1"></span>
             </button>
             <div class="mx-1 mb-1 mt-0 flex flex-wrap items-center gap-1">
-              ${[1, 2, 3, 4, 5, 6]
-                  .map(
-                      (n) =>
-                          `<button class="overlay${n}-btn btn btn-ghost h-5 w-5.5 min-h-0 p-0 rounded-xs text-base-content/50" onclick="overlayInput(${i}, ${n})" title="Overlay ${n}" aria-label="Overlay ${n}">${n}</button>`,
-                  )
-                  .join('')}
+              <div class="seg">
+                ${[1, 2, 3, 4, 5, 6]
+                    .map(
+                        (n) =>
+                            `<button class="overlay${n}-btn btn btn-ghost h-5 w-5.5 min-h-0 p-0 text-base-content/50" onclick="overlayInput(${i}, ${n})" title="Overlay ${n}" aria-label="Overlay ${n}">${n}</button>`,
+                    )
+                    .join('')}
+              </div>
               <button class="loop-btn btn btn-neutral h-5 w-6 min-h-0 p-0 rounded-xs" onclick="loopInput(${i})" aria-label="Toggle loop" title="Toggle loop">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
               </button>
             </div>
-            <div class="input-audio-row m-1 mt-0 flex min-h-5 flex-wrap items-center gap-0.5">
-              <button class="input-volume-minus btn btn-neutral h-5 w-5.5 min-h-0 rounded-xs p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, -1)">-</button>
-              <span class="input-audio-value badge badge-neutral h-5 w-12 rounded-xs px-0 text-xs font-semibold"></span>
-              <button class="input-volume-plus btn btn-neutral h-5 w-5.5 min-h-0 rounded-xs p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, 1)">+</button>
+            <div class="input-audio-row ctl-row m-1 mt-0 flex min-h-5 flex-wrap items-center gap-1">
+              <div class="seg">
+                <button class="input-volume-minus btn btn-neutral h-5 w-5.5 min-h-0 p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, -1)">-</button>
+                <span class="input-audio-value badge h-5 w-12 px-0 text-xs font-semibold"></span>
+                <button class="input-volume-plus btn btn-neutral h-5 w-5.5 min-h-0 p-0 text-xs font-semibold" onclick="adjustInputAudio(${i}, 1)">+</button>
+              </div>
               <button class="audio-btn btn btn-neutral h-5 w-6 min-h-0 p-0 rounded-xs" onclick="muteInput(${i})" aria-label="Toggle audio" title="Toggle audio">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
               </button>
-              ${AUDIO_BUSES.map(
-                  (bus) =>
-                      `<button class="bus-${bus} audio-bus-btn btn btn-neutral btn-sm h-5 min-h-0 w-5.5 rounded-xs p-0 text-xs" onclick="toggleAudioBus(${i}, '${bus}')" title="Send to bus ${bus}">${bus}</button>`,
-              ).join('')}
+              <div class="seg">
+                ${AUDIO_BUSES.map(
+                    (bus) =>
+                        `<button class="bus-${bus} audio-bus-btn btn btn-neutral btn-sm h-5 min-h-0 w-5.5 p-0 text-xs" onclick="toggleAudioBus(${i}, '${bus}')" title="Send to bus ${bus}">${bus}</button>`,
+                ).join('')}
+              </div>
             </div>
           </div>`;
     }
@@ -134,6 +142,8 @@ async function renderVmixWeb() {
     const ftbBtn = requireElement('.ftb-btn', screensElem);
     ftbBtn.classList.toggle('btn-soft', !info.fadeToBlack); // solid red while fading to black
 
+    const activeOnly = requireElementById<HTMLInputElement>('active-only').checked;
+
     const inputLength = info.inputs.length;
     for (let i = inputLength; i <= INPUTS_SIZE; i++) {
         const inputElem = requireElementById('input-' + i);
@@ -152,7 +162,11 @@ async function renderVmixWeb() {
             return;
         }
         const busHeader = requireElement('.mixer-header', mixerElem);
-        setColor(busHeader, busInfo.muted === 'False');
+        // A bus that is on gets the same outline, tinted header and solid badge as program.
+        const live = busInfo.muted === 'False';
+        mixerElem.classList.toggle('tally-live', live);
+        setColor(requireElement('.badge', busHeader), live, false, 'badge');
+        mixerElem.classList.toggle('is-muted', busInfo.muted !== 'False');
         mixerElem.classList.add('inline-block');
         mixerElem.classList.remove('hidden');
         const volumeElem = requireElement('.volume-value', mixerElem);
@@ -178,8 +192,28 @@ async function renderVmixWeb() {
         inputTitleElem.setAttribute('title', inputTitleTip);
         const previewBtn = requireElement('.preview-btn', inputElem);
         previewBtn.setAttribute('title', inputTitleTip);
-        setColor(previewBtn, i === info.active, i === info.preview);
+        // Tally state: outline and tinted header on the tile, solid number badge.
+        inputElem.classList.toggle('tally-program', i === info.active);
+        inputElem.classList.toggle('tally-preview', i === info.preview && i !== info.active);
+        setColor(
+            requireElement('.badge', previewBtn),
+            i === info.active,
+            i === info.preview,
+            'badge',
+        );
         const hasAudio = input.volume !== undefined;
+        inputElem.classList.toggle('is-muted', hasAudio && input.muted !== 'False');
+
+        // "Active only": program, preview, anything in an overlay, or unmuted audio.
+        const inOverlay = [1, 2, 3, 4, 5, 6].some((n) => info.overlays[n] === i);
+        const isActive =
+            i === info.active ||
+            i === info.preview ||
+            inOverlay ||
+            (hasAudio && input.muted === 'False');
+        const hideInput = activeOnly && !isActive;
+        inputElem.classList.toggle('hidden', hideInput);
+        inputElem.classList.toggle('inline-block', !hideInput);
         inputElem.classList.toggle('pr-3', hasAudio);
 
         for (let n = 1; n <= 6; n++) {
