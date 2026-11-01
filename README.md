@@ -96,7 +96,7 @@ npm run format
 npm run format:check
 ```
 
-The project uses npm scripts only. The website root lives in `public/`, and the TypeScript source lives in `public/ts/`. `npm run dev` serves the site at `http://localhost:3000` with live reload for TypeScript, HTML, CSS, and static asset changes. `npm run build` compiles browser scripts into ignored `public/js/` and DaisyUI/Tailwind CSS into ignored `public/output.css`.
+The project uses npm scripts only. The website root lives in `public/`, and the TypeScript source lives in `public/ts/`. `npm run dev` serves the site at `http://localhost:3000` with live reload for TypeScript, HTML, CSS, and static asset changes. `npm run build` compiles browser scripts into ignored `public/js/` and Tailwind CSS into ignored `public/output.css`.
 
 The demo is a small simulated vMix in [`public/ts/demo.ts`](public/ts/demo.ts). Boxes whose host is `demo`, `demo2`, and so on are answered by it instead of the network, and `?demo` opens three grouped ones.
 

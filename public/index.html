@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en" data-theme="dim">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>vMix Master</title>
     <link rel="icon" type="image/png" href="./logo.svg" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <meta name="theme-color" content="#111827" />
+    <meta name="theme-color" content="#010102" />
     <link rel="stylesheet" href="./output.css" />
     <script src="./Sortable.min.js" defer></script>
     <script src="./js/tools.js" defer></script>
@@ -24,11 +24,13 @@
       }
     </script>
   </head>
-  <body class="bg-base-100 pt-[3.125rem] text-base-content max-md:pt-[4.625rem]">
-    <div
-      class="navbar focus fixed top-0 z-50 min-h-10 w-full border-b border-base-300 bg-base-200 py-0 shadow-sm max-md:flex-wrap max-md:pt-2 max-md:pb-0">
+  <body class="bg-base-100 pt-10 text-base-content max-md:pt-[4.0625rem]">
+    <div class="navbar app-header fixed top-0 z-50 min-h-10 w-full border-b border-hairline py-0 max-md:flex-wrap max-md:pt-2 max-md:pb-0">
       <div class="flex flex-1 items-center gap-1 max-md:order-1">
-        <span class="px-3 text-base font-semibold whitespace-nowrap">vMix Master</span>
+        <span class="flex items-center gap-2 px-3 text-sm font-semibold tracking-tight whitespace-nowrap">
+          <img src="./logo.svg" alt="" class="h-5 w-5" />
+          vMix Master
+        </span>
       </div>
       <div class="hidden basis-full max-md:order-3 max-md:block"></div>
       <div class="absolute left-1/2 flex -translate-x-1/2 gap-2 max-md:static max-md:order-4 max-md:translate-x-0 max-md:px-3">
@@ -136,7 +138,7 @@
           <li>
             <details>
               <summary>vMix Scripts</summary>
-              <ul class="right-0 left-auto max-w-[calc(100vw-1rem)] overflow-x-auto rounded-t-none bg-base-100 p-2">
+              <ul class="right-0 left-auto max-w-[calc(100vw-1rem)] overflow-x-auto bg-base-200 p-1.5">
                 <li>
                   <a
                     class="whitespace-nowrap"
@@ -215,11 +217,11 @@
     </div>
 
     <main class="min-h-[calc(100vh-2.5rem)]">
-      <div id="demo-banner" class="bg-info/15 text-info hidden px-3 py-1 text-center text-xs">
+      <div id="demo-banner" class="hidden border-b border-info/25 bg-info/10 px-3 py-1.5 text-center text-xs text-info">
         Demo mode: these are simulated vMix systems, nothing is sent to your network.
         <a class="link font-semibold" href="./">Exit demo</a>
       </div>
-      <section class="border-base-300 bg-base-100 border-b px-2 py-3">
+      <section class="border-b border-hairline bg-base-100 px-2 py-3">
         <div class="flex w-full flex-wrap items-start gap-2" id="boxes"></div>
         <datalist id="hosts">
           <option value="192.168.154.x"></option>
@@ -228,13 +230,13 @@
 
       <section class="min-w-0 px-2 pt-5 pb-8">
         <div class="w-full">
-          <div id="welcome" class="mx-auto mb-5 max-w-2xl rounded-box border border-base-content/10 bg-base-200 p-5 text-center">
-            <h2 class="text-lg font-semibold">Control vMix from your browser</h2>
-            <p class="mt-2 text-sm opacity-80">
+          <div id="welcome" class="mx-auto mb-5 max-w-2xl rounded-box border border-hairline-strong bg-base-200 p-6 text-center">
+            <h2 class="text-xl font-semibold tracking-tight">Control vMix from your browser</h2>
+            <p class="mx-auto mt-2 max-w-xl text-sm text-neutral-content">
               Enter the address of your vMix in the box above, for example <code>192.168.1.20</code>. Add more systems with the + button to control
               several at once. Just looking? Try three simulated systems, no vMix needed.
             </p>
-            <a class="btn btn-accent btn-sm mt-3" href="?demo">Try the demo</a>
+            <a class="btn btn-primary btn-sm mt-4" href="?demo">Try the demo</a>
           </div>
           <div class="vmix-web">
             <div id="vmix-container" class="hidden pb-5">
@@ -242,10 +244,10 @@
                 <div class="flex min-w-0 flex-col gap-1">
                   <div
                     id="preview-title"
-                    class="wrap bg-warning text-primary-content flex min-h-14 flex-1 items-center justify-center rounded px-3 py-2 text-center text-lg font-semibold"></div>
+                    class="wrap flex min-h-14 flex-1 items-center justify-center rounded-lg bg-warning px-3 py-2 text-center text-lg font-semibold text-base-100"></div>
                   <div
                     id="preview-progress"
-                    class="flex min-h-9 shrink-0 items-center justify-center rounded bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
+                    class="flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-hairline bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
                     title="Position / Duration / Remaining"></div>
                   <div id="preview-controls" class="flex items-center gap-2">
                     <input
@@ -287,10 +289,10 @@
                 <div class="flex min-w-0 flex-col gap-1">
                   <div
                     id="active-title"
-                    class="wrap bg-primary text-primary-content flex min-h-14 flex-1 items-center justify-center rounded px-3 py-2 text-center text-lg font-semibold"></div>
+                    class="wrap flex min-h-14 flex-1 items-center justify-center rounded-lg bg-primary px-3 py-2 text-center text-lg font-semibold text-primary-content"></div>
                   <div
                     id="active-progress"
-                    class="flex min-h-9 shrink-0 items-center justify-center rounded bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
+                    class="flex min-h-9 shrink-0 items-center justify-center rounded-lg border border-hairline bg-base-200 px-2 text-center text-xl font-semibold tabular-nums"
                     title="Position / Duration / Remaining"></div>
                   <div id="active-controls" class="flex items-center gap-2">
                     <input
@@ -318,10 +320,16 @@
                 </div>
               </div>
 
-              <h3 class="mt-5 mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Audio buses</h3>
+              <h3 class="mt-6 mb-2 text-xs font-semibold tracking-widest uppercase text-neutral-content/70">Audio buses</h3>
               <div id="vmix-buses" class="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2"></div>
 
-              <h3 class="mt-5 mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Inputs</h3>
+              <div class="mt-6 mb-2 flex items-center justify-between gap-3">
+                <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-content/70">Inputs</h3>
+                <label class="flex cursor-pointer items-center gap-2 text-xs text-neutral-content/70 select-none">
+                  <input id="active-only" type="checkbox" class="url-param switch" />
+                  Active only
+                </label>
+              </div>
               <div id="vmix-inputs" class="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-2"></div>
             </div>
           </div>
@@ -329,8 +337,8 @@
           <div class="custom-functions mt-3">
             <div class="flex flex-col items-center">
               <div class="custom-functions-container flex w-full max-w-5xl flex-col gap-3">
-                <div class="rounded-box border border-base-content/10 bg-base-200 p-3">
-                  <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase opacity-60">Raw Request</h3>
+                <div class="rounded-box border border-hairline bg-base-200 p-3">
+                  <h3 class="mb-2 text-xs font-semibold tracking-widest uppercase text-neutral-content/70">Raw Request</h3>
                   <div class="join w-full">
                     <input
                       id="rawRequest"
@@ -359,7 +367,7 @@
           </button>
         </form>
         <h2 class="mb-3 text-xl font-bold">Logs</h2>
-        <div class="logs border-secondary bg-base-300 h-[70vh] overflow-y-scroll rounded-lg border p-3"></div>
+        <div class="logs h-[70vh] overflow-y-scroll rounded-lg border border-hairline-strong bg-base-100 p-3 font-mono text-xs"></div>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>
