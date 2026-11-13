@@ -65,6 +65,12 @@ const parser = new DOMParser();
 async function fetchVmixInfo(host: string): Promise<VmixFetchInfo> {
     const res = await fetchUrl(getApiUrl(host));
 
+    if (res.status === 401) {
+        return {
+            value: null,
+            error: 'Web Controller needs a password (401)',
+        };
+    }
     if (res.status === 200 && res.value !== null) {
         try {
             const xmlData = parser.parseFromString(res.value, 'text/xml');
