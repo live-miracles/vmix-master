@@ -12,8 +12,8 @@ you want to control.
 The computer that opens vMix Master must be able to reach the vMix machine on that port, so
 it needs to be on the same network, and the vMix machine's firewall must allow it.
 
-If you set a password for the Web Controller, vMix Master does not send one. Check that
-the system still shows as connected after you add it.
+vMix Master cannot use a Web Controller that has a password, see
+[Web Controller password](#web-controller-password).
 
 ## Add a system
 
@@ -37,6 +37,24 @@ To change a name or an address later, double-click it in the box. A click on the
 button adds the box to the group, and a click on the box makes it the master. The trash
 button removes a box after asking you to confirm, and an **Undo** button appears afterwards
 for a few seconds.
+
+## Web Controller password
+
+vMix Master cannot talk to a Web Controller that asks for a password. vMix protects it with
+HTTP Basic authentication, and a browser has to send the password in an `Authorization`
+header. For that, the browser first asks vMix for permission, and vMix does not answer that
+request. Chrome then blocks the call, and there is no way around it from a web page.
+
+A box for such a system shows **Unavailable** with `Web Controller needs a password (401)`.
+
+Use one of these instead:
+
+- In vMix, open **Settings → vMix Web Controller** and tick **Allow software on this computer
+  access without login**. It only covers requests to `127.0.0.1` from the computer vMix
+  runs on. The computer's own network address, and any other computer, still need the
+  password.
+- Leave the password off and limit who can reach the port, for example with the firewall of
+  the vMix machine or by keeping it on a private network.
 
 You can keep a list of addresses under **Settings → Host / API URL Suggestions**. They are
 offered while you type an address.
@@ -68,6 +86,8 @@ Things to check when a system will not connect:
 - The Web Controller is enabled in vMix and the port matches the address.
 - You can open `http://<ip>:8088/api/` in the same browser and see XML. If you do not, it is
   a network or firewall problem, not a vMix Master problem.
+- "Web Controller needs a password (401)" means the Web Controller has a password, see
+  [Web Controller password](#web-controller-password).
 - "Not a vMix API response" means something answered at that address, but it is not vMix,
   for example another web server on the same port.
 - You allowed the local network prompt in Chrome. You can change it under the site
